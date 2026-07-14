@@ -6,18 +6,76 @@ function doPost(e) {
     const payload = JSON.parse((e.postData && e.postData.contents) || "{}");
     const mode = payload.mode || (payload.to ? "sendStatusEmail" : "uploadAttachment");
     if (mode === "sendStatusEmail") return sendStatusEmail_(payload);
+    if (mode === "saveDriveDatabase") return saveDriveDatabase_(payload);
     return jsonResponse({ success: true, files: [saveAttachment_(payload)] });
   } catch (error) {
     return jsonResponse({ success: false, error: errorMessage_(error) });
   }
 }
 
-function doGet() {
+function doGet(e) {
+  const params = (e && e.parameter) || {};
+  const callback = String(params.callback || "").trim();
+  try {
+    if (params.mode === "loadDriveDatabase") return jsonpResponse(loadDriveDatabase_(params), callback);
+    return jsonpResponse({
+      success: true,
+      message: "T23 attachment upload, status email, and Drive database endpoint is running.",
+      folderId: DEFAULT_FOLDER_ID
+    }, callback);
+  } catch (error) {
+    return jsonpResponse({ success: false, error: errorMessage_(error) }, callback);
+  }
+}
+
+function loadDriveDatabase_(params) {
+  const folder = DriveApp.getFolderById(params.folderId || DEFAULT_FOLDER_ID);
+  return {
+    success: true,
+    folderId: folder.getId(),
+    loadedAt: new Date().toISOString(),
+    contractsCsvText: readTextFileByName_(folder, params.contractsCsv || "tracking_contracts_contracts_db.csv"),
+    logsCsvText: readTextFileByName_(folder, params.logsCsv || "tracking_contracts_log_db.csv"),
+    typeMasterCsvText: readTextFileByName_(folder, params.typeMasterCsv || "tracking_contracts_type_master_db.csv")
+  };
+}
+
+function saveDriveDatabase_(payload) {
+  const folder = DriveApp.getFolderById(payload.folderId || DEFAULT_FOLDER_ID);
+  const files = {
+    contracts: upsertTextFileByName_(folder, payload.contractsCsv || "tracking_contracts_contracts_db.csv", payload.contractsCsvText || ""),
+    logs: upsertTextFileByName_(folder, payload.logsCsv || "tracking_contracts_log_db.csv", payload.logsCsvText || ""),
+    typeMaster: upsertTextFileByName_(folder, payload.typeMasterCsv || "tracking_contracts_type_master_db.csv", payload.typeMasterCsvText || "")
+  };
   return jsonResponse({
     success: true,
-    message: "T23 attachment upload and status email endpoint is running.",
-    folderId: DEFAULT_FOLDER_ID
+    saved: true,
+    savedAt: new Date().toISOString(),
+    folderId: folder.getId(),
+    files: files
   });
+}
+
+function readTextFileByName_(folder, fileName) {
+  const files = folder.getFilesByName(fileName);
+  if (!files.hasNext()) return "";
+  return files.next().getBlob().getDataAsString("UTF-8").replace(/^\uFEFF/, "");
+}
+
+function upsertTextFileByName_(folder, fileName, text) {
+  const name = cleanFileName_(fileName || "database.csv");
+  const content = String(text || "");
+  const files = folder.getFilesByName(name);
+  const file = files.hasNext()
+    ? files.next().setContent(content)
+    : folder.createFile(name, content, MimeType.CSV);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return {
+    id: file.getId(),
+    name: file.getName(),
+    url: file.getUrl(),
+    downloadUrl: "https://drive.google.com/uc?export=download&id=" + file.getId()
+  };
 }
 
 function sendStatusEmail_(payload) {
@@ -193,4 +251,14 @@ function jsonResponse(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function jsonpResponse(data, callback) {
+  const safeCallback = String(callback || "").trim();
+  if (safeCallback && /^[A-Za-z_$][\w$]*(\.[A-Za-z_$][\w$]*)*$/.test(safeCallback)) {
+    return ContentService
+      .createTextOutput(safeCallback + "(" + JSON.stringify(data) + ");")
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return jsonResponse(data);
 }

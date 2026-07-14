@@ -2640,6 +2640,8 @@ def main():
     ];
 
     const localDatabaseKey = `trackingContracts.csvDatabase.${driveDatabaseConfig.folderId}.v1`;
+    let driveDatabaseSaveTimer = 0;
+    let isApplyingDriveDatabaseLoad = false;
 
     function csvCell(value) {
       let text = value == null ? "" : value;
@@ -2771,6 +2773,22 @@ def main():
       return Object.fromEntries(logDatabaseHeaders.map((header, index) => [header, row[index] ?? ""]));
     }
 
+    function logFromDbRow(row) {
+      return logDatabaseHeaders.map(header => {
+        const value = row[header] ?? "";
+        if (header === "Attachments" || header === "CC Recipients") {
+          if (!value) return [];
+          try {
+            const parsed = JSON.parse(value);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch (error) {
+            return [];
+          }
+        }
+        return value;
+      });
+    }
+
     function downloadTextFile(filename, text, mimeType = "text/csv;charset=utf-8") {
       const blob = new Blob(["\\uFEFF", text], { type: mimeType });
       const url = URL.createObjectURL(blob);
@@ -2847,6 +2865,7 @@ def main():
           logRecords
         }));
         updateDatabaseSyncStatus(`${contracts.length} contracts saved locally`);
+        scheduleDriveDatabaseSave();
       } catch (error) {
         updateDatabaseSyncStatus("Local database not saved");
       }
@@ -2875,6 +2894,116 @@ def main():
       } catch (error) {
         updateDatabaseSyncStatus("Local database could not load");
       }
+    }
+
+    function driveDatabaseEndpoint() {
+      return configuredAttachmentUploadEndpoint();
+    }
+
+    function typeMasterCsvText() {
+      const rows = realWorkbookData?.sheets?.["Contract Type Master"] || [];
+      const headers = rows.length
+        ? Array.from(rows.reduce((set, row) => {
+          Object.keys(row || {}).forEach(key => set.add(key));
+          return set;
+        }, new Set()))
+        : ["Type of Contract", "Category", "Description / คำอธิบาย"];
+      return objectsToCsv(headers, rows);
+    }
+
+    function driveDatabaseCsvPayload() {
+      return {
+        mode: "saveDriveDatabase",
+        folderId: driveDatabaseConfig.folderId,
+        contractsCsv: driveDatabaseConfig.contractsCsv,
+        logsCsv: driveDatabaseConfig.logsCsv,
+        typeMasterCsv: driveDatabaseConfig.typeMasterCsv,
+        contractsCsvText: objectsToCsv(contractDatabaseHeaders, contracts.map(contractDbRow)),
+        logsCsvText: objectsToCsv(logDatabaseHeaders, logRecords.map(logDbRow)),
+        typeMasterCsvText: typeMasterCsvText()
+      };
+    }
+
+    function applyDriveDatabasePayload(payload) {
+      if (!payload || payload.success === false) return false;
+      const contractText = payload.contractsCsvText || payload.files?.contracts?.text || "";
+      const logText = payload.logsCsvText || payload.files?.logs?.text || "";
+      if (!contractText) return false;
+      const cloudContracts = csvToObjects(contractText).map(contractFromDbRow).filter(item => item.id && item.name);
+      if (!cloudContracts.length) return false;
+      const cloudLogs = logText ? csvToObjects(logText).map(logFromDbRow) : [];
+      const migratedCount = migrateContractIdsToDepartmentFormat(cloudContracts, cloudLogs);
+      isApplyingDriveDatabaseLoad = true;
+      contracts.splice(0, contracts.length, ...cloudContracts);
+      logRecords.splice(0, logRecords.length, ...cloudLogs);
+      localStorage.setItem(localDatabaseKey, JSON.stringify({
+        savedAt: localIsoDateTime(),
+        contracts,
+        logRecords
+      }));
+      isApplyingDriveDatabaseLoad = false;
+      refreshDashboardDataFromContracts();
+      renderAll();
+      updateDatabaseSyncStatus(`${contracts.length} contracts loaded from Shared Drive${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}`);
+      return true;
+    }
+
+    function loadDriveDatabaseFromCloud() {
+      const endpoint = driveDatabaseEndpoint();
+      if (!endpoint) return;
+      const callbackName = `t23DriveDb_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      const params = new URLSearchParams({
+        mode: "loadDriveDatabase",
+        folderId: driveDatabaseConfig.folderId,
+        contractsCsv: driveDatabaseConfig.contractsCsv,
+        logsCsv: driveDatabaseConfig.logsCsv,
+        typeMasterCsv: driveDatabaseConfig.typeMasterCsv,
+        callback: callbackName
+      });
+      const script = document.createElement("script");
+      let done = false;
+      window[callbackName] = payload => {
+        done = true;
+        try {
+          if (!applyDriveDatabasePayload(payload)) updateDatabaseSyncStatus("Shared Drive database is empty");
+        } catch (error) {
+          updateDatabaseSyncStatus("Shared Drive database could not load");
+        } finally {
+          delete window[callbackName];
+          script.remove();
+        }
+      };
+      script.onerror = () => {
+        if (!done) updateDatabaseSyncStatus("Shared Drive database could not load");
+        delete window[callbackName];
+        script.remove();
+      };
+      script.src = `${endpoint}${endpoint.includes("?") ? "&" : "?"}${params.toString()}`;
+      document.head.appendChild(script);
+    }
+
+    async function saveDriveDatabaseToCloud() {
+      const endpoint = driveDatabaseEndpoint();
+      if (!endpoint || isApplyingDriveDatabaseLoad) return;
+      try {
+        updateDatabaseSyncStatus(`${contracts.length} contracts saved locally · syncing Shared Drive`);
+        await fetch(endpoint, {
+          method: "POST",
+          mode: "no-cors",
+          redirect: "follow",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(driveDatabaseCsvPayload())
+        });
+        updateDatabaseSyncStatus(`${contracts.length} contracts saved to Shared Drive`);
+      } catch (error) {
+        updateDatabaseSyncStatus(`${contracts.length} contracts saved locally · Shared Drive sync failed`);
+      }
+    }
+
+    function scheduleDriveDatabaseSave() {
+      if (isApplyingDriveDatabaseLoad) return;
+      clearTimeout(driveDatabaseSaveTimer);
+      driveDatabaseSaveTimer = window.setTimeout(saveDriveDatabaseToCloud, 800);
     }
 
     function exportContractsCsv() {
@@ -2963,7 +3092,8 @@ def main():
         """    applyRoleAccess();
     setupCsvDatabaseControls();
     loadContractsDatabase();
-    renderAll();""",
+    renderAll();
+    loadDriveDatabaseFromCloud();""",
     )
     html = html.replace("Mockup Data · จำนวน Delayed / Overdue แตกต่างกันตาม Contract Owner และ Department", "Excel Data · ข้อมูล Contract ID / SLA จาก workbook จริง")
     html = html.replace("applyDiverseMockupData();\n    normalizeExistingData();", "    // Real workbook data is embedded above. Keep the mock generator available for reference, but do not run it.\n    normalizeExistingData();")
@@ -3085,18 +3215,76 @@ function doPost(e) {{
     const payload = JSON.parse((e.postData && e.postData.contents) || "{{}}");
     const mode = payload.mode || (payload.to ? "sendStatusEmail" : "uploadAttachment");
     if (mode === "sendStatusEmail") return sendStatusEmail_(payload);
+    if (mode === "saveDriveDatabase") return saveDriveDatabase_(payload);
     return jsonResponse({{ success: true, files: [saveAttachment_(payload)] }});
   }} catch (error) {{
     return jsonResponse({{ success: false, error: errorMessage_(error) }});
   }}
 }}
 
-function doGet() {{
+function doGet(e) {{
+  const params = (e && e.parameter) || {{}};
+  const callback = String(params.callback || "").trim();
+  try {{
+    if (params.mode === "loadDriveDatabase") return jsonpResponse(loadDriveDatabase_(params), callback);
+    return jsonpResponse({{
+      success: true,
+      message: "T23 attachment upload, status email, and Drive database endpoint is running.",
+      folderId: DEFAULT_FOLDER_ID
+    }}, callback);
+  }} catch (error) {{
+    return jsonpResponse({{ success: false, error: errorMessage_(error) }}, callback);
+  }}
+}}
+
+function loadDriveDatabase_(params) {{
+  const folder = DriveApp.getFolderById(params.folderId || DEFAULT_FOLDER_ID);
+  return {{
+    success: true,
+    folderId: folder.getId(),
+    loadedAt: new Date().toISOString(),
+    contractsCsvText: readTextFileByName_(folder, params.contractsCsv || "tracking_contracts_contracts_db.csv"),
+    logsCsvText: readTextFileByName_(folder, params.logsCsv || "tracking_contracts_log_db.csv"),
+    typeMasterCsvText: readTextFileByName_(folder, params.typeMasterCsv || "tracking_contracts_type_master_db.csv")
+  }};
+}}
+
+function saveDriveDatabase_(payload) {{
+  const folder = DriveApp.getFolderById(payload.folderId || DEFAULT_FOLDER_ID);
+  const files = {{
+    contracts: upsertTextFileByName_(folder, payload.contractsCsv || "tracking_contracts_contracts_db.csv", payload.contractsCsvText || ""),
+    logs: upsertTextFileByName_(folder, payload.logsCsv || "tracking_contracts_log_db.csv", payload.logsCsvText || ""),
+    typeMaster: upsertTextFileByName_(folder, payload.typeMasterCsv || "tracking_contracts_type_master_db.csv", payload.typeMasterCsvText || "")
+  }};
   return jsonResponse({{
     success: true,
-    message: "T23 attachment upload and status email endpoint is running.",
-    folderId: DEFAULT_FOLDER_ID
+    saved: true,
+    savedAt: new Date().toISOString(),
+    folderId: folder.getId(),
+    files: files
   }});
+}}
+
+function readTextFileByName_(folder, fileName) {{
+  const files = folder.getFilesByName(fileName);
+  if (!files.hasNext()) return "";
+  return files.next().getBlob().getDataAsString("UTF-8").replace(/^\\uFEFF/, "");
+}}
+
+function upsertTextFileByName_(folder, fileName, text) {{
+  const name = cleanFileName_(fileName || "database.csv");
+  const content = String(text || "");
+  const files = folder.getFilesByName(name);
+  const file = files.hasNext()
+    ? files.next().setContent(content)
+    : folder.createFile(name, content, MimeType.CSV);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return {{
+    id: file.getId(),
+    name: file.getName(),
+    url: file.getUrl(),
+    downloadUrl: "https://drive.google.com/uc?export=download&id=" + file.getId()
+  }};
 }}
 
 function sendStatusEmail_(payload) {{
@@ -3273,6 +3461,16 @@ function jsonResponse(data) {{
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }}
+
+function jsonpResponse(data, callback) {{
+  const safeCallback = String(callback || "").trim();
+  if (safeCallback && /^[A-Za-z_$][\\w$]*(\\.[A-Za-z_$][\\w$]*)*$/.test(safeCallback)) {{
+    return ContentService
+      .createTextOutput(safeCallback + "(" + JSON.stringify(data) + ");")
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }}
+  return jsonResponse(data);
+}}
 """,
         encoding="utf-8",
     )
@@ -3289,9 +3487,9 @@ function jsonResponse(data) {{
             f"Attachment upload Apps Script: {OUTPUT_ATTACHMENT_APPS_SCRIPT.name}",
             f"Attachment Cloud folder: {ATTACHMENT_CLOUD_FOLDER_URL}",
             "",
-            "Edit contracts in tracking_contracts_contracts_db.csv, then use Import Contracts CSV in Contract Master.",
-            "Use Export Contracts CSV after Add Case / Update Status / Close Case to keep the CSV database current.",
-            "To enable real email sending and direct attachment upload, deploy tracking_contracts_attachment_upload_apps_script.js as a Google Apps Script Web App.",
+            "The dashboard loads the CSV database from the shared Google Drive folder through the Apps Script Web App.",
+            "Add Case / Update Status / Close Case save locally first, then sync the CSV database back to the shared Drive folder in the background.",
+            "To enable real email sending, direct attachment upload, and Drive CSV sync, deploy tracking_contracts_attachment_upload_apps_script.js as a Google Apps Script Web App.",
             "Then paste the Web App URL into ATTACHMENT_UPLOAD_ENDPOINT in tracking_contracts_dashboard_codex_code.py and regenerate the HTML.",
         ]),
         encoding="utf-8",
