@@ -953,6 +953,10 @@ def main():
       min-width: 0;
     }
 
+    .master-data-panel-full {
+      grid-column: 1 / -1;
+    }
+
     .master-data-actions {
       display: flex;
       gap: 8px;
@@ -979,6 +983,11 @@ def main():
     .master-table textarea.input {
       min-height: 58px;
       resize: vertical;
+    }
+
+    .master-table .icon-button {
+      width: 30px;
+      height: 30px;
     }
 
     @media (max-width: 1040px) {
@@ -1128,7 +1137,7 @@ def main():
           <span>✎</span><span class="nav-label">User Case Action</span><span class="nav-count">3</span>
         </button>
         <button class="nav-button" data-view="master" title="Master Data">
-          <span>▤</span><span class="nav-label">Master Data</span><span class="nav-count">4</span>
+          <span>▤</span><span class="nav-label">Master Data</span><span class="nav-count">5</span>
         </button>""",
     )
     html = html.replace(
@@ -1145,6 +1154,21 @@ def main():
               </div>
             </div>
             <div class="master-data-grid">
+              <section class="panel master-data-panel master-data-panel-full">
+                <div class="panel-header">
+                  <div>
+                    <h2>Contract Records</h2>
+                    <small>Edit or delete incorrect cases created from Add Case</small>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Contract ID</th><th>Contract Name</th><th>Department / Restaurant</th><th>Contract Owner</th><th>Type of Contract</th><th>Stage</th><th>Status Update</th><th>Station Owner</th><th>Due Date</th><th></th></tr></thead>
+                    <tbody id="masterContractRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
               <section class="panel master-data-panel">
                 <div class="panel-header">
                   <div>
@@ -3317,7 +3341,7 @@ def main():
         </select>`;
       }
       if (tag === "textarea") return `<textarea class="${classes}" data-master-field="${escapeHtml(field)}">${escapeHtml(value)}</textarea>`;
-      return `<input class="${classes}" data-master-field="${escapeHtml(field)}" value="${escapeHtml(value)}">`;
+      return `<input class="${classes}" type="${escapeHtml(options.type || "text")}" data-master-field="${escapeHtml(field)}" value="${escapeHtml(value)}">`;
     }
 
     function masterActiveSelect(field, value = "Yes") {
@@ -3328,7 +3352,28 @@ def main():
       return `<button class="icon-button" type="button" data-remove-master-row title="Remove row">×</button>`;
     }
 
+    function stationOwnerForMasterContract(contract) {
+      return stationParts(contract.station).to || contract.stationOwner || contract.owner || "";
+    }
+
     function renderMasterData() {
+      const contractBody = document.querySelector("#masterContractRows");
+      if (contractBody) {
+        contractBody.innerHTML = contracts.map(contract => `
+          <tr>
+            <td><input type="hidden" data-master-field="_originalId" value="${escapeHtml(contract.id)}">${masterInput("id", contract.id)}</td>
+            <td>${masterInput("name", contract.name)}</td>
+            <td>${masterInput("department", contract.department)}</td>
+            <td>${masterInput("owner", contract.owner)}</td>
+            <td>${masterInput("type", contract.type)}</td>
+            <td>${masterInput("stage", contract.stage)}</td>
+            <td>${masterInput("status", contract.status)}</td>
+            <td>${masterInput("stationOwner", stationOwnerForMasterContract(contract))}</td>
+            <td>${masterInput("due", contract.due, { type: "date" })}</td>
+            <td>${masterDeleteButton()}</td>
+          </tr>`).join("");
+      }
+
       const deptBody = document.querySelector("#masterDepartmentRows");
       if (deptBody) {
         deptBody.innerHTML = (masterData.departments || []).map(row => `
@@ -3390,6 +3435,72 @@ def main():
     }
 
     function normalizeMasterDataFromUi() {
+      const originalContracts = new Map(contracts.map(contract => [String(contract.id || "").trim(), contract]));
+      const contractRows = readMasterRows("#masterContractRows", ["_originalId", "id", "name", "department", "owner", "type", "stage", "status", "stationOwner", "due"], "_originalId");
+      const nextContracts = [];
+      const keptIds = new Set();
+      const idMap = new Map();
+      let hasContractError = false;
+
+      contractRows.forEach(row => {
+        const originalId = String(row._originalId || "").trim();
+        const id = String(row.id || "").trim();
+        const name = String(row.name || "").trim();
+        if (!id || !name) {
+          hasContractError = true;
+          return;
+        }
+        if (keptIds.has(id)) {
+          hasContractError = true;
+          return;
+        }
+        keptIds.add(id);
+        const original = originalContracts.get(originalId) || {};
+        const type = String(row.type || original.type || "Other").trim();
+        const owner = String(row.owner || original.owner || "").trim();
+        const stationOwner = String(row.stationOwner || stationOwnerForMasterContract(original) || "Legal").trim();
+        const totalSla = Number(original.totalSla || totalSlaFor(type)) || 0;
+        const used = Number(original.used || original.days || 0) || 0;
+        const accessLevel = String(original.accessLevel || accessLevelForContractType(type) || "Normal").trim();
+        nextContracts.push({
+          ...original,
+          id,
+          name,
+          department: String(row.department || original.department || "").trim(),
+          owner,
+          type,
+          vendor: String(original.vendor || "").trim(),
+          stage: String(row.stage || original.stage || "Draft Created").trim(),
+          status: String(row.status || original.status || original.alert || "Green >>G=On Track").trim(),
+          station: `From ${owner || stationParts(original.station || "").from || "Owner"} >> To ${stationOwner}`,
+          due: String(row.due || original.due || "").trim(),
+          workType: String(original.workType || type || "Other").trim(),
+          totalSla,
+          used,
+          days: Number(original.days || used) || 0,
+          balance: Number(original.balance || (totalSla - used)) || 0,
+          alert: String(row.status || original.alert || original.status || "Green >>G=On Track").trim(),
+          accessLevel,
+          visibility: String(original.visibility || (accessLevel === "Confidential" ? "Restricted access / จำกัดสิทธิ์" : "Standard access / สิทธิ์ทั่วไป")).trim(),
+          category: String(original.category || contractTypeCategoryFor(type)).trim()
+        });
+        if (originalId && originalId !== id) idMap.set(originalId, id);
+      });
+
+      if (hasContractError) {
+        showToast("Contract ID and Contract Name are required, and Contract ID must not duplicate");
+        return false;
+      }
+
+      contracts.splice(0, contracts.length, ...nextContracts);
+      logRecords.splice(0, logRecords.length, ...logRecords
+        .map(row => {
+          if (Array.isArray(row) && idMap.has(row[0])) row[0] = idMap.get(row[0]);
+          return row;
+        })
+        .filter(row => keptIds.has(row?.[0])));
+      refreshDashboardDataFromContracts();
+
       masterData.departments = readMasterRows("#masterDepartmentRows", ["Department / Restaurant", "Department Code", "Active"], "Department / Restaurant")
         .map(row => ({ ...row, "Department Code": String(row["Department Code"] || "").trim().toUpperCase(), Active: row.Active || "Yes" }));
       masterData.people = readMasterRows("#masterPeopleRows", ["company", "department", "name", "email", "active"], "name")
@@ -3398,10 +3509,11 @@ def main():
         .map(row => ({ ...row, Active: row.Active || "Yes" }));
       masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "accessLevel", "active"], "name")
         .map(row => ({ ...row, workType: row.type || "Other", category: row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
+      return true;
     }
 
     function addMasterRow(kind) {
-      normalizeMasterDataFromUi();
+      if (!normalizeMasterDataFromUi()) return;
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
       if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
       if (kind === "contractTypes") masterData.contractTypes.push({ Category: "Day-to-day", "Type of Contract": "", "Description / คำอธิบาย": "", Active: "Yes" });
@@ -3410,7 +3522,7 @@ def main():
     }
 
     async function saveMasterDataFromUi() {
-      normalizeMasterDataFromUi();
+      if (!normalizeMasterDataFromUi()) return;
       renderMasterData();
       saveContractsDatabase();
       await saveDriveDatabaseToCloud();
