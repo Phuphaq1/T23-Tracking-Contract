@@ -1,6 +1,7 @@
 import csv
 import json
 import math
+import re
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -14,6 +15,9 @@ OUTPUT_HTML = ROOT / "outputs" / "tracking_contracts_dashboard_real_excel_dropdo
 OUTPUT_CONTRACTS_CSV = ROOT / "outputs" / "tracking_contracts_contracts_db.csv"
 OUTPUT_LOGS_CSV = ROOT / "outputs" / "tracking_contracts_log_db.csv"
 OUTPUT_TYPE_MASTER_CSV = ROOT / "outputs" / "tracking_contracts_type_master_db.csv"
+OUTPUT_DEPARTMENT_MASTER_CSV = ROOT / "outputs" / "tracking_contracts_department_master_db.csv"
+OUTPUT_PEOPLE_MASTER_CSV = ROOT / "outputs" / "tracking_contracts_people_master_db.csv"
+OUTPUT_CONTRACT_TEMPLATE_CSV = ROOT / "outputs" / "tracking_contracts_contract_template_master_db.csv"
 OUTPUT_CODE = ROOT / "outputs" / "tracking_contracts_dashboard_codex_code.py"
 OUTPUT_README = ROOT / "outputs" / "tracking_contracts_database_readme.txt"
 OUTPUT_ATTACHMENT_APPS_SCRIPT = ROOT / "outputs" / "tracking_contracts_attachment_upload_apps_script.js"
@@ -197,6 +201,8 @@ def main():
         if row.get("Contract Name / ชื่อสัญญา") and row.get("Type of Contract / ประเภทสัญญา")
     ]
     type_rows = records(type_master_df)
+    for row in type_rows:
+        row.setdefault("Active", "Yes")
     action_rows = records(action_sla_df)
     rules_rows = [
         [clean(cell) for cell in row]
@@ -240,6 +246,24 @@ def main():
     log_records = []
     fixed_sla = {"Other": 3}
     contract_catalog = []
+    department_master_rows = [
+        {
+            "Department / Restaurant": name,
+            "Department Code": code,
+            "Active": "Yes",
+        }
+        for name, code in DEPARTMENT_CODE_CONFIG.items()
+    ]
+    source_html_for_people = SOURCE_HTML.read_text(encoding="utf-8")
+    people_match = re.search(r"const employeeDirectory = (\[[\s\S]*?\]);", source_html_for_people)
+    people_master_rows = []
+    if people_match:
+        try:
+            people_master_rows = json.loads(people_match.group(1))
+        except json.JSONDecodeError:
+            people_master_rows = []
+    for row in people_master_rows:
+        row.setdefault("active", "Yes")
 
     for index, row in enumerate(register_rows, start=1):
         contract_id = row.get("Contract ID", "")
@@ -331,6 +355,7 @@ def main():
             "contractId": "",
             "accessLevel": access_level,
             "category": access_level,
+            "active": "Yes",
         }
         for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
     ]
@@ -461,7 +486,19 @@ def main():
         html,
         "    const contractInputCatalog = [",
         "\n    ];\n    const requestedRole",
-        f"    const contractInputCatalog = {js(contract_catalog)};\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
+        f"    const contractInputCatalog = {js(contract_catalog)};\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
+    )
+    html = html.replace(
+        "    const requestedRole",
+        f"""    const masterData = {{
+      departments: {js(department_master_rows)},
+      people: employeeDirectory.map(item => ({{ ...item, active: item.active || "Yes" }})),
+      contractTypes: (realWorkbookData?.sheets?.["Contract Type Master"] || []).map(item => ({{ ...item, Active: item.Active || "Yes" }})),
+      contractTemplates: contractInputCatalog.map(item => ({{ ...item, active: item.active || "Yes" }}))
+    }};
+
+    const requestedRole""",
+        1,
     )
 
     old_summary = """    function contractSummaryMarkup(contract) {
@@ -901,6 +938,51 @@ def main():
       display: block;
     }
 
+    .master-data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .master-data-panel {
+      min-width: 0;
+    }
+
+    .master-data-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .master-table {
+      min-width: 720px;
+    }
+
+    .master-table th,
+    .master-table td {
+      vertical-align: top;
+    }
+
+    .master-table .input,
+    .master-table .select {
+      min-height: 34px;
+      padding: 7px 8px;
+      font-size: 12px;
+    }
+
+    .master-table textarea.input {
+      min-height: 58px;
+      resize: vertical;
+    }
+
+    @media (max-width: 1040px) {
+      .master-data-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .combo-empty {""",
     )
     html = html.replace(
@@ -930,10 +1012,41 @@ def main():
     html = html.replace(
         """    function actionDropdownOptions() {
       return updateActionDefinitions.map(item => ({""",
-        """    function contractTypeDescriptionFor(typeValue) {
+        """    function isMasterActive(value) {
+      return !["no", "false", "inactive", "0"].includes(normalizeDirectoryValue(value));
+    }
+
+    function activeMasterContractTypes() {
+      return (masterData.contractTypes || []).filter(row => row["Type of Contract"] && isMasterActive(row.Active));
+    }
+
+    function activeMasterContractTemplates() {
+      return (masterData.contractTemplates || []).filter(item => item.name && isMasterActive(item.active));
+    }
+
+    function activeMasterPeople() {
+      return (masterData.people || []).filter(item => item.name && isMasterActive(item.active));
+    }
+
+    function activeMasterDepartments() {
+      return (masterData.departments || []).filter(item => item["Department / Restaurant"] && isMasterActive(item.Active));
+    }
+
+    function allPeopleDirectory() {
+      const merged = new Map();
+      [...employeeDirectory, ...activeMasterPeople()].forEach(item => {
+        const email = String(item.email || "").trim().toLowerCase();
+        const key = email || normalizeDirectoryValue(item.name);
+        if (!key) return;
+        merged.set(key, { ...item });
+      });
+      return [...merged.values()];
+    }
+
+    function contractTypeDescriptionFor(typeValue) {
       const normalized = normalizeDirectoryValue(typeValue);
       if (!normalized) return "";
-      const rows = realWorkbookData?.sheets?.["Contract Type Master"] || [];
+      const rows = activeMasterContractTypes();
       const match = rows.find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalized);
       return match?.["Description / คำอธิบาย"] || "";
     }
@@ -941,7 +1054,7 @@ def main():
     function contractTypeCategoryFor(typeValue) {
       const normalized = normalizeDirectoryValue(typeValue);
       if (!normalized) return "";
-      const rows = realWorkbookData?.sheets?.["Contract Type Master"] || [];
+      const rows = activeMasterContractTypes();
       const match = rows.find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalized);
       return match?.Category || "";
     }
@@ -988,6 +1101,10 @@ def main():
       return updateActionDefinitions.map(item => ({""",
     )
     html = html.replace(
+        """      const rows = realWorkbookData?.sheets?.["Contract Type Master"] || [];""",
+        """      const rows = activeMasterContractTypes();""",
+    )
+    html = html.replace(
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
@@ -998,6 +1115,100 @@ def main():
         ariaLabel: "Type of Contract / ประเภทสัญญา"
       });
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
+    )
+    html = html.replace(
+        """        <button class="nav-button" data-view="user" title="User Case Action">
+          <span>✎</span><span class="nav-label">User Case Action</span><span class="nav-count">3</span>
+        </button>""",
+        """        <button class="nav-button" data-view="user" title="User Case Action">
+          <span>✎</span><span class="nav-label">User Case Action</span><span class="nav-count">3</span>
+        </button>
+        <button class="nav-button" data-view="master" title="Master Data">
+          <span>▤</span><span class="nav-label">Master Data</span><span class="nav-count">4</span>
+        </button>""",
+    )
+    html = html.replace(
+        """        <section class="view" id="notifications" hidden>""",
+        """        <section class="view" id="master">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Master Data</h2>
+                <small>Edit dropdown data and save it back to Shared Drive</small>
+              </div>
+              <div class="master-data-actions">
+                <button class="primary-button" type="button" id="saveMasterDataBtn">Save Master Data</button>
+              </div>
+            </div>
+            <div class="master-data-grid">
+              <section class="panel master-data-panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Department Master</h2>
+                    <small>Department / Restaurant + code for Contract ID</small>
+                  </div>
+                  <button class="secondary-button" type="button" data-add-master-row="departments">Add Row</button>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Department / Restaurant</th><th>Code</th><th>Active</th><th></th></tr></thead>
+                    <tbody id="masterDepartmentRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>People / Owner Master</h2>
+                    <small>Used by Owner, To, CC and email lookup</small>
+                  </div>
+                  <button class="secondary-button" type="button" data-add-master-row="people">Add Row</button>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Name</th><th>Department</th><th>Email</th><th>Company</th><th>Active</th><th></th></tr></thead>
+                    <tbody id="masterPeopleRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Type of Contract Master</h2>
+                    <small>Used by Type of Contract dropdown and tooltip</small>
+                  </div>
+                  <button class="secondary-button" type="button" data-add-master-row="contractTypes">Add Row</button>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Category</th><th>Type of Contract</th><th>Description</th><th>Active</th><th></th></tr></thead>
+                    <tbody id="masterContractTypeRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Contract Name Template</h2>
+                    <small>Used by Contract Name dropdown in Add Case</small>
+                  </div>
+                  <button class="secondary-button" type="button" data-add-master-row="contractTemplates">Add Row</button>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Contract Name</th><th>Type</th><th>Access</th><th>Active</th><th></th></tr></thead>
+                    <tbody id="masterTemplateRows"></tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="notifications" hidden>""",
     )
     html = html.replace(
         """      const contractType = String(typeInput.value || "").trim();
@@ -2298,6 +2509,8 @@ def main():
     function departmentCodeFor(department) {{
       const raw = String(department || "").trim();
       if (!raw) return "";
+      const masterMatch = activeMasterDepartments().find(item => normalizeDirectoryValue(item["Department / Restaurant"]) === normalizeDirectoryValue(raw));
+      if (masterMatch?.["Department Code"]) return String(masterMatch["Department Code"]).trim().toUpperCase();
       if (departmentCodeConfig[raw]) return departmentCodeConfig[raw];
       const normalized = normalizeDirectoryValue(raw);
       const match = Object.keys(departmentCodeConfig).find(key => normalizeDirectoryValue(key) === normalized);
@@ -2862,7 +3075,8 @@ def main():
         localStorage.setItem(localDatabaseKey, JSON.stringify({
           savedAt: localIsoDateTime(),
           contracts,
-          logRecords
+          logRecords,
+          masterData
         }));
         updateDatabaseSyncStatus(`${contracts.length} contracts saved locally`);
         scheduleDriveDatabaseSave();
@@ -2885,6 +3099,12 @@ def main():
         }
         const parsedContracts = parsed.contracts;
         const parsedLogs = Array.isArray(parsed.logRecords) ? parsed.logRecords : [];
+        if (parsed.masterData && typeof parsed.masterData === "object") {
+          if (Array.isArray(parsed.masterData.departments)) masterData.departments = parsed.masterData.departments;
+          if (Array.isArray(parsed.masterData.people)) masterData.people = parsed.masterData.people;
+          if (Array.isArray(parsed.masterData.contractTypes)) masterData.contractTypes = parsed.masterData.contractTypes;
+          if (Array.isArray(parsed.masterData.contractTemplates)) masterData.contractTemplates = parsed.masterData.contractTemplates;
+        }
         const migratedCount = migrateContractIdsToDepartmentFormat(parsedContracts, parsedLogs);
         contracts.splice(0, contracts.length, ...parsedContracts);
         if (Array.isArray(parsed.logRecords)) logRecords.splice(0, logRecords.length, ...parsedLogs);
@@ -2901,7 +3121,7 @@ def main():
     }
 
     function typeMasterCsvText() {
-      const rows = realWorkbookData?.sheets?.["Contract Type Master"] || [];
+      const rows = masterData.contractTypes || [];
       const headers = rows.length
         ? Array.from(rows.reduce((set, row) => {
           Object.keys(row || {}).forEach(key => set.add(key));
@@ -2911,6 +3131,18 @@ def main():
       return objectsToCsv(headers, rows);
     }
 
+    function departmentMasterCsvText() {
+      return objectsToCsv(["Department / Restaurant", "Department Code", "Active"], masterData.departments || []);
+    }
+
+    function peopleMasterCsvText() {
+      return objectsToCsv(["company", "department", "name", "email", "active"], masterData.people || []);
+    }
+
+    function contractTemplateCsvText() {
+      return objectsToCsv(["name", "type", "workType", "contractId", "accessLevel", "category", "active"], masterData.contractTemplates || []);
+    }
+
     function driveDatabaseCsvPayload() {
       return {
         mode: "saveDriveDatabase",
@@ -2918,9 +3150,15 @@ def main():
         contractsCsv: driveDatabaseConfig.contractsCsv,
         logsCsv: driveDatabaseConfig.logsCsv,
         typeMasterCsv: driveDatabaseConfig.typeMasterCsv,
+        departmentMasterCsv: driveDatabaseConfig.departmentMasterCsv,
+        peopleMasterCsv: driveDatabaseConfig.peopleMasterCsv,
+        contractTemplateCsv: driveDatabaseConfig.contractTemplateCsv,
         contractsCsvText: objectsToCsv(contractDatabaseHeaders, contracts.map(contractDbRow)),
         logsCsvText: objectsToCsv(logDatabaseHeaders, logRecords.map(logDbRow)),
-        typeMasterCsvText: typeMasterCsvText()
+        typeMasterCsvText: typeMasterCsvText(),
+        departmentMasterCsvText: departmentMasterCsvText(),
+        peopleMasterCsvText: peopleMasterCsvText(),
+        contractTemplateCsvText: contractTemplateCsvText()
       };
     }
 
@@ -2928,6 +3166,14 @@ def main():
       if (!payload || payload.success === false) return false;
       const contractText = payload.contractsCsvText || payload.files?.contracts?.text || "";
       const logText = payload.logsCsvText || payload.files?.logs?.text || "";
+      const typeMasterText = payload.typeMasterCsvText || payload.files?.typeMaster?.text || "";
+      const departmentMasterText = payload.departmentMasterCsvText || payload.files?.departments?.text || "";
+      const peopleMasterText = payload.peopleMasterCsvText || payload.files?.people?.text || "";
+      const contractTemplateText = payload.contractTemplateCsvText || payload.files?.contractTemplates?.text || "";
+      if (typeMasterText) masterData.contractTypes = csvToObjects(typeMasterText);
+      if (departmentMasterText) masterData.departments = csvToObjects(departmentMasterText);
+      if (peopleMasterText) masterData.people = csvToObjects(peopleMasterText);
+      if (contractTemplateText) masterData.contractTemplates = csvToObjects(contractTemplateText);
       if (!contractText) return false;
       const cloudContracts = csvToObjects(contractText).map(contractFromDbRow).filter(item => item.id && item.name);
       if (!cloudContracts.length) return false;
@@ -2943,6 +3189,7 @@ def main():
       }));
       isApplyingDriveDatabaseLoad = false;
       refreshDashboardDataFromContracts();
+      renderMasterData();
       renderAll();
       updateDatabaseSyncStatus(`${contracts.length} contracts loaded from Shared Drive${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}`);
       return true;
@@ -2958,6 +3205,9 @@ def main():
         contractsCsv: driveDatabaseConfig.contractsCsv,
         logsCsv: driveDatabaseConfig.logsCsv,
         typeMasterCsv: driveDatabaseConfig.typeMasterCsv,
+        departmentMasterCsv: driveDatabaseConfig.departmentMasterCsv,
+        peopleMasterCsv: driveDatabaseConfig.peopleMasterCsv,
+        contractTemplateCsv: driveDatabaseConfig.contractTemplateCsv,
         callback: callbackName
       });
       const script = document.createElement("script");
@@ -3055,6 +3305,130 @@ def main():
       reader.readAsText(file, "utf-8");
     }
 
+    function masterInput(field, value = "", options = {}) {
+      const tag = options.multiline ? "textarea" : "input";
+      const classes = options.select ? "select" : "input";
+      if (options.select) {
+        return `<select class="${classes}" data-master-field="${escapeHtml(field)}">
+          ${(options.choices || []).map(choice => `<option value="${escapeHtml(choice)}" ${String(value || "") === choice ? "selected" : ""}>${escapeHtml(choice)}</option>`).join("")}
+        </select>`;
+      }
+      if (tag === "textarea") return `<textarea class="${classes}" data-master-field="${escapeHtml(field)}">${escapeHtml(value)}</textarea>`;
+      return `<input class="${classes}" data-master-field="${escapeHtml(field)}" value="${escapeHtml(value)}">`;
+    }
+
+    function masterActiveSelect(field, value = "Yes") {
+      return masterInput(field, value || "Yes", { select: true, choices: ["Yes", "No"] });
+    }
+
+    function masterDeleteButton() {
+      return `<button class="icon-button" type="button" data-remove-master-row title="Remove row">×</button>`;
+    }
+
+    function renderMasterData() {
+      const deptBody = document.querySelector("#masterDepartmentRows");
+      if (deptBody) {
+        deptBody.innerHTML = (masterData.departments || []).map(row => `
+          <tr>
+            <td>${masterInput("Department / Restaurant", row["Department / Restaurant"])}</td>
+            <td>${masterInput("Department Code", row["Department Code"])}</td>
+            <td>${masterActiveSelect("Active", row.Active)}</td>
+            <td>${masterDeleteButton()}</td>
+          </tr>`).join("");
+      }
+
+      const peopleBody = document.querySelector("#masterPeopleRows");
+      if (peopleBody) {
+        peopleBody.innerHTML = (masterData.people || []).map(row => `
+          <tr>
+            <td>${masterInput("name", row.name)}</td>
+            <td>${masterInput("department", row.department)}</td>
+            <td>${masterInput("email", row.email)}</td>
+            <td>${masterInput("company", row.company)}</td>
+            <td>${masterActiveSelect("active", row.active)}</td>
+            <td>${masterDeleteButton()}</td>
+          </tr>`).join("");
+      }
+
+      const typeBody = document.querySelector("#masterContractTypeRows");
+      if (typeBody) {
+        typeBody.innerHTML = (masterData.contractTypes || []).map(row => `
+          <tr>
+            <td>${masterInput("Category", row.Category)}</td>
+            <td>${masterInput("Type of Contract", row["Type of Contract"])}</td>
+            <td>${masterInput("Description / คำอธิบาย", row["Description / คำอธิบาย"], { multiline: true })}</td>
+            <td>${masterActiveSelect("Active", row.Active)}</td>
+            <td>${masterDeleteButton()}</td>
+          </tr>`).join("");
+      }
+
+      const templateBody = document.querySelector("#masterTemplateRows");
+      if (templateBody) {
+        templateBody.innerHTML = (masterData.contractTemplates || []).map(row => `
+          <tr>
+            <td>${masterInput("name", row.name)}</td>
+            <td>${masterInput("type", row.type)}</td>
+            <td>${masterInput("accessLevel", row.accessLevel || accessLevelForContractType(row.type), { select: true, choices: ["Normal", "Confidential"] })}</td>
+            <td>${masterActiveSelect("active", row.active)}</td>
+            <td>${masterDeleteButton()}</td>
+          </tr>`).join("");
+      }
+    }
+
+    function readMasterRows(selector, fields, requiredField) {
+      return [...document.querySelectorAll(`${selector} tr`)].map(row => {
+        const item = {};
+        fields.forEach(field => {
+          const input = [...row.querySelectorAll("[data-master-field]")].find(control => control.dataset.masterField === field);
+          item[field] = String(input?.value || "").trim();
+        });
+        return item;
+      }).filter(item => String(item[requiredField] || "").trim());
+    }
+
+    function normalizeMasterDataFromUi() {
+      masterData.departments = readMasterRows("#masterDepartmentRows", ["Department / Restaurant", "Department Code", "Active"], "Department / Restaurant")
+        .map(row => ({ ...row, "Department Code": String(row["Department Code"] || "").trim().toUpperCase(), Active: row.Active || "Yes" }));
+      masterData.people = readMasterRows("#masterPeopleRows", ["company", "department", "name", "email", "active"], "name")
+        .map(row => ({ ...row, email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" }));
+      masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Category", "Type of Contract", "Description / คำอธิบาย", "Active"], "Type of Contract")
+        .map(row => ({ ...row, Active: row.Active || "Yes" }));
+      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "accessLevel", "active"], "name")
+        .map(row => ({ ...row, workType: row.type || "Other", category: row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
+    }
+
+    function addMasterRow(kind) {
+      normalizeMasterDataFromUi();
+      if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
+      if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
+      if (kind === "contractTypes") masterData.contractTypes.push({ Category: "Day-to-day", "Type of Contract": "", "Description / คำอธิบาย": "", Active: "Yes" });
+      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", active: "Yes" });
+      renderMasterData();
+    }
+
+    async function saveMasterDataFromUi() {
+      normalizeMasterDataFromUi();
+      renderMasterData();
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
+      populateUserControls();
+      renderUserCasePreview();
+      showToast("Master Data saved to Shared Drive");
+    }
+
+    function setupMasterDataControls() {
+      document.querySelector("#saveMasterDataBtn")?.addEventListener("click", saveMasterDataFromUi);
+      document.querySelectorAll("[data-add-master-row]").forEach(button => {
+        button.addEventListener("click", () => addMasterRow(button.dataset.addMasterRow));
+      });
+      document.querySelector("#master")?.addEventListener("click", event => {
+        const removeButton = event.target.closest("[data-remove-master-row]");
+        if (!removeButton) return;
+        removeButton.closest("tr")?.remove();
+      });
+      renderMasterData();
+    }
+
     function setupCsvDatabaseControls() {
       document.querySelector("#openDriveDatabase")?.setAttribute("href", driveDatabaseConfig.folderUrl);
       document.querySelector("#exportContractsCsv")?.addEventListener("click", exportContractsCsv);
@@ -3100,7 +3474,93 @@ def main():
     html = html.replace("    // Fixed SLA values imported\n    });\n\n    // Fixed SLA values imported from", "    // Fixed SLA values imported from")
     html = html.replace("    // Contract examples imported\n    });\n\n    // Contract examples imported from", "    // Contract examples imported from")
     html = html.replace("});\n    const requestedRole\n    ];\n    const requestedRole =", "});\n    const requestedRole =")
+    html = html.replace("    const requestedRole\n    ];\n", "")
     html = html.replace("get directorySummary() { return { people: employeeDirectory.length, departments: directoryDepartments().length }; }", "get directorySummary() { return { people: employeeDirectory.length, departments: directoryDepartments().length }; },\n      get realWorkbookData() { return realWorkbookData; }")
+    html = html.replace(
+        "      contractInputCatalog\n        .forEach(item => {",
+        "      [...contractInputCatalog, ...activeMasterContractTemplates()]\n        .forEach(item => {",
+    )
+    html = html.replace(
+        """    function directoryDepartments() {
+      return orderedUniqueList(employeeDirectory.map(item => item.department).filter(Boolean));
+    }""",
+        """    function directoryDepartments() {
+      return orderedUniqueList([
+        ...activeMasterDepartments().map(item => item["Department / Restaurant"]),
+        ...allPeopleDirectory().map(item => item.department),
+        ...contracts.map(item => item.department)
+      ].filter(Boolean));
+    }""",
+    )
+    html = html.replace(
+        "    function directoryPeopleOptions(items = employeeDirectory) {",
+        "    function directoryPeopleOptions(items = allPeopleDirectory()) {",
+    )
+    html = html.replace(
+        "      return employeeDirectory.find(item => normalizeDirectoryValue(item.name) === needle || normalizeDirectoryValue(item.email) === needle)",
+        "      return allPeopleDirectory().find(item => normalizeDirectoryValue(item.name) === needle || normalizeDirectoryValue(item.email) === needle)",
+    )
+    html = html.replace(
+        "      return employeeDirectory.filter(item => normalizeDirectoryValue(item.department) === needle);",
+        "      return allPeopleDirectory().filter(item => normalizeDirectoryValue(item.department) === needle);",
+    )
+    html = html.replace(
+        "    function directoryEmployeeOptions(items = employeeDirectory) {",
+        "    function directoryEmployeeOptions(items = allPeopleDirectory()) {",
+    )
+    html = html.replace(
+        "      return directoryEmployeeOptions(matches.length ? matches : employeeDirectory);",
+        "      return directoryEmployeeOptions(matches.length ? matches : allPeopleDirectory());",
+    )
+    html = html.replace(
+        "employeeDirectory.find(item => normalizeDirectoryValue(item.email)",
+        "allPeopleDirectory().find(item => normalizeDirectoryValue(item.email)",
+    )
+    html = html.replace(
+        """      user: ["User Case Action", "เพิ่มเคส อัปเดทสถานะ และปิดเคสจาก Contract Status / Log View"],
+      notifications: ["Notification Queue", "NotificationQueueTable"],""",
+        """      user: ["User Case Action", "เพิ่มเคส อัปเดทสถานะ และปิดเคสจาก Contract Status / Log View"],
+      master: ["Master Data", "แก้ไขข้อมูล dropdown และบันทึกกลับ Shared Drive"],
+      notifications: ["Notification Queue", "NotificationQueueTable"],""",
+    )
+    html = html.replace(
+        """    function canAccessView(viewName) {
+      if (viewName === "user") return isAdmin();
+      return true;
+    }""",
+        """    function canAccessView(viewName) {
+      if (viewName === "user" || viewName === "master") return isAdmin();
+      return true;
+    }""",
+    )
+    html = html.replace(
+        """      const userNav = document.querySelector('.nav-button[data-view="user"]');
+      const newContractBtn = document.querySelector("#newContractBtn");""",
+        """      const userNav = document.querySelector('.nav-button[data-view="user"]');
+      const masterNav = document.querySelector('.nav-button[data-view="master"]');
+      const newContractBtn = document.querySelector("#newContractBtn");""",
+    )
+    html = html.replace(
+        """        if (userNav) userNav.hidden = true;
+        if (newContractBtn) newContractBtn.hidden = true;""",
+        """        if (userNav) userNav.hidden = true;
+        if (masterNav) masterNav.hidden = true;
+        if (newContractBtn) newContractBtn.hidden = true;""",
+    )
+    html = html.replace(
+        """      renderUserCasePreview();
+      syncNavCounts();""",
+        """      renderUserCasePreview();
+      renderMasterData();
+      syncNavCounts();""",
+    )
+    html = html.replace(
+        """    setupCsvDatabaseControls();
+    loadContractsDatabase();""",
+        """    setupCsvDatabaseControls();
+    setupMasterDataControls();
+    loadContractsDatabase();""",
+    )
     html = html.replace("<title>Tracking Contracts — User Status & Email</title>", "<title>Tracking Contracts — Real Excel Dropdowns</title>")
 
     contract_headers = [
@@ -3206,6 +3666,9 @@ def main():
     write_csv(OUTPUT_CONTRACTS_CSV, contract_csv_rows, contract_headers)
     write_csv(OUTPUT_LOGS_CSV, log_csv_rows, log_headers)
     write_csv(OUTPUT_TYPE_MASTER_CSV, type_rows, type_headers)
+    write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Active"])
+    write_csv(OUTPUT_PEOPLE_MASTER_CSV, people_master_rows, ["company", "department", "name", "email", "active"])
+    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["name", "type", "workType", "contractId", "accessLevel", "category", "active"])
     OUTPUT_ATTACHMENT_APPS_SCRIPT.write_text(
         f"""const DEFAULT_FOLDER_ID = "{ATTACHMENT_CLOUD_FOLDER_ID}";
 const EMAIL_SENDER_NAME = "T23 Contract Tracking";
@@ -3245,7 +3708,10 @@ function loadDriveDatabase_(params) {{
     loadedAt: new Date().toISOString(),
     contractsCsvText: readTextFileByName_(folder, params.contractsCsv || "tracking_contracts_contracts_db.csv"),
     logsCsvText: readTextFileByName_(folder, params.logsCsv || "tracking_contracts_log_db.csv"),
-    typeMasterCsvText: readTextFileByName_(folder, params.typeMasterCsv || "tracking_contracts_type_master_db.csv")
+    typeMasterCsvText: readTextFileByName_(folder, params.typeMasterCsv || "tracking_contracts_type_master_db.csv"),
+    departmentMasterCsvText: readTextFileByName_(folder, params.departmentMasterCsv || "tracking_contracts_department_master_db.csv"),
+    peopleMasterCsvText: readTextFileByName_(folder, params.peopleMasterCsv || "tracking_contracts_people_master_db.csv"),
+    contractTemplateCsvText: readTextFileByName_(folder, params.contractTemplateCsv || "tracking_contracts_contract_template_master_db.csv")
   }};
 }}
 
@@ -3254,7 +3720,10 @@ function saveDriveDatabase_(payload) {{
   const files = {{
     contracts: upsertTextFileByName_(folder, payload.contractsCsv || "tracking_contracts_contracts_db.csv", payload.contractsCsvText || ""),
     logs: upsertTextFileByName_(folder, payload.logsCsv || "tracking_contracts_log_db.csv", payload.logsCsvText || ""),
-    typeMaster: upsertTextFileByName_(folder, payload.typeMasterCsv || "tracking_contracts_type_master_db.csv", payload.typeMasterCsvText || "")
+    typeMaster: upsertTextFileByName_(folder, payload.typeMasterCsv || "tracking_contracts_type_master_db.csv", payload.typeMasterCsvText || ""),
+    departments: upsertTextFileByName_(folder, payload.departmentMasterCsv || "tracking_contracts_department_master_db.csv", payload.departmentMasterCsvText || ""),
+    people: upsertTextFileByName_(folder, payload.peopleMasterCsv || "tracking_contracts_people_master_db.csv", payload.peopleMasterCsvText || ""),
+    contractTemplates: upsertTextFileByName_(folder, payload.contractTemplateCsv || "tracking_contracts_contract_template_master_db.csv", payload.contractTemplateCsvText || "")
   }};
   return jsonResponse({{
     success: true,
@@ -3484,6 +3953,9 @@ function jsonpResponse(data, callback) {{
             f"Contracts CSV database: {OUTPUT_CONTRACTS_CSV.name}",
             f"Log CSV database: {OUTPUT_LOGS_CSV.name}",
             f"Contract type master CSV: {OUTPUT_TYPE_MASTER_CSV.name}",
+            f"Department master CSV: {OUTPUT_DEPARTMENT_MASTER_CSV.name}",
+            f"People master CSV: {OUTPUT_PEOPLE_MASTER_CSV.name}",
+            f"Contract name template CSV: {OUTPUT_CONTRACT_TEMPLATE_CSV.name}",
             f"Attachment upload Apps Script: {OUTPUT_ATTACHMENT_APPS_SCRIPT.name}",
             f"Attachment Cloud folder: {ATTACHMENT_CLOUD_FOLDER_URL}",
             "",

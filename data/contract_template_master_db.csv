@@ -1,0 +1,17 @@
+﻿name,type,workType,contractId,accessLevel,category,active
+Head Office Lease Agreement,Lease Agreement,Lease Agreement,,Normal,Normal,Yes
+General Legal Service Agreement,Service Agreement,Service Agreement,,Normal,Normal,Yes
+Retail Space Sub Lease Agreement,Sub Lease Agreement,Sub Lease Agreement,,Normal,Normal,Yes
+Office Equipment Lease Asset Agreement,Lease Asset Agreement,Lease Asset Agreement,,Normal,Normal,Yes
+Amendment to Existing Agreement,Amendment,Amendment,,Normal,Normal,Yes
+Laptop Rental Agreement,Rental Agreement,Rental Agreement,,Normal,Normal,Yes
+Equipment Sale and Purchase Agreement,Sale and Purchase Agreement,Sale and Purchase Agreement,,Normal,Normal,Yes
+Outsourced Service Provider Agreement,Service Provider Agreement,Service Provider Agreement,,Normal,Normal,Yes
+Confident-001 – Memorandum of Understanding,Memorandum of Understanding,Memorandum of Understanding,,Confidential,Confidential,Yes
+Confident-002 – Consultancy Agreement,Consultancy Agreement,Consultancy Agreement,,Confidential,Confidential,Yes
+Confident-003 – Confidentiality Agreement,Confidentiality Agreement,Confidentiality Agreement,,Confidential,Confidential,Yes
+Confident-004  – Management Agreement,Management Agreement,Management Agreement,,Confidential,Confidential,Yes
+Confident-005  – Loan Agreement,Loan Agreement,Loan Agreement,,Confidential,Confidential,Yes
+Confident-006 – M&A Agreement,Mergers and Acquisitions Agreement,Mergers and Acquisitions Agreement,,Confidential,Confidential,Yes
+Confident-007 – Shareholder Agreement,Sharer Holder Agreement,Sharer Holder Agreement,,Confidential,Confidential,Yes
+Confident-008  – Term Sheet,Term Sheet,Term Sheet,,Confidential,Confidential,Yes
