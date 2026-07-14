@@ -27,6 +27,7 @@ ATTACHMENT_CLOUD_FOLDER_ID = "13d9ZNEE0ijV5JfU7chg0wHrTNp500AgR"
 ATTACHMENT_CLOUD_FOLDER_URL = f"https://drive.google.com/drive/folders/{ATTACHMENT_CLOUD_FOLDER_ID}"
 ATTACHMENT_CLOUD_FOLDER_NAME = "Attachments Files"
 ATTACHMENT_UPLOAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhIbrLVvD-Cwxh3wqEWqjSaIESGgXfhdJ2cWUhepiSIsAyG8yQafG392kkjnSvjT_N/exec"
+RESET_CONTRACT_AND_LOG_DATA = True
 
 TODAY = date(2026, 7, 11)
 
@@ -359,6 +360,9 @@ def main():
         }
         for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
     ]
+    if RESET_CONTRACT_AND_LOG_DATA:
+        contracts = []
+        log_records = []
 
     action_sla = {}
     sla_steps = []
@@ -3176,9 +3180,8 @@ def main():
       if (contractTemplateText) masterData.contractTemplates = csvToObjects(contractTemplateText);
       if (!contractText) return false;
       const cloudContracts = csvToObjects(contractText).map(contractFromDbRow).filter(item => item.id && item.name);
-      if (!cloudContracts.length) return false;
-      const cloudLogs = logText ? csvToObjects(logText).map(logFromDbRow) : [];
-      const migratedCount = migrateContractIdsToDepartmentFormat(cloudContracts, cloudLogs);
+      const cloudLogs = logText ? csvToObjects(logText).map(logFromDbRow).filter(row => String(row?.[0] || "").trim()) : [];
+      const migratedCount = cloudContracts.length ? migrateContractIdsToDepartmentFormat(cloudContracts, cloudLogs) : 0;
       isApplyingDriveDatabaseLoad = true;
       contracts.splice(0, contracts.length, ...cloudContracts);
       logRecords.splice(0, logRecords.length, ...cloudLogs);
