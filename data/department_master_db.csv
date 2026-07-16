@@ -1,4 +1,5 @@
 ﻿Department / Restaurant,Department Code,Active
+ADMIN,ADMIN,Yes
 Information Technology,IT,Yes
 IT,IT,Yes
 Legal,LEGAL,Yes
@@ -8,10 +9,12 @@ Human Resources,HR,Yes
 Administration,ADMIN,Yes
 Business Development,BD,Yes
 Marketing,MKT,Yes
+MKT,MKT,Yes
 Operation,OP,Yes
 Procurement,PC,Yes
 Project Management,PM,Yes
 Project Manager,PM,Yes
+PM,PM,Yes
 Baan Turtle,BT,Yes
 Table 1749,T1749,Yes
 FSQ,FSQ,Yes

@@ -1,33 +1,27 @@
 ﻿Active,Category,Description / คำอธิบาย,Fixed SLA (Working Days),Type of Contract
-Yes,Day-to-day,"Lease of property or premises.
-สัญญาเช่าทรัพย์สินหรือพื้นที่",15,Lease Agreement
-Yes,Day-to-day,"Agreement for specified services.
-สัญญาว่าจ้างให้ดำเนินงานหรือให้บริการ",10,Service Agreement
-Yes,Day-to-day,"Agreement to sublease rented property.
-สัญญาให้บุคคลอื่นเช่าช่วงทรัพย์สินที่เช่าอยู่",15,Sub Lease Agreement
-Yes,Day-to-day,"Lease of equipment or other assets.
-สัญญาเช่าอุปกรณ์หรือทรัพย์สิน",12,Lease Asset Agreement
-Yes,Day-to-day,"Changes or additions to an existing agreement.
-เอกสารแก้ไขหรือเพิ่มเติมสัญญาเดิม",7,Amendment
-Yes,Day-to-day,"Short-term rental of property or equipment.
-สัญญาเช่าทรัพย์สินหรืออุปกรณ์ระยะสั้น",12,Rental Agreement
-Yes,Day-to-day,"Agreement for the sale and purchase of goods or assets.
-สัญญาซื้อขายสินค้าหรือทรัพย์สิน",15,Sale and Purchase Agreement
-Yes,Day-to-day,"Agreement appointing an external service provider.
-สัญญาแต่งตั้งผู้ให้บริการภายนอก",10,Service Provider Agreement
-Yes,Confidential,"Initial framework for cooperation between parties.
-บันทึกกรอบความร่วมมือเบื้องต้นระหว่างคู่สัญญา",10,Memorandum of Understanding
-Yes,Confidential,"Agreement for professional advisory services.
-สัญญาว่าจ้างที่ปรึกษาเฉพาะด้าน",12,Consultancy Agreement
-Yes,Confidential,"Agreement protecting confidential information.
-สัญญารักษาความลับของข้อมูล",7,Confidentiality Agreement
-Yes,Confidential,"Agreement for business or project management.
-สัญญาว่าจ้างบริหารกิจการหรือโครงการ",15,Management Agreement
-Yes,Confidential,"Agreement covering a loan and repayment terms.
-สัญญากู้ยืมเงินและเงื่อนไขการชำระคืน",20,Loan Agreement
-Yes,Confidential,"Agreement for a merger or business acquisition.
-สัญญาควบรวมหรือซื้อกิจการ",30,Mergers and Acquisitions Agreement
-Yes,Confidential,"Agreement governing shareholders’ rights and duties.
-สัญญากำหนดสิทธิและหน้าที่ของผู้ถือหุ้น",20,Sharer Holder Agreement
-Yes,Confidential,"Summary of key terms before the final agreement.
-เอกสารสรุปเงื่อนไขหลักก่อนทำสัญญาฉบับเต็ม",15,Term Sheet
+Yes,Technology & Systems | ระบบและเทคโนโลยี,Technology & Systems | ระบบและเทคโนโลยี,30 | 52 | 84 | 92 | 10 | 7,Service Agreement | สัญญาให้บริการ
+Yes,Design & Construction | ออกแบบและก่อสร้าง,Design & Construction | ออกแบบและก่อสร้าง,90 | 120,Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา
+Yes,Design & Construction | ออกแบบและก่อสร้าง,Design & Construction | ออกแบบและก่อสร้าง,60,Interior Design Agreement | สัญญาออกแบบตกแต่งภายใน
+Yes,Design & Construction | ออกแบบและก่อสร้าง,Design & Construction | ออกแบบและก่อสร้าง,60,Construction Contract | สัญญาก่อสร้าง
+Yes,Lease & Related Services | เช่าพื้นที่และบริการ,Lease & Related Services | เช่าพื้นที่และบริการ,60 | 45 | 60,Lease and Service Agreement | สัญญาเช่าและบริการ
+Yes,Lease & Related Services | เช่าพื้นที่และบริการ,Lease & Related Services | เช่าพื้นที่และบริการ,30,Area Rental Agreement | สัญญาเช่าพื้นที่
+Yes,Lease & Related Services | เช่าพื้นที่และบริการ,Lease & Related Services | เช่าพื้นที่และบริการ,30 | 60 | 10,Lease Agreement | สัญญาเช่า
+Yes,Lease & Related Services | เช่าพื้นที่และบริการ,Lease & Related Services | เช่าพื้นที่และบริการ,30,Sublease Agreement | สัญญาเช่าช่วง
+Yes,Support Services | งานสนับสนุน,Support Services | งานสนับสนุน,10,Rental Agreement | สัญญาเช่า
+Yes,Support Services | งานสนับสนุน,Support Services | งานสนับสนุน,10,Service Provider Agreement | สัญญาผู้ให้บริการ
+Yes,Support Services | งานสนับสนุน,Support Services | งานสนับสนุน,10,Partner Service Agreement | สัญญาบริการพันธมิตร
+Yes,Insurance | ประกันภัย,Insurance | ประกันภัย,90 | 75 | 75,Insurance Claim | การเรียกร้องค่าสินไหมประกันภัย
+Yes,Business Management | บริหารธุรกิจ,Business Management | บริหารธุรกิจ,90 | 60 | 30 | 14 | 14 | 14 | 14 | 15,Management Fee Agreement | สัญญาค่าธรรมเนียมการบริหาร
+Yes,Business Management | บริหารธุรกิจ,Business Management | บริหารธุรกิจ,10,Delivery Platform Service Agreement | สัญญาบริการแพลตฟอร์มจัดส่งอาหาร
+Yes,Business Management | บริหารธุรกิจ,Business Management | บริหารธุรกิจ,15,Credit Card Promotion Agreement | สัญญาส่งเสริมการขายบัตรเครดิต
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,12 | 10,Consultancy Agreement | สัญญาให้คำปรึกษา
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,12,Non-Disclosure Agreement | สัญญาไม่เปิดเผยข้อมูล
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,15,Memorandum of Understanding | บันทึกความเข้าใจ
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,10,Confidentiality Agreement | สัญญารักษาความลับ
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,12,Management Agreement | สัญญาบริหารจัดการ
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,7,Loan Agreement | สัญญาเงินกู้
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,15,Mergers and Acquisitions Agreement | สัญญาการควบรวมและซื้อกิจการ
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,20,Shareholders’ Agreement | สัญญาระหว่างผู้ถือหุ้น
+Yes,Legal & Consultancy | กฎหมายและที่ปรึกษา,Legal & Consultancy | กฎหมายและที่ปรึกษา,30,Term Sheet | เอกสารสรุปเงื่อนไขเบื้องต้น
+Yes,Contract Amendment | แก้ไขสัญญา,Contract Amendment | แก้ไขสัญญา,20,Amendment Agreement | สัญญาแก้ไขเพิ่มเติม
+Yes,Sale & Purchase | ซื้อขาย,Sale & Purchase | ซื้อขาย,15,Sale and Purchase Agreement | สัญญาซื้อขาย
