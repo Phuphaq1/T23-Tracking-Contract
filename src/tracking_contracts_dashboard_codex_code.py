@@ -11,7 +11,7 @@ import pandas as pd
 ROOT = Path("/Users/tspphupha/Documents/Codex/2026-07-11/files-mentioned-by-the-user-tracking")
 SOURCE_HTML = Path("/Users/tspphupha/Downloads/tracking_contracts_dashboard_person_mixed_y_r_mockup_code.txt")
 SOURCE_XLSX = Path("/Users/tspphupha/Downloads/Contract_SLA_Input_With_Contract_ID_Design.xlsx")
-SOURCE_CONTRACT_MASTER_CSV = Path("/Users/tspphupha/Downloads/contract_master_sla_separated.csv")
+SOURCE_CONTRACT_MASTER_CSV = ROOT / "outputs" / "contract_master_sla_separated_2_export.csv"
 OUTPUT_HTML = ROOT / "outputs" / "tracking_contracts_dashboard_real_excel_dropdowns.html"
 OUTPUT_CONTRACTS_CSV = ROOT / "outputs" / "tracking_contracts_contracts_db.csv"
 OUTPUT_LOGS_CSV = ROOT / "outputs" / "tracking_contracts_log_db.csv"
@@ -147,6 +147,16 @@ def read_contract_master_rows():
         ]
 
 
+def contract_group(row):
+    return (
+        row.get("Group Contract / กลุ่มสัญญา")
+        or row.get("Group Contract / กลุ่มสัญญา ")
+        or row.get("กลุ่มสัญญา")
+        or row.get("Category")
+        or ""
+    )
+
+
 def js(value):
     return json.dumps(value, ensure_ascii=False, indent=6)
 
@@ -253,7 +263,7 @@ def main():
             contract_type = row.get("Type of Contract / ประเภทสัญญา", "")
             if not contract_type:
                 continue
-            group = row.get("กลุ่มสัญญา", "")
+            group = contract_group(row)
             sla_text = row.get("Total SLA / SLA รวม", "")
             current = type_by_name.setdefault(contract_type, {
                 "Active": "Yes",
@@ -287,7 +297,7 @@ def main():
                 "Contract Name / ชื่อสัญญา": row.get("Contract Name / ชื่อสัญญามาตรฐาน", ""),
                 "Type of Contract / ประเภทสัญญา": row.get("Type of Contract / ประเภทสัญญา", ""),
                 "Access Level / ระดับการเข้าถึง": "Normal",
-                "Category": row.get("กลุ่มสัญญา", ""),
+                "Category": contract_group(row),
                 "Department / Restaurant": row.get("Department / Restaurant", ""),
                 "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": row.get("Vendor / Counter Party / ผู้ขาย–คู่สัญญา", ""),
                 "Total SLA / SLA รวม": row.get("Total SLA / SLA รวม", ""),
@@ -444,10 +454,10 @@ def main():
                 "workType": contract_type,
                 "contractId": "",
                 "accessLevel": "Normal",
-                "category": row.get("กลุ่มสัญญา", "") or "Normal",
+                "category": contract_group(row) or "Normal",
                 "department": row.get("Department / Restaurant", ""),
                 "vendor": vendor,
-                "group": row.get("กลุ่มสัญญา", ""),
+                "group": contract_group(row),
                 "fixedSla": sla_text,
                 "remark": row.get("หมายเหตุ", ""),
                 "active": "Yes",
@@ -703,6 +713,35 @@ def main():
         });""",
     )
     html = html.replace(
+        """                  <div class="case-form-section-title"><span class="section-index">1</span>Contract classification flow <small>Contract Name → Type of Contract → Vendor / Counter party</small></div>
+                  <div class="linked-contract-flow full">
+                    <label class="form-field full linked-flow-field" data-flow-order="1">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">1</span>
+                        <span class="bilingual-label"><span>Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                      </span>
+                      <input class="input" name="name" id="addContractName" list="contractNameOptions" required autocomplete="off" placeholder="Select an existing Contract Name or type a new name">
+                      <small class="linked-flow-status" id="linkedNameStatus">Start here · เริ่มกรอกชื่อสัญญา</small>
+                    </label>""",
+        """                  <div class="case-form-section-title"><span class="section-index">1</span>Contract classification flow <small>Group Contract → Contract Name → Type of Contract → Vendor / Counter party</small></div>
+                  <div class="linked-contract-flow full">
+                    <label class="form-field full linked-flow-field" data-flow-order="0">
+                      <span class="linked-flow-head">
+                        <span class="bilingual-label"><span>Group Contract</span><span>กลุ่มสัญญา</span></span>
+                      </span>
+                      <input class="input" name="group" id="addContractGroup" list="contractGroupOptions" autocomplete="off" placeholder="Select Group Contract to filter / เลือกกลุ่มสัญญาเพื่อค้นหา">
+                      <small class="linked-flow-status" id="linkedGroupStatus">All groups · แสดงทุกกลุ่ม</small>
+                    </label>
+                    <label class="form-field full linked-flow-field" data-flow-order="1">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">1</span>
+                        <span class="bilingual-label"><span>Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                      </span>
+                      <input class="input" name="name" id="addContractName" list="contractNameOptions" required autocomplete="off" placeholder="Select an existing Contract Name or type a new name">
+                      <small class="linked-flow-status" id="linkedNameStatus">Select Contract Name · เลือกชื่อสัญญา</small>
+                    </label>""",
+    )
+    html = html.replace(
         """                    <label class="form-field full linked-flow-field" data-flow-order="3">
                       <span class="linked-flow-head">
                         <span class="linked-flow-number">3</span>
@@ -734,6 +773,11 @@ def main():
     html = html.replace(
         """<small class="linked-flow-status" id="linkedNameStatus">Start here · เริ่มกรอกชื่อสัญญา</small>""",
         """<small class="linked-flow-status" id="linkedNameStatus">Select Contract Name · เลือกชื่อสัญญา</small>""",
+    )
+    html = html.replace(
+        """                <datalist id="contractNameOptions"></datalist>""",
+        """                <datalist id="contractGroupOptions"></datalist>
+                <datalist id="contractNameOptions"></datalist>""",
     )
     html = html.replace(
         """    .linked-flow-field .input {
@@ -1224,8 +1268,26 @@ def main():
         }));
     }
 
+    function selectedContractGroup() {
+      return String(document.querySelector("#addContractGroup")?.value || "").trim();
+    }
+
+    function groupContractDropdownOptions() {
+      return orderedUniqueList(getContractFormCatalog().map(item => item.group || item.category).filter(Boolean))
+        .map(group => {
+          const count = getContractFormCatalog().filter(item => (item.group || item.category) === group).length;
+          return {
+            value: group,
+            primary: group,
+            secondary: `${count} Contract Name${count === 1 ? "" : "s"}`
+          };
+        });
+    }
+
     function contractNameDropdownOptions() {
+      const selectedGroup = selectedContractGroup();
       return getContractFormCatalog()
+        .filter(item => !selectedGroup || (item.group || item.category) === selectedGroup)
         .map(item => {
           const access = item.accessLevel || accessLevelForContractType(item.type) || "Normal";
           return {
@@ -1393,6 +1455,9 @@ def main():
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
+      attachEditableDropdown("addContractGroup", groupContractDropdownOptions, () => syncAddCaseGroupFilter(), {
+        ariaLabel: "Group Contract / กลุ่มสัญญา"
+      });
       attachEditableDropdown("addContractName", contractNameDropdownOptions, () => syncAddCaseLinkedFields("name"), {
         ariaLabel: "Contract Name / ชื่อสัญญา"
       });
@@ -1400,6 +1465,15 @@ def main():
         ariaLabel: "Type of Contract / ประเภทสัญญา"
       });
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
+    )
+    html = html.replace(
+        """      const contractCatalog = getContractFormCatalog();
+      const contractTypes = orderedUniqueList(contractCatalog.map(item => item.type).filter(Boolean));
+      fillDatalist("contractNameOptions", contractCatalog.map(item => ({ value: item.name, label: `${item.type} · ${item.workType}` })));""",
+        """      const contractCatalog = getContractFormCatalog();
+      const contractTypes = orderedUniqueList(contractCatalog.map(item => item.type).filter(Boolean));
+      fillDatalist("contractGroupOptions", orderedUniqueList(contractCatalog.map(item => item.group || item.category).filter(Boolean)));
+      fillDatalist("contractNameOptions", contractCatalog.map(item => ({ value: item.selectionLabel || item.name, label: [item.group || item.category, item.type, item.fixedSla ? `SLA ${item.fixedSla}` : ""].filter(Boolean).join(" · ") })));""",
     )
     html = html.replace(
         """        <button class="nav-button" data-view="user" title="User Case Action">
@@ -1915,6 +1989,7 @@ def main():
         """      const typeInput = document.querySelector("#addContractType");
       const workInput = document.querySelector("#addWorkType");
       const accessInput = document.querySelector("#addAccessLevel");
+      const groupInput = document.querySelector("#addContractGroup");
       const departmentInput = document.querySelector("#addDepartment");
       const vendorInput = document.querySelector("#addVendor");
       if (!nameInput || !typeInput || !workInput) return;""",
@@ -1926,6 +2001,7 @@ def main():
         """        typeInput.value = "";
         workInput.value = "";
         if (accessInput) accessInput.value = "";
+        if (groupInput && source !== "group") groupInput.value = "";
         if (vendorInput) vendorInput.value = "";
         setAccessLevelBadge("");
         typeInput.disabled = true;""",
@@ -1936,6 +2012,9 @@ def main():
           typeInput.dataset.autoLinked = "true";""",
         """          typeInput.value = template.type || "";
           workInput.value = template.workType || "Other";
+          if (groupInput && !groupInput.value && (template.group || template.category)) {
+            groupInput.value = template.group || template.category;
+          }
           if (departmentInput && template.department) {
             departmentInput.value = template.department;
             syncDepartmentOwnerOptions(true);
@@ -1961,6 +2040,39 @@ def main():
         setLinkedFlowStatus("linkedTypeStatus", "Waiting for Contract Name · รอชื่อสัญญา", "waiting");
         setLinkedFlowStatus("linkedAccessStatus", "Waiting for Type · รอประเภท", "waiting");
         syncAddCaseSystemFields();""",
+    )
+    html = html.replace(
+        """    function syncAddCaseLinkedFields(source = "init") {""",
+        """    function syncAddCaseGroupFilter() {
+      const groupInput = document.querySelector("#addContractGroup");
+      const nameInput = document.querySelector("#addContractName");
+      const typeInput = document.querySelector("#addContractType");
+      const vendorInput = document.querySelector("#addVendor");
+      const workInput = document.querySelector("#addWorkType");
+      const group = String(groupInput?.value || "").trim();
+      const groupStatus = document.querySelector("#linkedGroupStatus");
+      if (groupStatus) {
+        const count = contractNameDropdownOptions().length;
+        groupStatus.textContent = group ? `${count} Contract Name(s) in selected group · ${count} รายการในกลุ่มนี้` : "All groups · แสดงทุกกลุ่ม";
+        groupStatus.classList.toggle("linked", Boolean(group));
+        groupStatus.classList.toggle("waiting", !group);
+      }
+      const selectedTemplate = contractTemplateFor(String(nameInput?.value || "").trim());
+      if (group && selectedTemplate && (selectedTemplate.group || selectedTemplate.category) !== group) {
+        if (nameInput) nameInput.value = "";
+        if (typeInput) {
+          typeInput.value = "";
+          typeInput.disabled = true;
+        }
+        if (vendorInput) vendorInput.value = "";
+        if (workInput) workInput.value = "";
+        setAccessLevelBadge("");
+      }
+      refreshEditableDropdown("addContractName");
+      syncAddCaseLinkedFields("group");
+    }
+
+    function syncAddCaseLinkedFields(source = "init") {""",
     )
     html = html.replace(
         """      if (!contractType) {
@@ -2972,6 +3084,18 @@ def main():
       refreshEditableDropdown("addOwner");
       syncAddCaseSystemFields();
     });""",
+    )
+    html = html.replace(
+        """    document.querySelector("#addContractName")?.addEventListener("input", () => {""",
+        """    document.querySelector("#addContractGroup")?.addEventListener("input", () => {
+      resetInitialDueDateOverride();
+      syncAddCaseGroupFilter();
+    });
+    document.querySelector("#addContractGroup")?.addEventListener("change", () => {
+      resetInitialDueDateOverride();
+      syncAddCaseGroupFilter();
+    });
+    document.querySelector("#addContractName")?.addEventListener("input", () => {""",
     )
     html = html.replace(
         """      const accessLevel = String(form.get("accessLevel") || accessLevelForContractType(contractType) || "Normal").trim();
