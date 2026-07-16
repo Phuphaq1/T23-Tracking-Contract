@@ -356,10 +356,14 @@ def main():
             "contractId": "",
             "accessLevel": access_level,
             "category": access_level,
+            "fixedSla": fixed_sla.get(contract_type, ""),
             "active": "Yes",
         }
         for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
     ]
+    for row in type_rows:
+        contract_type = row.get("Type of Contract", "")
+        row["Fixed SLA (Working Days)"] = row.get("Fixed SLA (Working Days)") or fixed_sla.get(contract_type, "")
     if RESET_CONTRACT_AND_LOG_DATA:
         contracts = []
         log_records = []
@@ -1077,6 +1081,27 @@ def main():
       return normalizeDirectoryValue(category) === "confidential" ? "Confidential" : "Normal";
     }
 
+    function fixedSlaValue(value) {
+      const number = Number(String(value ?? "").trim());
+      return Number.isFinite(number) && number > 0 ? number : 0;
+    }
+
+    function fixedSlaFromMasterData(workType, contractName = "") {
+      const normalizedType = normalizeDirectoryValue(workType);
+      const normalizedName = normalizeDirectoryValue(contractName);
+      if (normalizedName) {
+        const template = activeMasterContractTemplates().find(item => normalizeDirectoryValue(item.name) === normalizedName);
+        const templateSla = fixedSlaValue(template?.fixedSla || template?.["Fixed SLA (Working Days)"] || template?.SLA);
+        if (templateSla > 0) return templateSla;
+      }
+      if (normalizedType) {
+        const typeRow = activeMasterContractTypes().find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalizedType);
+        const typeSla = fixedSlaValue(typeRow?.["Fixed SLA (Working Days)"] || typeRow?.FixedSLA || typeRow?.SLA);
+        if (typeSla > 0) return typeSla;
+      }
+      return 0;
+    }
+
     function accessLevelForAddCase(template, contractType) {
       return template?.accessLevel || accessLevelForContractType(contractType);
     }
@@ -1116,6 +1141,39 @@ def main():
     html = html.replace(
         """      const rows = realWorkbookData?.sheets?.["Contract Type Master"] || [];""",
         """      const rows = activeMasterContractTypes();""",
+    )
+    html = html.replace(
+        """    function totalSlaFor(workType) {
+      const normalized = String(workType || "").trim();
+      if (Object.prototype.hasOwnProperty.call(fixedSlaConfig, normalized)) {
+        return Number(fixedSlaConfig[normalized]);
+      }
+      return Number(fixedSlaConfig.Other);
+    }""",
+        """    function totalSlaFor(workType, contractName = "") {
+      const masterSla = fixedSlaFromMasterData(workType, contractName);
+      if (masterSla > 0) return masterSla;
+      const normalized = String(workType || "").trim();
+      if (Object.prototype.hasOwnProperty.call(fixedSlaConfig, normalized)) {
+        return Number(fixedSlaConfig[normalized]);
+      }
+      return Number(fixedSlaConfig.Other);
+    }""",
+    )
+    html = html.replace(
+        """      // Type of Contract links to the hidden Work Type, which determines the fixed SLA.
+      const sla = totalSlaFor(workType);
+      const systemDue = addBusinessDays(lockedInDate, sla);""",
+        """      // Contract Name SLA overrides Type SLA when configured in Master Data.
+      const contractName = String(form.elements.name?.value || "").trim();
+      const sla = totalSlaFor(workType, contractName);
+      const systemDue = addBusinessDays(lockedInDate, sla);""",
+    )
+    html = html.replace(
+        """      const totalSla = totalSlaFor(workType);
+      const lockedInDate = todayInputValue();""",
+        """      const totalSla = totalSlaFor(workType, String(form.get("name") || "").trim());
+      const lockedInDate = todayInputValue();""",
     )
     html = html.replace(
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
@@ -1211,7 +1269,7 @@ def main():
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
-                    <thead><tr><th>Category</th><th>Type of Contract</th><th>Description</th><th>Active</th><th></th></tr></thead>
+                    <thead><tr><th>Category</th><th>Type of Contract</th><th>Fixed SLA</th><th>Description</th><th>Active</th><th></th></tr></thead>
                     <tbody id="masterContractTypeRows"></tbody>
                   </table>
                 </div>
@@ -1227,7 +1285,7 @@ def main():
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
-                    <thead><tr><th>Contract Name</th><th>Type</th><th>Access</th><th>Active</th><th></th></tr></thead>
+                    <thead><tr><th>Contract Name</th><th>Type</th><th>Fixed SLA</th><th>Access</th><th>Active</th><th></th></tr></thead>
                     <tbody id="masterTemplateRows"></tbody>
                   </table>
                 </div>
@@ -3168,7 +3226,7 @@ def main():
     }
 
     function contractTemplateCsvText() {
-      return objectsToCsv(["name", "type", "workType", "contractId", "accessLevel", "category", "active"], masterData.contractTemplates || []);
+      return objectsToCsv(["name", "type", "workType", "contractId", "accessLevel", "category", "fixedSla", "active"], masterData.contractTemplates || []);
     }
 
     function driveDatabaseCsvPayload() {
@@ -3404,6 +3462,7 @@ def main():
           <tr>
             <td>${masterInput("Category", row.Category)}</td>
             <td>${masterInput("Type of Contract", row["Type of Contract"])}</td>
+            <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"], { type: "number" })}</td>
             <td>${masterInput("Description / คำอธิบาย", row["Description / คำอธิบาย"], { multiline: true })}</td>
             <td>${masterActiveSelect("Active", row.Active)}</td>
             <td>${masterDeleteButton()}</td>
@@ -3416,6 +3475,7 @@ def main():
           <tr>
             <td>${masterInput("name", row.name)}</td>
             <td>${masterInput("type", row.type)}</td>
+            <td>${masterInput("fixedSla", row.fixedSla || row["Fixed SLA (Working Days)"], { type: "number" })}</td>
             <td>${masterInput("accessLevel", row.accessLevel || accessLevelForContractType(row.type), { select: true, choices: ["Normal", "Confidential"] })}</td>
             <td>${masterActiveSelect("active", row.active)}</td>
             <td>${masterDeleteButton()}</td>
@@ -3505,10 +3565,10 @@ def main():
         .map(row => ({ ...row, "Department Code": String(row["Department Code"] || "").trim().toUpperCase(), Active: row.Active || "Yes" }));
       masterData.people = readMasterRows("#masterPeopleRows", ["company", "department", "name", "email", "active"], "name")
         .map(row => ({ ...row, email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" }));
-      masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Category", "Type of Contract", "Description / คำอธิบาย", "Active"], "Type of Contract")
-        .map(row => ({ ...row, Active: row.Active || "Yes" }));
-      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "accessLevel", "active"], "name")
-        .map(row => ({ ...row, workType: row.type || "Other", category: row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
+      masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Category", "Type of Contract", "Fixed SLA (Working Days)", "Description / คำอธิบาย", "Active"], "Type of Contract")
+        .map(row => ({ ...row, "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(), Active: row.Active || "Yes" }));
+      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "fixedSla", "accessLevel", "active"], "name")
+        .map(row => ({ ...row, fixedSla: String(row.fixedSla || "").trim(), workType: row.type || "Other", category: row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
       return true;
     }
 
@@ -3516,8 +3576,8 @@ def main():
       if (!normalizeMasterDataFromUi()) return;
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
       if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
-      if (kind === "contractTypes") masterData.contractTypes.push({ Category: "Day-to-day", "Type of Contract": "", "Description / คำอธิบาย": "", Active: "Yes" });
-      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", active: "Yes" });
+      if (kind === "contractTypes") masterData.contractTypes.push({ Category: "Day-to-day", "Type of Contract": "", "Fixed SLA (Working Days)": "", "Description / คำอธิบาย": "", Active: "Yes" });
+      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", fixedSla: "", active: "Yes" });
       renderMasterData();
     }
 
@@ -3783,7 +3843,7 @@ def main():
     write_csv(OUTPUT_TYPE_MASTER_CSV, type_rows, type_headers)
     write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Active"])
     write_csv(OUTPUT_PEOPLE_MASTER_CSV, people_master_rows, ["company", "department", "name", "email", "active"])
-    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["name", "type", "workType", "contractId", "accessLevel", "category", "active"])
+    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["name", "type", "workType", "contractId", "accessLevel", "category", "fixedSla", "active"])
     OUTPUT_ATTACHMENT_APPS_SCRIPT.write_text(
         f"""const DEFAULT_FOLDER_ID = "{ATTACHMENT_CLOUD_FOLDER_ID}";
 const EMAIL_SENDER_NAME = "T23 Contract Tracking";

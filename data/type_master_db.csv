@@ -1,33 +1,33 @@
-﻿Active,Category,Description / คำอธิบาย,Type of Contract
+﻿Active,Category,Description / คำอธิบาย,Fixed SLA (Working Days),Type of Contract
 Yes,Day-to-day,"Lease of property or premises.
-สัญญาเช่าทรัพย์สินหรือพื้นที่",Lease Agreement
+สัญญาเช่าทรัพย์สินหรือพื้นที่",15,Lease Agreement
 Yes,Day-to-day,"Agreement for specified services.
-สัญญาว่าจ้างให้ดำเนินงานหรือให้บริการ",Service Agreement
+สัญญาว่าจ้างให้ดำเนินงานหรือให้บริการ",10,Service Agreement
 Yes,Day-to-day,"Agreement to sublease rented property.
-สัญญาให้บุคคลอื่นเช่าช่วงทรัพย์สินที่เช่าอยู่",Sub Lease Agreement
+สัญญาให้บุคคลอื่นเช่าช่วงทรัพย์สินที่เช่าอยู่",15,Sub Lease Agreement
 Yes,Day-to-day,"Lease of equipment or other assets.
-สัญญาเช่าอุปกรณ์หรือทรัพย์สิน",Lease Asset Agreement
+สัญญาเช่าอุปกรณ์หรือทรัพย์สิน",12,Lease Asset Agreement
 Yes,Day-to-day,"Changes or additions to an existing agreement.
-เอกสารแก้ไขหรือเพิ่มเติมสัญญาเดิม",Amendment
+เอกสารแก้ไขหรือเพิ่มเติมสัญญาเดิม",7,Amendment
 Yes,Day-to-day,"Short-term rental of property or equipment.
-สัญญาเช่าทรัพย์สินหรืออุปกรณ์ระยะสั้น",Rental Agreement
+สัญญาเช่าทรัพย์สินหรืออุปกรณ์ระยะสั้น",12,Rental Agreement
 Yes,Day-to-day,"Agreement for the sale and purchase of goods or assets.
-สัญญาซื้อขายสินค้าหรือทรัพย์สิน",Sale and Purchase Agreement
+สัญญาซื้อขายสินค้าหรือทรัพย์สิน",15,Sale and Purchase Agreement
 Yes,Day-to-day,"Agreement appointing an external service provider.
-สัญญาแต่งตั้งผู้ให้บริการภายนอก",Service Provider Agreement
+สัญญาแต่งตั้งผู้ให้บริการภายนอก",10,Service Provider Agreement
 Yes,Confidential,"Initial framework for cooperation between parties.
-บันทึกกรอบความร่วมมือเบื้องต้นระหว่างคู่สัญญา",Memorandum of Understanding
+บันทึกกรอบความร่วมมือเบื้องต้นระหว่างคู่สัญญา",10,Memorandum of Understanding
 Yes,Confidential,"Agreement for professional advisory services.
-สัญญาว่าจ้างที่ปรึกษาเฉพาะด้าน",Consultancy Agreement
+สัญญาว่าจ้างที่ปรึกษาเฉพาะด้าน",12,Consultancy Agreement
 Yes,Confidential,"Agreement protecting confidential information.
-สัญญารักษาความลับของข้อมูล",Confidentiality Agreement
+สัญญารักษาความลับของข้อมูล",7,Confidentiality Agreement
 Yes,Confidential,"Agreement for business or project management.
-สัญญาว่าจ้างบริหารกิจการหรือโครงการ",Management Agreement
+สัญญาว่าจ้างบริหารกิจการหรือโครงการ",15,Management Agreement
 Yes,Confidential,"Agreement covering a loan and repayment terms.
-สัญญากู้ยืมเงินและเงื่อนไขการชำระคืน",Loan Agreement
+สัญญากู้ยืมเงินและเงื่อนไขการชำระคืน",20,Loan Agreement
 Yes,Confidential,"Agreement for a merger or business acquisition.
-สัญญาควบรวมหรือซื้อกิจการ",Mergers and Acquisitions Agreement
+สัญญาควบรวมหรือซื้อกิจการ",30,Mergers and Acquisitions Agreement
 Yes,Confidential,"Agreement governing shareholders’ rights and duties.
-สัญญากำหนดสิทธิและหน้าที่ของผู้ถือหุ้น",Sharer Holder Agreement
+สัญญากำหนดสิทธิและหน้าที่ของผู้ถือหุ้น",20,Sharer Holder Agreement
 Yes,Confidential,"Summary of key terms before the final agreement.
-เอกสารสรุปเงื่อนไขหลักก่อนทำสัญญาฉบับเต็ม",Term Sheet
+เอกสารสรุปเงื่อนไขหลักก่อนทำสัญญาฉบับเต็ม",15,Term Sheet
