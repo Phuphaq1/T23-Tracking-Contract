@@ -6696,7 +6696,7 @@
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
-                    <thead><tr><th>Contract Name</th><th>Type</th><th>Fixed SLA</th><th>Access</th><th>Active</th><th></th></tr></thead>
+                    <thead><tr><th>Contract Name</th><th>Type</th><th>Department</th><th>Vendor</th><th>Group</th><th>Fixed SLA</th><th>Access</th><th>Active</th><th></th></tr></thead>
                     <tbody id="masterTemplateRows"></tbody>
                   </table>
                 </div>
@@ -7589,9 +7589,9 @@
     const slaSummaryConfig = [
       [
             "Lease Agreement",
-            "Day-to-day",
+            "Imported",
             15,
-            "Lease of property or premises.\nสัญญาเช่าทรัพย์สินหรือพื้นที่",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7599,9 +7599,9 @@
       ],
       [
             "Service Agreement",
-            "Day-to-day",
+            "Imported",
             10,
-            "Agreement for specified services.\nสัญญาว่าจ้างให้ดำเนินงานหรือให้บริการ",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7609,9 +7609,9 @@
       ],
       [
             "Sub Lease Agreement",
-            "Day-to-day",
+            "Imported",
             15,
-            "Agreement to sublease rented property.\nสัญญาให้บุคคลอื่นเช่าช่วงทรัพย์สินที่เช่าอยู่",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7619,9 +7619,9 @@
       ],
       [
             "Lease Asset Agreement",
-            "Day-to-day",
+            "Imported",
             12,
-            "Lease of equipment or other assets.\nสัญญาเช่าอุปกรณ์หรือทรัพย์สิน",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7629,9 +7629,9 @@
       ],
       [
             "Amendment",
-            "Day-to-day",
+            "Imported",
             7,
-            "Changes or additions to an existing agreement.\nเอกสารแก้ไขหรือเพิ่มเติมสัญญาเดิม",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7639,9 +7639,9 @@
       ],
       [
             "Rental Agreement",
-            "Day-to-day",
+            "Imported",
             12,
-            "Short-term rental of property or equipment.\nสัญญาเช่าทรัพย์สินหรืออุปกรณ์ระยะสั้น",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7649,9 +7649,9 @@
       ],
       [
             "Sale and Purchase Agreement",
-            "Day-to-day",
+            "Imported",
             15,
-            "Agreement for the sale and purchase of goods or assets.\nสัญญาซื้อขายสินค้าหรือทรัพย์สิน",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7659,9 +7659,9 @@
       ],
       [
             "Service Provider Agreement",
-            "Day-to-day",
+            "Imported",
             10,
-            "Agreement appointing an external service provider.\nสัญญาแต่งตั้งผู้ให้บริการภายนอก",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7669,9 +7669,9 @@
       ],
       [
             "Memorandum of Understanding",
-            "Confidential",
+            "Imported",
             10,
-            "Initial framework for cooperation between parties.\nบันทึกกรอบความร่วมมือเบื้องต้นระหว่างคู่สัญญา",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7679,9 +7679,9 @@
       ],
       [
             "Consultancy Agreement",
-            "Confidential",
+            "Imported",
             12,
-            "Agreement for professional advisory services.\nสัญญาว่าจ้างที่ปรึกษาเฉพาะด้าน",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7689,9 +7689,9 @@
       ],
       [
             "Confidentiality Agreement",
-            "Confidential",
+            "Imported",
             7,
-            "Agreement protecting confidential information.\nสัญญารักษาความลับของข้อมูล",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7699,9 +7699,9 @@
       ],
       [
             "Management Agreement",
-            "Confidential",
+            "Imported",
             15,
-            "Agreement for business or project management.\nสัญญาว่าจ้างบริหารกิจการหรือโครงการ",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7709,9 +7709,9 @@
       ],
       [
             "Loan Agreement",
-            "Confidential",
+            "Imported",
             20,
-            "Agreement covering a loan and repayment terms.\nสัญญากู้ยืมเงินและเงื่อนไขการชำระคืน",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7719,9 +7719,9 @@
       ],
       [
             "Mergers and Acquisitions Agreement",
-            "Confidential",
+            "Imported",
             30,
-            "Agreement for a merger or business acquisition.\nสัญญาควบรวมหรือซื้อกิจการ",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7729,9 +7729,9 @@
       ],
       [
             "Sharer Holder Agreement",
-            "Confidential",
+            "Imported",
             20,
-            "Agreement governing shareholders’ rights and duties.\nสัญญากำหนดสิทธิและหน้าที่ของผู้ถือหุ้น",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7739,9 +7739,9 @@
       ],
       [
             "Term Sheet",
-            "Confidential",
+            "Imported",
             15,
-            "Summary of key terms before the final agreement.\nเอกสารสรุปเงื่อนไขหลักก่อนทำสัญญาฉบับเต็ม",
+            "",
             1,
             "Yes",
             "2026-07-11",
@@ -7753,8 +7753,8 @@
 
     const slaDetailConfig = [
       [
-            "Lease Agreement|Submit to Review|Any",
-            "Lease Agreement",
+            "Service Agreement|Submit to Review|Any",
+            "Service Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -7765,8 +7765,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Lease Agreement|Return|Any",
-            "Lease Agreement",
+            "Service Agreement|Return|Any",
+            "Service Agreement",
             2,
             "Return",
             "Current Owner",
@@ -7777,8 +7777,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Lease Agreement|Resubmit|Any",
-            "Lease Agreement",
+            "Service Agreement|Resubmit|Any",
+            "Service Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -7789,8 +7789,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Lease Agreement|Forward|Any",
-            "Lease Agreement",
+            "Service Agreement|Forward|Any",
+            "Service Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -7801,428 +7801,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Lease Agreement|Approved|Any",
-            "Lease Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Service Provider Agreement|Submit to Review|Any",
-            "Service Provider Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Service Provider Agreement|Return|Any",
-            "Service Provider Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Service Provider Agreement|Resubmit|Any",
-            "Service Provider Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Service Provider Agreement|Forward|Any",
-            "Service Provider Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Service Provider Agreement|Approved|Any",
-            "Service Provider Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Memorandum of Understanding|Submit to Review|Any",
-            "Memorandum of Understanding",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Memorandum of Understanding|Return|Any",
-            "Memorandum of Understanding",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Memorandum of Understanding|Resubmit|Any",
-            "Memorandum of Understanding",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Memorandum of Understanding|Forward|Any",
-            "Memorandum of Understanding",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Memorandum of Understanding|Approved|Any",
-            "Memorandum of Understanding",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Management Agreement|Submit to Review|Any",
-            "Management Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Management Agreement|Return|Any",
-            "Management Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Management Agreement|Resubmit|Any",
-            "Management Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Management Agreement|Forward|Any",
-            "Management Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Management Agreement|Approved|Any",
-            "Management Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Submit to Review|Any",
-            "Mergers and Acquisitions Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Return|Any",
-            "Mergers and Acquisitions Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Resubmit|Any",
-            "Mergers and Acquisitions Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Forward|Any",
-            "Mergers and Acquisitions Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Approved|Any",
-            "Mergers and Acquisitions Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Loan Agreement|Submit to Review|Any",
-            "Loan Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Loan Agreement|Return|Any",
-            "Loan Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Loan Agreement|Resubmit|Any",
-            "Loan Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Loan Agreement|Forward|Any",
-            "Loan Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Loan Agreement|Approved|Any",
-            "Loan Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Amendment|Submit to Review|Any",
-            "Amendment",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Amendment|Return|Any",
-            "Amendment",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Amendment|Resubmit|Any",
-            "Amendment",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Amendment|Forward|Any",
-            "Amendment",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Amendment|Approved|Any",
-            "Amendment",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Sub Lease Agreement|Submit to Review|Any",
-            "Sub Lease Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Sub Lease Agreement|Return|Any",
-            "Sub Lease Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Sub Lease Agreement|Resubmit|Any",
-            "Sub Lease Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Sub Lease Agreement|Forward|Any",
-            "Sub Lease Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Sub Lease Agreement|Approved|Any",
-            "Sub Lease Agreement",
+            "Service Agreement|Approved|Any",
+            "Service Agreement",
             5,
             "Approved",
             "Current Owner",
@@ -8293,8 +7873,8 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
-            "Confidentiality Agreement|Submit to Review|Any",
-            "Confidentiality Agreement",
+            "Amendment|Submit to Review|Any",
+            "Amendment",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8305,8 +7885,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Confidentiality Agreement|Return|Any",
-            "Confidentiality Agreement",
+            "Amendment|Return|Any",
+            "Amendment",
             2,
             "Return",
             "Current Owner",
@@ -8317,8 +7897,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Confidentiality Agreement|Resubmit|Any",
-            "Confidentiality Agreement",
+            "Amendment|Resubmit|Any",
+            "Amendment",
             3,
             "Resubmit",
             "Current Owner",
@@ -8329,8 +7909,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Confidentiality Agreement|Forward|Any",
-            "Confidentiality Agreement",
+            "Amendment|Forward|Any",
+            "Amendment",
             4,
             "Forward",
             "Current Owner",
@@ -8341,8 +7921,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Confidentiality Agreement|Approved|Any",
-            "Confidentiality Agreement",
+            "Amendment|Approved|Any",
+            "Amendment",
             5,
             "Approved",
             "Current Owner",
@@ -8353,8 +7933,8 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
-            "Term Sheet|Submit to Review|Any",
-            "Term Sheet",
+            "Lease Agreement|Submit to Review|Any",
+            "Lease Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8365,8 +7945,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Term Sheet|Return|Any",
-            "Term Sheet",
+            "Lease Agreement|Return|Any",
+            "Lease Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8377,8 +7957,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Term Sheet|Resubmit|Any",
-            "Term Sheet",
+            "Lease Agreement|Resubmit|Any",
+            "Lease Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8389,8 +7969,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Term Sheet|Forward|Any",
-            "Term Sheet",
+            "Lease Agreement|Forward|Any",
+            "Lease Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8401,8 +7981,128 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Term Sheet|Approved|Any",
-            "Term Sheet",
+            "Lease Agreement|Approved|Any",
+            "Lease Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Memorandum of Understanding|Submit to Review|Any",
+            "Memorandum of Understanding",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Memorandum of Understanding|Return|Any",
+            "Memorandum of Understanding",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Memorandum of Understanding|Resubmit|Any",
+            "Memorandum of Understanding",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Memorandum of Understanding|Forward|Any",
+            "Memorandum of Understanding",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Memorandum of Understanding|Approved|Any",
+            "Memorandum of Understanding",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Submit to Review|Any",
+            "Mergers and Acquisitions Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Return|Any",
+            "Mergers and Acquisitions Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Resubmit|Any",
+            "Mergers and Acquisitions Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Forward|Any",
+            "Mergers and Acquisitions Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Approved|Any",
+            "Mergers and Acquisitions Agreement",
             5,
             "Approved",
             "Current Owner",
@@ -8473,8 +8173,8 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
-            "Sharer Holder Agreement|Submit to Review|Any",
-            "Sharer Holder Agreement",
+            "Service Provider Agreement|Submit to Review|Any",
+            "Service Provider Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8485,8 +8185,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Sharer Holder Agreement|Return|Any",
-            "Sharer Holder Agreement",
+            "Service Provider Agreement|Return|Any",
+            "Service Provider Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8497,8 +8197,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Sharer Holder Agreement|Resubmit|Any",
-            "Sharer Holder Agreement",
+            "Service Provider Agreement|Resubmit|Any",
+            "Service Provider Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8509,8 +8209,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Sharer Holder Agreement|Forward|Any",
-            "Sharer Holder Agreement",
+            "Service Provider Agreement|Forward|Any",
+            "Service Provider Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8521,8 +8221,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Sharer Holder Agreement|Approved|Any",
-            "Sharer Holder Agreement",
+            "Service Provider Agreement|Approved|Any",
+            "Service Provider Agreement",
             5,
             "Approved",
             "Current Owner",
@@ -8593,6 +8293,126 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
+            "Confidentiality Agreement|Submit to Review|Any",
+            "Confidentiality Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Confidentiality Agreement|Return|Any",
+            "Confidentiality Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Confidentiality Agreement|Resubmit|Any",
+            "Confidentiality Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Confidentiality Agreement|Forward|Any",
+            "Confidentiality Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Confidentiality Agreement|Approved|Any",
+            "Confidentiality Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Sub Lease Agreement|Submit to Review|Any",
+            "Sub Lease Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Sub Lease Agreement|Return|Any",
+            "Sub Lease Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Sub Lease Agreement|Resubmit|Any",
+            "Sub Lease Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Sub Lease Agreement|Forward|Any",
+            "Sub Lease Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Sub Lease Agreement|Approved|Any",
+            "Sub Lease Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
             "Consultancy Agreement|Submit to Review|Any",
             "Consultancy Agreement",
             1,
@@ -8653,8 +8473,8 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
-            "Service Agreement|Submit to Review|Any",
-            "Service Agreement",
+            "Sharer Holder Agreement|Submit to Review|Any",
+            "Sharer Holder Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8665,8 +8485,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Service Agreement|Return|Any",
-            "Service Agreement",
+            "Sharer Holder Agreement|Return|Any",
+            "Sharer Holder Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8677,8 +8497,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Service Agreement|Resubmit|Any",
-            "Service Agreement",
+            "Sharer Holder Agreement|Resubmit|Any",
+            "Sharer Holder Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8689,8 +8509,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Service Agreement|Forward|Any",
-            "Service Agreement",
+            "Sharer Holder Agreement|Forward|Any",
+            "Sharer Holder Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8701,8 +8521,188 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Service Agreement|Approved|Any",
-            "Service Agreement",
+            "Sharer Holder Agreement|Approved|Any",
+            "Sharer Holder Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Term Sheet|Submit to Review|Any",
+            "Term Sheet",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Term Sheet|Return|Any",
+            "Term Sheet",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Term Sheet|Resubmit|Any",
+            "Term Sheet",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Term Sheet|Forward|Any",
+            "Term Sheet",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Term Sheet|Approved|Any",
+            "Term Sheet",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Management Agreement|Submit to Review|Any",
+            "Management Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Management Agreement|Return|Any",
+            "Management Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Management Agreement|Resubmit|Any",
+            "Management Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Management Agreement|Forward|Any",
+            "Management Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Management Agreement|Approved|Any",
+            "Management Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Loan Agreement|Submit to Review|Any",
+            "Loan Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Loan Agreement|Return|Any",
+            "Loan Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Loan Agreement|Resubmit|Any",
+            "Loan Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Loan Agreement|Forward|Any",
+            "Loan Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Loan Agreement|Approved|Any",
+            "Loan Agreement",
             5,
             "Approved",
             "Current Owner",
@@ -8944,169 +8944,763 @@
       "Loan Agreement": 20,
       "Mergers and Acquisitions Agreement": 30,
       "Sharer Holder Agreement": 20,
-      "Term Sheet": 15
+      "Term Sheet": 15,
+      "Service Agreement | สัญญาให้บริการ": 7,
+      "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา": 120,
+      "Interior Design Agreement | สัญญาออกแบบตกแต่งภายใน": 60,
+      "Construction Contract | สัญญาก่อสร้าง": 60,
+      "Lease and Service Agreement | สัญญาเช่าและบริการ": 60,
+      "Area Rental Agreement | สัญญาเช่าพื้นที่": 30,
+      "Lease Agreement | สัญญาเช่า": 10,
+      "Sublease Agreement | สัญญาเช่าช่วง": 30,
+      "Rental Agreement | สัญญาเช่า": 10,
+      "Service Provider Agreement | สัญญาผู้ให้บริการ": 10,
+      "Partner Service Agreement | สัญญาบริการพันธมิตร": 10,
+      "Insurance Claim | การเรียกร้องค่าสินไหมประกันภัย": 90,
+      "Management Fee Agreement | สัญญาค่าธรรมเนียมการบริหาร": 90,
+      "Delivery Platform Service Agreement | สัญญาบริการแพลตฟอร์มจัดส่งอาหาร": 10,
+      "Credit Card Promotion Agreement | สัญญาส่งเสริมการขายบัตรเครดิต": 15,
+      "Consultancy Agreement | สัญญาให้คำปรึกษา": 10,
+      "Non-Disclosure Agreement | สัญญาไม่เปิดเผยข้อมูล": 12,
+      "Memorandum of Understanding | บันทึกความเข้าใจ": 15,
+      "Confidentiality Agreement | สัญญารักษาความลับ": 10,
+      "Management Agreement | สัญญาบริหารจัดการ": 12,
+      "Loan Agreement | สัญญาเงินกู้": 7,
+      "Mergers and Acquisitions Agreement | สัญญาการควบรวมและซื้อกิจการ": 15,
+      "Shareholders’ Agreement | สัญญาระหว่างผู้ถือหุ้น": 20,
+      "Term Sheet | เอกสารสรุปเงื่อนไขเบื้องต้น": 30,
+      "Amendment Agreement | สัญญาแก้ไขเพิ่มเติม": 20,
+      "Sale and Purchase Agreement | สัญญาซื้อขาย": 15
 });
 
     // Contract examples imported from contract_user_input_form.numbers / User_Form.
     const contractInputCatalog = [
       {
-            "name": "Head Office Lease Agreement",
-            "type": "Lease Agreement",
-            "workType": "Lease Agreement",
+            "name": "Reservation System Service Agreement | สัญญาเช่าใช้ระบบสำรองที่นั่ง",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
             "contractId": "",
             "accessLevel": "Normal",
-            "category": "Normal",
-            "fixedSla": 15,
+            "category": "Technology & Systems | ระบบและเทคโนโลยี",
+            "department": "IT",
+            "vendor": "WEELOY PTE. LTD.",
+            "group": "Technology & Systems | ระบบและเทคโนโลยี",
+            "fixedSla": "30",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "General Legal Service Agreement",
-            "type": "Service Agreement",
-            "workType": "Service Agreement",
+            "name": "Architectural and Interior Design Agreement | สัญญาจ้างออกแบบงานสถาปัตยกรรมและตกแต่งภายใน",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
             "contractId": "",
             "accessLevel": "Normal",
-            "category": "Normal",
-            "fixedSla": 10,
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "PM",
+            "vendor": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท เทสต์สเปซ จำกัด",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "90",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Retail Space Sub Lease Agreement",
-            "type": "Sub Lease Agreement",
-            "workType": "Sub Lease Agreement",
+            "name": "Kitchen System Design Agreement | สัญญาจ้างออกแบบระบบครัว",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
             "contractId": "",
             "accessLevel": "Normal",
-            "category": "Normal",
-            "fixedSla": 15,
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "PM",
+            "vendor": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท ทรัย-อาร์ค เอ็นเตอร์ไพรส์ จำกัด",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "90",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Office Equipment Lease Asset Agreement",
-            "type": "Lease Asset Agreement",
-            "workType": "Lease Asset Agreement",
+            "name": "Structural Design Agreement | สัญญาจ้างออกแบบงานโครงสร้างอาคาร",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
             "contractId": "",
             "accessLevel": "Normal",
-            "category": "Normal",
-            "fixedSla": 12,
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "PM",
+            "vendor": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท อีทีวายเอส แอนด์ แอสโซซิเอทส์ จำกัด",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "90",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Amendment to Existing Agreement",
-            "type": "Amendment",
-            "workType": "Amendment",
+            "name": "Electrical, Sanitary, Air-Conditioning and External Systems Design Agreement | สัญญาจ้างออกแบบงานระบบไฟฟ้า สุขาภิบาล ปรับอากาศ และระบบภายนอกอาคาร",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
             "contractId": "",
             "accessLevel": "Normal",
-            "category": "Normal",
-            "fixedSla": 7,
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "PM",
+            "vendor": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท มิตรเทคนิคัลคอนซัลแท้นท์ จำกัด",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "90",
+            "remark": "แก้คำจาก “สุภาภิบาล”",
             "active": "Yes"
       },
       {
-            "name": "Laptop Rental Agreement",
-            "type": "Rental Agreement",
-            "workType": "Rental Agreement",
+            "name": "Architectural Drafting Agreement | สัญญาจ้างเขียนแบบสถาปัตยกรรม",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
             "contractId": "",
             "accessLevel": "Normal",
-            "category": "Normal",
-            "fixedSla": 12,
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "PM",
+            "vendor": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท ไพศาลวัฒนา การ์ดอลินสกี้ สถาปนิก จำกัด",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "90",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Equipment Sale and Purchase Agreement",
-            "type": "Sale and Purchase Agreement",
-            "workType": "Sale and Purchase Agreement",
+            "name": "Quantity Surveying and Construction Cost Estimation Agreement | สัญญาจ้างสำรวจปริมาณงานและประมาณราคาก่อสร้าง",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
             "contractId": "",
             "accessLevel": "Normal",
-            "category": "Normal",
-            "fixedSla": 15,
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "PM",
+            "vendor": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท อัลทัส กรุ๊ป เซอร์วิสเซส (ประเทศไทย) จำกัด",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "90",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Outsourced Service Provider Agreement",
-            "type": "Service Provider Agreement",
-            "workType": "Service Provider Agreement",
+            "name": "Lighting Design and Consultancy Agreement | สัญญาจ้างออกแบบระบบแสงสว่างและให้คำปรึกษา",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
             "contractId": "",
             "accessLevel": "Normal",
-            "category": "Normal",
-            "fixedSla": 10,
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "PM",
+            "vendor": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท โบ สไตเบอร์ ไลท์ติ้ง ดีไซน์ (ประเทศไทย) จำกัด",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "90",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Confident-001 – Memorandum of Understanding",
-            "type": "Memorandum of Understanding",
-            "workType": "Memorandum of Understanding",
+            "name": "Interior Design Agreement | สัญญาจ้างออกแบบตกแต่งภายใน",
+            "type": "Interior Design Agreement | สัญญาออกแบบตกแต่งภายใน",
+            "workType": "Interior Design Agreement | สัญญาออกแบบตกแต่งภายใน",
             "contractId": "",
-            "accessLevel": "Confidential",
-            "category": "Confidential",
-            "fixedSla": 10,
+            "accessLevel": "Normal",
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "Business Development",
+            "vendor": "PAC Architect",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "60",
+            "remark": "เดิม: Interior",
             "active": "Yes"
       },
       {
-            "name": "Confident-002 – Consultancy Agreement",
-            "type": "Consultancy Agreement",
-            "workType": "Consultancy Agreement",
+            "name": "Construction Contractor Agreement | สัญญาจ้างผู้รับเหมาก่อสร้าง",
+            "type": "Construction Contract | สัญญาก่อสร้าง",
+            "workType": "Construction Contract | สัญญาก่อสร้าง",
             "contractId": "",
-            "accessLevel": "Confidential",
-            "category": "Confidential",
-            "fixedSla": 12,
+            "accessLevel": "Normal",
+            "category": "Design & Construction | ออกแบบและก่อสร้าง",
+            "department": "Business Development",
+            "vendor": "PAC Architect",
+            "group": "Design & Construction | ออกแบบและก่อสร้าง",
+            "fixedSla": "60",
+            "remark": "เดิม: Contractor",
             "active": "Yes"
       },
       {
-            "name": "Confident-003 – Confidentiality Agreement",
-            "type": "Confidentiality Agreement",
-            "workType": "Confidentiality Agreement",
+            "name": "Lease and Service Agreement – LahnYai NUSARA (Baan Turtle) | สัญญาเช่าและบริการ – LahnYai NUSARA (Baan Turtle)",
+            "type": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+            "workType": "Lease and Service Agreement | สัญญาเช่าและบริการ",
             "contractId": "",
-            "accessLevel": "Confidential",
-            "category": "Confidential",
-            "fixedSla": 7,
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Operation",
+            "vendor": "BLY and FSQ",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "60",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Confident-004  – Management Agreement",
-            "type": "Management Agreement",
-            "workType": "Management Agreement",
+            "name": "Lease and Service Agreement – Man Tables (Baan Turtle) | สัญญาเช่าและบริการ – Man Tables (Baan Turtle)",
+            "type": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+            "workType": "Lease and Service Agreement | สัญญาเช่าและบริการ",
             "contractId": "",
-            "accessLevel": "Confidential",
-            "category": "Confidential",
-            "fixedSla": 15,
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Operation",
+            "vendor": "Win Win Kitchen and FSQ",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "60",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Confident-005  – Loan Agreement",
-            "type": "Loan Agreement",
-            "workType": "Loan Agreement",
+            "name": "Lease and Service Agreement – BK Salon | สัญญาเช่าและบริการ – BK Salon",
+            "type": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+            "workType": "Lease and Service Agreement | สัญญาเช่าและบริการ",
             "contractId": "",
-            "accessLevel": "Confidential",
-            "category": "Confidential",
-            "fixedSla": 20,
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Operation",
+            "vendor": "BLY and FSQ",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "60",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Confident-006 – M&A Agreement",
-            "type": "Mergers and Acquisitions Agreement",
-            "workType": "Mergers and Acquisitions Agreement",
+            "name": "Lease and Service Agreement – Gowin | สัญญาเช่าและบริการ – Gowin",
+            "type": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+            "workType": "Lease and Service Agreement | สัญญาเช่าและบริการ",
             "contractId": "",
-            "accessLevel": "Confidential",
-            "category": "Confidential",
-            "fixedSla": 30,
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Operation",
+            "vendor": "BLY and FSQ | CM Gold and FSQ",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "45 | 60",
+            "remark": "มี 2 รายการ ใช้ชื่อเดียวกัน",
             "active": "Yes"
       },
       {
-            "name": "Confident-007 – Shareholder Agreement",
-            "type": "Sharer Holder Agreement",
-            "workType": "Sharer Holder Agreement",
+            "name": "Booth Rental and Service Agreement | สัญญาเช่าพื้นที่บูธและบริการ",
+            "type": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+            "workType": "Lease and Service Agreement | สัญญาเช่าและบริการ",
             "contractId": "",
-            "accessLevel": "Confidential",
-            "category": "Confidential",
-            "fixedSla": 20,
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Operation",
+            "vendor": "Taste Hunters and MMP",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "60",
+            "remark": "—",
             "active": "Yes"
       },
       {
-            "name": "Confident-008  – Term Sheet",
-            "type": "Term Sheet",
-            "workType": "Term Sheet",
+            "name": "Area Rental Agreement – Coffee Truck 1 | สัญญาเช่าพื้นที่ – Coffee Truck 1",
+            "type": "Area Rental Agreement | สัญญาเช่าพื้นที่",
+            "workType": "Area Rental Agreement | สัญญาเช่าพื้นที่",
             "contractId": "",
-            "accessLevel": "Confidential",
-            "category": "Confidential",
-            "fixedSla": 15,
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Business Development",
+            "vendor": "UTAV",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "30",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Area Rental Agreement – Coffee Truck 2 | สัญญาเช่าพื้นที่ – Coffee Truck 2",
+            "type": "Area Rental Agreement | สัญญาเช่าพื้นที่",
+            "workType": "Area Rental Agreement | สัญญาเช่าพื้นที่",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Business Development",
+            "vendor": "UTAV",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "30",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Head Office Lease Agreement | สัญญาเช่าสำนักงานใหญ่",
+            "type": "Lease Agreement | สัญญาเช่า",
+            "workType": "Lease Agreement | สัญญาเช่า",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "30",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Retail Space Sublease Agreement | สัญญาเช่าช่วงพื้นที่ค้าปลีก",
+            "type": "Sublease Agreement | สัญญาเช่าช่วง",
+            "workType": "Sublease Agreement | สัญญาเช่าช่วง",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "30",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Lease Agreement – Chan Kao | สัญญาเช่า – Chan Kao",
+            "type": "Lease Agreement | สัญญาเช่า",
+            "workType": "Lease Agreement | สัญญาเช่า",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "department": "Business Development",
+            "vendor": "T5-WBKK",
+            "group": "Lease & Related Services | เช่าพื้นที่และบริการ",
+            "fixedSla": "60",
+            "remark": "สัญญาเช่าทั่วไป",
+            "active": "Yes"
+      },
+      {
+            "name": "Lift Maintenance Service Agreement – Baan Turtle | สัญญาบริการบำรุงรักษาลิฟต์ – Baan Turtle",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Building Services | บริการอาคาร",
+            "department": "Operation",
+            "vendor": "CIBES LIFT and FSQ",
+            "group": "Building Services | บริการอาคาร",
+            "fixedSla": "52",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Security Guard Service Agreement – BK Salon | สัญญาบริการรักษาความปลอดภัย – BK Salon",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Building Services | บริการอาคาร",
+            "department": "Operation",
+            "vendor": "LSS and FSQ",
+            "group": "Building Services | บริการอาคาร",
+            "fixedSla": "84",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Security Guard Service Agreement – Baan Turtle Phuket | สัญญาบริการรักษาความปลอดภัย – Baan Turtle Phuket",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Building Services | บริการอาคาร",
+            "department": "Operation",
+            "vendor": "PCS and Turtle 23",
+            "group": "Building Services | บริการอาคาร",
+            "fixedSla": "30",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Pest Control Service Agreement | สัญญาบริการกำจัดแมลงและสัตว์รบกวน",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Building Services | บริการอาคาร",
+            "department": "Operation",
+            "vendor": "Rentokil and Kon Talay Thai",
+            "group": "Building Services | บริการอาคาร",
+            "fixedSla": "",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Messenger Service Agreement | สัญญาให้บริการพนักงานรับ–ส่งเอกสารและสิ่งของ",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "ADMIN",
+            "vendor": "T23-SKOOTAR",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "92",
+            "remark": "บริการรับ–ส่งเอกสารและสิ่งของ",
+            "active": "Yes"
+      },
+      {
+            "name": "Executive Car Rental Agreement – Managing Director | สัญญาเช่ารถยนต์สำหรับกรรมการผู้จัดการ",
+            "type": "Rental Agreement | สัญญาเช่า",
+            "workType": "Rental Agreement | สัญญาเช่า",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "ADMIN",
+            "vendor": "T23-KSERV",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "10",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Executive Driver Service Agreement – Managing Director | สัญญาให้บริการพนักงานขับรถยนต์สำหรับกรรมการผู้จัดการ",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "ADMIN",
+            "vendor": "T23-KSERV",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "10",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Cleaning Service Agreement | สัญญาจ้างเหมาบริการทำความสะอาด",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "ADMIN",
+            "vendor": "T23-SCS / SMART CLEANING SOLUTION",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "10",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Office Equipment Lease Agreement | สัญญาเช่าอุปกรณ์สำนักงาน",
+            "type": "Lease Agreement | สัญญาเช่า",
+            "workType": "Lease Agreement | สัญญาเช่า",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "10",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Laptop Rental Agreement | สัญญาเช่าคอมพิวเตอร์โน้ตบุ๊ก",
+            "type": "Rental Agreement | สัญญาเช่า",
+            "workType": "Rental Agreement | สัญญาเช่า",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "10",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Car Rental Agreement – Coffee Truck | สัญญาเช่ารถยนต์ – Coffee Truck",
+            "type": "Rental Agreement | สัญญาเช่า",
+            "workType": "Rental Agreement | สัญญาเช่า",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "Business Development",
+            "vendor": "Mr. Therdsit (Food Truck Owner)",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "10",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Outsourced Service Provider Agreement | สัญญาจ้างผู้ให้บริการภายนอก",
+            "type": "Service Provider Agreement | สัญญาผู้ให้บริการ",
+            "workType": "Service Provider Agreement | สัญญาผู้ให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "10",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Partner Service Order Agreement – Dianping Thailand | สัญญาสั่งซื้อบริการพันธมิตร – Dianping Thailand",
+            "type": "Partner Service Agreement | สัญญาบริการพันธมิตร",
+            "workType": "Partner Service Agreement | สัญญาบริการพันธมิตร",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Support Services | งานสนับสนุน",
+            "department": "MKT",
+            "vendor": "T5-Dianping Thailand",
+            "group": "Support Services | งานสนับสนุน",
+            "fixedSla": "10",
+            "remark": "เดิม: Service Contract Order",
+            "active": "Yes"
+      },
+      {
+            "name": "Insurance Claim Supporting Documents | เอกสารประกอบการเรียกร้องค่าสินไหมประกันภัย",
+            "type": "Insurance Claim | การเรียกร้องค่าสินไหมประกันภัย",
+            "workType": "Insurance Claim | การเรียกร้องค่าสินไหมประกันภัย",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Insurance | ประกันภัย",
+            "department": "Operation",
+            "vendor": "Maison Dunand – Rabbit Broker and Alpea | Capricci – Rabbit Broker and MMP | BK Salon – Rabbit Broker and FSQ",
+            "group": "Insurance | ประกันภัย",
+            "fixedSla": "90 | 75 | 75",
+            "remark": "มี 3 รายการ ใช้ชื่อเดียวกัน",
+            "active": "Yes"
+      },
+      {
+            "name": "Restaurant Management and Consultancy Agreement – Sushi Saryu | สัญญาบริหารและให้คำปรึกษาร้านอาหาร – Sushi Saryu",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Business Management | บริหารธุรกิจ",
+            "department": "MKT",
+            "vendor": "T23-Kinn1, T23-Mochit Land",
+            "group": "Business Management | บริหารธุรกิจ",
+            "fixedSla": "90",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Management Services Agreement | สัญญาจ้างบริหาร",
+            "type": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "workType": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Business Management | บริหารธุรกิจ",
+            "department": "MKT",
+            "vendor": "T23-Kamkoong, T23-Mochit Land",
+            "group": "Business Management | บริหารธุรกิจ",
+            "fixedSla": "120",
+            "remark": "เดิม: สัญญาจ้างบริหาร",
+            "active": "Yes"
+      },
+      {
+            "name": "Management Fee Agreement | สัญญาค่าธรรมเนียมการบริหาร",
+            "type": "Management Fee Agreement | สัญญาค่าธรรมเนียมการบริหาร",
+            "workType": "Management Fee Agreement | สัญญาค่าธรรมเนียมการบริหาร",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Business Management | บริหารธุรกิจ",
+            "department": "Finance",
+            "vendor": "T23-KTT | T23-FSQ | T23-W-BKK | T23-MMPZ | T23-RCS | T23-ALPEA | T23-TTH | T23-T5",
+            "group": "Business Management | บริหารธุรกิจ",
+            "fixedSla": "90 | 60 | 30 | 14 | 14 | 14 | 14 | 15",
+            "remark": "มี 8 รายการ ใช้ชื่อเดียวกัน",
+            "active": "Yes"
+      },
+      {
+            "name": "Wongnai–LINE MAN GP Model Participation Agreement | สัญญาเข้าร่วมโครงการ Wongnai–LINE MAN GP Model",
+            "type": "Delivery Platform Service Agreement | สัญญาบริการแพลตฟอร์มจัดส่งอาหาร",
+            "workType": "Delivery Platform Service Agreement | สัญญาบริการแพลตฟอร์มจัดส่งอาหาร",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Business Management | บริหารธุรกิจ",
+            "department": "MKT",
+            "vendor": "T23-Grab, T23-LINE MAN",
+            "group": "Business Management | บริหารธุรกิจ",
+            "fixedSla": "10",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Credit Card Promotion Agreement with Bank | สัญญาร่วมรายการส่งเสริมการขายบัตรเครดิตกับธนาคาร",
+            "type": "Credit Card Promotion Agreement | สัญญาส่งเสริมการขายบัตรเครดิต",
+            "workType": "Credit Card Promotion Agreement | สัญญาส่งเสริมการขายบัตรเครดิต",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Business Management | บริหารธุรกิจ",
+            "department": "MKT",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Business Management | บริหารธุรกิจ",
+            "fixedSla": "15",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Consultancy Agreement – Bluekoff | สัญญาให้คำปรึกษา – Bluekoff",
+            "type": "Consultancy Agreement | สัญญาให้คำปรึกษา",
+            "workType": "Consultancy Agreement | สัญญาให้คำปรึกษา",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Business Development",
+            "vendor": "Bluekoff (K’ Jame)",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "12",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "General Legal Services Agreement | สัญญาให้บริการด้านกฎหมายทั่วไป",
+            "type": "Service Agreement | สัญญาให้บริการ",
+            "workType": "Service Agreement | สัญญาให้บริการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "7",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Non-Disclosure Agreement – Devanom | สัญญาไม่เปิดเผยข้อมูล – Devanom",
+            "type": "Non-Disclosure Agreement | สัญญาไม่เปิดเผยข้อมูล",
+            "workType": "Non-Disclosure Agreement | สัญญาไม่เปิดเผยข้อมูล",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Business Development",
+            "vendor": "Mr. Nattachai (CEO, Devanom)",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "12",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Memorandum of Understanding (MOU) | บันทึกความเข้าใจ",
+            "type": "Memorandum of Understanding | บันทึกความเข้าใจ",
+            "workType": "Memorandum of Understanding | บันทึกความเข้าใจ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "15",
+            "remark": "เดิม: Confident-001",
+            "active": "Yes"
+      },
+      {
+            "name": "Consultancy Agreement | สัญญาให้คำปรึกษา",
+            "type": "Consultancy Agreement | สัญญาให้คำปรึกษา",
+            "workType": "Consultancy Agreement | สัญญาให้คำปรึกษา",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "10",
+            "remark": "เดิม: Confident-002",
+            "active": "Yes"
+      },
+      {
+            "name": "Confidentiality Agreement | สัญญารักษาความลับ",
+            "type": "Confidentiality Agreement | สัญญารักษาความลับ",
+            "workType": "Confidentiality Agreement | สัญญารักษาความลับ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "10",
+            "remark": "เดิม: Confident-003",
+            "active": "Yes"
+      },
+      {
+            "name": "Management Agreement | สัญญาบริหารจัดการ",
+            "type": "Management Agreement | สัญญาบริหารจัดการ",
+            "workType": "Management Agreement | สัญญาบริหารจัดการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "12",
+            "remark": "เดิม: Confident-004",
+            "active": "Yes"
+      },
+      {
+            "name": "Loan Agreement | สัญญาเงินกู้",
+            "type": "Loan Agreement | สัญญาเงินกู้",
+            "workType": "Loan Agreement | สัญญาเงินกู้",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "7",
+            "remark": "เดิม: Confident-005",
+            "active": "Yes"
+      },
+      {
+            "name": "Merger and Acquisition Agreement (M&A Agreement) | สัญญาการควบรวมและซื้อกิจการ",
+            "type": "Mergers and Acquisitions Agreement | สัญญาการควบรวมและซื้อกิจการ",
+            "workType": "Mergers and Acquisitions Agreement | สัญญาการควบรวมและซื้อกิจการ",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "15",
+            "remark": "เดิม: Confident-006",
+            "active": "Yes"
+      },
+      {
+            "name": "Shareholders’ Agreement | สัญญาระหว่างผู้ถือหุ้น",
+            "type": "Shareholders’ Agreement | สัญญาระหว่างผู้ถือหุ้น",
+            "workType": "Shareholders’ Agreement | สัญญาระหว่างผู้ถือหุ้น",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "20",
+            "remark": "เดิม: Confident-007",
+            "active": "Yes"
+      },
+      {
+            "name": "Term Sheet | เอกสารสรุปเงื่อนไขเบื้องต้น",
+            "type": "Term Sheet | เอกสารสรุปเงื่อนไขเบื้องต้น",
+            "workType": "Term Sheet | เอกสารสรุปเงื่อนไขเบื้องต้น",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+            "fixedSla": "30",
+            "remark": "เดิม: Confident-008",
+            "active": "Yes"
+      },
+      {
+            "name": "Amendment to Existing Agreement | สัญญาแก้ไขเพิ่มเติมสัญญาเดิม",
+            "type": "Amendment Agreement | สัญญาแก้ไขเพิ่มเติม",
+            "workType": "Amendment Agreement | สัญญาแก้ไขเพิ่มเติม",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Contract Amendment | แก้ไขสัญญา",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Contract Amendment | แก้ไขสัญญา",
+            "fixedSla": "20",
+            "remark": "—",
+            "active": "Yes"
+      },
+      {
+            "name": "Equipment Sale and Purchase Agreement | สัญญาซื้อขายอุปกรณ์",
+            "type": "Sale and Purchase Agreement | สัญญาซื้อขาย",
+            "workType": "Sale and Purchase Agreement | สัญญาซื้อขาย",
+            "contractId": "",
+            "accessLevel": "Normal",
+            "category": "Sale & Purchase | ซื้อขาย",
+            "department": "Legal",
+            "vendor": "ยังไม่ระบุ",
+            "group": "Sale & Purchase | ซื้อขาย",
+            "fixedSla": "15",
+            "remark": "—",
             "active": "Yes"
       }
 ];
@@ -9342,214 +9936,656 @@
             ],
             "Contract SLA Input": [
                   {
-                        "Contract Name / ชื่อสัญญา": "Head Office Lease Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Lease Agreement",
+                        "Contract Name / ชื่อสัญญา": "Reservation System Service Agreement | สัญญาเช่าใช้ระบบสำรองที่นั่ง",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
                         "Access Level / ระดับการเข้าถึง": "Normal",
-                        "Category": "Normal"
+                        "Category": "Technology & Systems | ระบบและเทคโนโลยี",
+                        "Department / Restaurant": "IT",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "WEELOY PTE. LTD.",
+                        "Total SLA / SLA รวม": "30"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "General Legal Service Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Service Agreement",
+                        "Contract Name / ชื่อสัญญา": "Architectural and Interior Design Agreement | สัญญาจ้างออกแบบงานสถาปัตยกรรมและตกแต่งภายใน",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
                         "Access Level / ระดับการเข้าถึง": "Normal",
-                        "Category": "Normal"
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "PM",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท เทสต์สเปซ จำกัด",
+                        "Total SLA / SLA รวม": "90"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Retail Space Sub Lease Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Sub Lease Agreement",
+                        "Contract Name / ชื่อสัญญา": "Kitchen System Design Agreement | สัญญาจ้างออกแบบระบบครัว",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
                         "Access Level / ระดับการเข้าถึง": "Normal",
-                        "Category": "Normal"
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "PM",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท ทรัย-อาร์ค เอ็นเตอร์ไพรส์ จำกัด",
+                        "Total SLA / SLA รวม": "90"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Office Equipment Lease Asset Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Lease Asset Agreement",
+                        "Contract Name / ชื่อสัญญา": "Structural Design Agreement | สัญญาจ้างออกแบบงานโครงสร้างอาคาร",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
                         "Access Level / ระดับการเข้าถึง": "Normal",
-                        "Category": "Normal"
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "PM",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท อีทีวายเอส แอนด์ แอสโซซิเอทส์ จำกัด",
+                        "Total SLA / SLA รวม": "90"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Amendment to Existing Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Amendment",
+                        "Contract Name / ชื่อสัญญา": "Electrical, Sanitary, Air-Conditioning and External Systems Design Agreement | สัญญาจ้างออกแบบงานระบบไฟฟ้า สุขาภิบาล ปรับอากาศ และระบบภายนอกอาคาร",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
                         "Access Level / ระดับการเข้าถึง": "Normal",
-                        "Category": "Normal"
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "PM",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท มิตรเทคนิคัลคอนซัลแท้นท์ จำกัด",
+                        "Total SLA / SLA รวม": "90"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Laptop Rental Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Rental Agreement",
+                        "Contract Name / ชื่อสัญญา": "Architectural Drafting Agreement | สัญญาจ้างเขียนแบบสถาปัตยกรรม",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
                         "Access Level / ระดับการเข้าถึง": "Normal",
-                        "Category": "Normal"
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "PM",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท ไพศาลวัฒนา การ์ดอลินสกี้ สถาปนิก จำกัด",
+                        "Total SLA / SLA รวม": "90"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Equipment Sale and Purchase Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Sale and Purchase Agreement",
+                        "Contract Name / ชื่อสัญญา": "Quantity Surveying and Construction Cost Estimation Agreement | สัญญาจ้างสำรวจปริมาณงานและประมาณราคาก่อสร้าง",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
                         "Access Level / ระดับการเข้าถึง": "Normal",
-                        "Category": "Normal"
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "PM",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท อัลทัส กรุ๊ป เซอร์วิสเซส (ประเทศไทย) จำกัด",
+                        "Total SLA / SLA รวม": "90"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Outsourced Service Provider Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Service Provider Agreement",
+                        "Contract Name / ชื่อสัญญา": "Lighting Design and Consultancy Agreement | สัญญาจ้างออกแบบระบบแสงสว่างและให้คำปรึกษา",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
                         "Access Level / ระดับการเข้าถึง": "Normal",
-                        "Category": "Normal"
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "PM",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "บริษัท เทอร์เทิล ทเว้นตี้ทรี สาขา 0003 – บริษัท โบ สไตเบอร์ ไลท์ติ้ง ดีไซน์ (ประเทศไทย) จำกัด",
+                        "Total SLA / SLA รวม": "90"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Confident-001 – Memorandum of Understanding",
-                        "Type of Contract / ประเภทสัญญา": "Memorandum of Understanding",
-                        "Access Level / ระดับการเข้าถึง": "Confidential",
-                        "Category": "Confidential"
+                        "Contract Name / ชื่อสัญญา": "Interior Design Agreement | สัญญาจ้างออกแบบตกแต่งภายใน",
+                        "Type of Contract / ประเภทสัญญา": "Interior Design Agreement | สัญญาออกแบบตกแต่งภายใน",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "Business Development",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "PAC Architect",
+                        "Total SLA / SLA รวม": "60"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Confident-002 – Consultancy Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Consultancy Agreement",
-                        "Access Level / ระดับการเข้าถึง": "Confidential",
-                        "Category": "Confidential"
+                        "Contract Name / ชื่อสัญญา": "Construction Contractor Agreement | สัญญาจ้างผู้รับเหมาก่อสร้าง",
+                        "Type of Contract / ประเภทสัญญา": "Construction Contract | สัญญาก่อสร้าง",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Department / Restaurant": "Business Development",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "PAC Architect",
+                        "Total SLA / SLA รวม": "60"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Confident-003 – Confidentiality Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Confidentiality Agreement",
-                        "Access Level / ระดับการเข้าถึง": "Confidential",
-                        "Category": "Confidential"
+                        "Contract Name / ชื่อสัญญา": "Lease and Service Agreement – LahnYai NUSARA (Baan Turtle) | สัญญาเช่าและบริการ – LahnYai NUSARA (Baan Turtle)",
+                        "Type of Contract / ประเภทสัญญา": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "BLY and FSQ",
+                        "Total SLA / SLA รวม": "60"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Confident-004  – Management Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Management Agreement",
-                        "Access Level / ระดับการเข้าถึง": "Confidential",
-                        "Category": "Confidential"
+                        "Contract Name / ชื่อสัญญา": "Lease and Service Agreement – Man Tables (Baan Turtle) | สัญญาเช่าและบริการ – Man Tables (Baan Turtle)",
+                        "Type of Contract / ประเภทสัญญา": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "Win Win Kitchen and FSQ",
+                        "Total SLA / SLA รวม": "60"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Confident-005  – Loan Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Loan Agreement",
-                        "Access Level / ระดับการเข้าถึง": "Confidential",
-                        "Category": "Confidential"
+                        "Contract Name / ชื่อสัญญา": "Lease and Service Agreement – BK Salon | สัญญาเช่าและบริการ – BK Salon",
+                        "Type of Contract / ประเภทสัญญา": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "BLY and FSQ",
+                        "Total SLA / SLA รวม": "60"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Confident-006 – M&A Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Mergers and Acquisitions Agreement",
-                        "Access Level / ระดับการเข้าถึง": "Confidential",
-                        "Category": "Confidential"
+                        "Contract Name / ชื่อสัญญา": "Lease and Service Agreement – Gowin | สัญญาเช่าและบริการ – Gowin",
+                        "Type of Contract / ประเภทสัญญา": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "BLY and FSQ | CM Gold and FSQ",
+                        "Total SLA / SLA รวม": "45 | 60"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Confident-007 – Shareholder Agreement",
-                        "Type of Contract / ประเภทสัญญา": "Sharer Holder Agreement",
-                        "Access Level / ระดับการเข้าถึง": "Confidential",
-                        "Category": "Confidential"
+                        "Contract Name / ชื่อสัญญา": "Booth Rental and Service Agreement | สัญญาเช่าพื้นที่บูธและบริการ",
+                        "Type of Contract / ประเภทสัญญา": "Lease and Service Agreement | สัญญาเช่าและบริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "Taste Hunters and MMP",
+                        "Total SLA / SLA รวม": "60"
                   },
                   {
-                        "Contract Name / ชื่อสัญญา": "Confident-008  – Term Sheet",
-                        "Type of Contract / ประเภทสัญญา": "Term Sheet",
-                        "Access Level / ระดับการเข้าถึง": "Confidential",
-                        "Category": "Confidential"
+                        "Contract Name / ชื่อสัญญา": "Area Rental Agreement – Coffee Truck 1 | สัญญาเช่าพื้นที่ – Coffee Truck 1",
+                        "Type of Contract / ประเภทสัญญา": "Area Rental Agreement | สัญญาเช่าพื้นที่",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Business Development",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "UTAV",
+                        "Total SLA / SLA รวม": "30"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Area Rental Agreement – Coffee Truck 2 | สัญญาเช่าพื้นที่ – Coffee Truck 2",
+                        "Type of Contract / ประเภทสัญญา": "Area Rental Agreement | สัญญาเช่าพื้นที่",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Business Development",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "UTAV",
+                        "Total SLA / SLA รวม": "30"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Head Office Lease Agreement | สัญญาเช่าสำนักงานใหญ่",
+                        "Type of Contract / ประเภทสัญญา": "Lease Agreement | สัญญาเช่า",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "30"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Retail Space Sublease Agreement | สัญญาเช่าช่วงพื้นที่ค้าปลีก",
+                        "Type of Contract / ประเภทสัญญา": "Sublease Agreement | สัญญาเช่าช่วง",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "30"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Lease Agreement – Chan Kao | สัญญาเช่า – Chan Kao",
+                        "Type of Contract / ประเภทสัญญา": "Lease Agreement | สัญญาเช่า",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Department / Restaurant": "Business Development",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T5-WBKK",
+                        "Total SLA / SLA รวม": "60"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Lift Maintenance Service Agreement – Baan Turtle | สัญญาบริการบำรุงรักษาลิฟต์ – Baan Turtle",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Building Services | บริการอาคาร",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "CIBES LIFT and FSQ",
+                        "Total SLA / SLA รวม": "52"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Security Guard Service Agreement – BK Salon | สัญญาบริการรักษาความปลอดภัย – BK Salon",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Building Services | บริการอาคาร",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "LSS and FSQ",
+                        "Total SLA / SLA รวม": "84"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Security Guard Service Agreement – Baan Turtle Phuket | สัญญาบริการรักษาความปลอดภัย – Baan Turtle Phuket",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Building Services | บริการอาคาร",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "PCS and Turtle 23",
+                        "Total SLA / SLA รวม": "30"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Pest Control Service Agreement | สัญญาบริการกำจัดแมลงและสัตว์รบกวน",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Building Services | บริการอาคาร",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "Rentokil and Kon Talay Thai",
+                        "Total SLA / SLA รวม": ""
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Messenger Service Agreement | สัญญาให้บริการพนักงานรับ–ส่งเอกสารและสิ่งของ",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "ADMIN",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T23-SKOOTAR",
+                        "Total SLA / SLA รวม": "92"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Executive Car Rental Agreement – Managing Director | สัญญาเช่ารถยนต์สำหรับกรรมการผู้จัดการ",
+                        "Type of Contract / ประเภทสัญญา": "Rental Agreement | สัญญาเช่า",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "ADMIN",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T23-KSERV",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Executive Driver Service Agreement – Managing Director | สัญญาให้บริการพนักงานขับรถยนต์สำหรับกรรมการผู้จัดการ",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "ADMIN",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T23-KSERV",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Cleaning Service Agreement | สัญญาจ้างเหมาบริการทำความสะอาด",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "ADMIN",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T23-SCS / SMART CLEANING SOLUTION",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Office Equipment Lease Agreement | สัญญาเช่าอุปกรณ์สำนักงาน",
+                        "Type of Contract / ประเภทสัญญา": "Lease Agreement | สัญญาเช่า",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Laptop Rental Agreement | สัญญาเช่าคอมพิวเตอร์โน้ตบุ๊ก",
+                        "Type of Contract / ประเภทสัญญา": "Rental Agreement | สัญญาเช่า",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Car Rental Agreement – Coffee Truck | สัญญาเช่ารถยนต์ – Coffee Truck",
+                        "Type of Contract / ประเภทสัญญา": "Rental Agreement | สัญญาเช่า",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "Business Development",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "Mr. Therdsit (Food Truck Owner)",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Outsourced Service Provider Agreement | สัญญาจ้างผู้ให้บริการภายนอก",
+                        "Type of Contract / ประเภทสัญญา": "Service Provider Agreement | สัญญาผู้ให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Partner Service Order Agreement – Dianping Thailand | สัญญาสั่งซื้อบริการพันธมิตร – Dianping Thailand",
+                        "Type of Contract / ประเภทสัญญา": "Partner Service Agreement | สัญญาบริการพันธมิตร",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Department / Restaurant": "MKT",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T5-Dianping Thailand",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Insurance Claim Supporting Documents | เอกสารประกอบการเรียกร้องค่าสินไหมประกันภัย",
+                        "Type of Contract / ประเภทสัญญา": "Insurance Claim | การเรียกร้องค่าสินไหมประกันภัย",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Insurance | ประกันภัย",
+                        "Department / Restaurant": "Operation",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "Maison Dunand – Rabbit Broker and Alpea | Capricci – Rabbit Broker and MMP | BK Salon – Rabbit Broker and FSQ",
+                        "Total SLA / SLA รวม": "90 | 75 | 75"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Restaurant Management and Consultancy Agreement – Sushi Saryu | สัญญาบริหารและให้คำปรึกษาร้านอาหาร – Sushi Saryu",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Business Management | บริหารธุรกิจ",
+                        "Department / Restaurant": "MKT",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T23-Kinn1, T23-Mochit Land",
+                        "Total SLA / SLA รวม": "90"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Management Services Agreement | สัญญาจ้างบริหาร",
+                        "Type of Contract / ประเภทสัญญา": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Business Management | บริหารธุรกิจ",
+                        "Department / Restaurant": "MKT",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T23-Kamkoong, T23-Mochit Land",
+                        "Total SLA / SLA รวม": "120"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Management Fee Agreement | สัญญาค่าธรรมเนียมการบริหาร",
+                        "Type of Contract / ประเภทสัญญา": "Management Fee Agreement | สัญญาค่าธรรมเนียมการบริหาร",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Business Management | บริหารธุรกิจ",
+                        "Department / Restaurant": "Finance",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T23-KTT | T23-FSQ | T23-W-BKK | T23-MMPZ | T23-RCS | T23-ALPEA | T23-TTH | T23-T5",
+                        "Total SLA / SLA รวม": "90 | 60 | 30 | 14 | 14 | 14 | 14 | 15"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Wongnai–LINE MAN GP Model Participation Agreement | สัญญาเข้าร่วมโครงการ Wongnai–LINE MAN GP Model",
+                        "Type of Contract / ประเภทสัญญา": "Delivery Platform Service Agreement | สัญญาบริการแพลตฟอร์มจัดส่งอาหาร",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Business Management | บริหารธุรกิจ",
+                        "Department / Restaurant": "MKT",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "T23-Grab, T23-LINE MAN",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Credit Card Promotion Agreement with Bank | สัญญาร่วมรายการส่งเสริมการขายบัตรเครดิตกับธนาคาร",
+                        "Type of Contract / ประเภทสัญญา": "Credit Card Promotion Agreement | สัญญาส่งเสริมการขายบัตรเครดิต",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Business Management | บริหารธุรกิจ",
+                        "Department / Restaurant": "MKT",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "15"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Consultancy Agreement – Bluekoff | สัญญาให้คำปรึกษา – Bluekoff",
+                        "Type of Contract / ประเภทสัญญา": "Consultancy Agreement | สัญญาให้คำปรึกษา",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Business Development",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "Bluekoff (K’ Jame)",
+                        "Total SLA / SLA รวม": "12"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "General Legal Services Agreement | สัญญาให้บริการด้านกฎหมายทั่วไป",
+                        "Type of Contract / ประเภทสัญญา": "Service Agreement | สัญญาให้บริการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "7"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Non-Disclosure Agreement – Devanom | สัญญาไม่เปิดเผยข้อมูล – Devanom",
+                        "Type of Contract / ประเภทสัญญา": "Non-Disclosure Agreement | สัญญาไม่เปิดเผยข้อมูล",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Business Development",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "Mr. Nattachai (CEO, Devanom)",
+                        "Total SLA / SLA รวม": "12"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Memorandum of Understanding (MOU) | บันทึกความเข้าใจ",
+                        "Type of Contract / ประเภทสัญญา": "Memorandum of Understanding | บันทึกความเข้าใจ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "15"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Consultancy Agreement | สัญญาให้คำปรึกษา",
+                        "Type of Contract / ประเภทสัญญา": "Consultancy Agreement | สัญญาให้คำปรึกษา",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Confidentiality Agreement | สัญญารักษาความลับ",
+                        "Type of Contract / ประเภทสัญญา": "Confidentiality Agreement | สัญญารักษาความลับ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "10"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Management Agreement | สัญญาบริหารจัดการ",
+                        "Type of Contract / ประเภทสัญญา": "Management Agreement | สัญญาบริหารจัดการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "12"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Loan Agreement | สัญญาเงินกู้",
+                        "Type of Contract / ประเภทสัญญา": "Loan Agreement | สัญญาเงินกู้",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "7"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Merger and Acquisition Agreement (M&A Agreement) | สัญญาการควบรวมและซื้อกิจการ",
+                        "Type of Contract / ประเภทสัญญา": "Mergers and Acquisitions Agreement | สัญญาการควบรวมและซื้อกิจการ",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "15"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Shareholders’ Agreement | สัญญาระหว่างผู้ถือหุ้น",
+                        "Type of Contract / ประเภทสัญญา": "Shareholders’ Agreement | สัญญาระหว่างผู้ถือหุ้น",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "20"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Term Sheet | เอกสารสรุปเงื่อนไขเบื้องต้น",
+                        "Type of Contract / ประเภทสัญญา": "Term Sheet | เอกสารสรุปเงื่อนไขเบื้องต้น",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "30"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Amendment to Existing Agreement | สัญญาแก้ไขเพิ่มเติมสัญญาเดิม",
+                        "Type of Contract / ประเภทสัญญา": "Amendment Agreement | สัญญาแก้ไขเพิ่มเติม",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Contract Amendment | แก้ไขสัญญา",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "20"
+                  },
+                  {
+                        "Contract Name / ชื่อสัญญา": "Equipment Sale and Purchase Agreement | สัญญาซื้อขายอุปกรณ์",
+                        "Type of Contract / ประเภทสัญญา": "Sale and Purchase Agreement | สัญญาซื้อขาย",
+                        "Access Level / ระดับการเข้าถึง": "Normal",
+                        "Category": "Sale & Purchase | ซื้อขาย",
+                        "Department / Restaurant": "Legal",
+                        "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": "ยังไม่ระบุ",
+                        "Total SLA / SLA รวม": "15"
                   }
             ],
             "Contract Type Master": [
                   {
-                        "Category": "Day-to-day",
-                        "Type of Contract": "Lease Agreement",
-                        "Description / คำอธิบาย": "Lease of property or premises.\nสัญญาเช่าทรัพย์สินหรือพื้นที่",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 15
+                        "Category": "Technology & Systems | ระบบและเทคโนโลยี",
+                        "Description / คำอธิบาย": "Technology & Systems | ระบบและเทคโนโลยี",
+                        "Fixed SLA (Working Days)": "30 | 52 | 84 | 92 | 10 | 7",
+                        "Type of Contract": "Service Agreement | สัญญาให้บริการ"
                   },
                   {
-                        "Category": "Day-to-day",
-                        "Type of Contract": "Service Agreement",
-                        "Description / คำอธิบาย": "Agreement for specified services.\nสัญญาว่าจ้างให้ดำเนินงานหรือให้บริการ",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 10
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Description / คำอธิบาย": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Fixed SLA (Working Days)": "90 | 120",
+                        "Type of Contract": "Service and Consultancy Agreement | สัญญาให้บริการและที่ปรึกษา"
                   },
                   {
-                        "Category": "Day-to-day",
-                        "Type of Contract": "Sub Lease Agreement",
-                        "Description / คำอธิบาย": "Agreement to sublease rented property.\nสัญญาให้บุคคลอื่นเช่าช่วงทรัพย์สินที่เช่าอยู่",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 15
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Description / คำอธิบาย": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Fixed SLA (Working Days)": "60",
+                        "Type of Contract": "Interior Design Agreement | สัญญาออกแบบตกแต่งภายใน"
                   },
                   {
-                        "Category": "Day-to-day",
-                        "Type of Contract": "Lease Asset Agreement",
-                        "Description / คำอธิบาย": "Lease of equipment or other assets.\nสัญญาเช่าอุปกรณ์หรือทรัพย์สิน",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 12
+                        "Category": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Description / คำอธิบาย": "Design & Construction | ออกแบบและก่อสร้าง",
+                        "Fixed SLA (Working Days)": "60",
+                        "Type of Contract": "Construction Contract | สัญญาก่อสร้าง"
                   },
                   {
-                        "Category": "Day-to-day",
-                        "Type of Contract": "Amendment",
-                        "Description / คำอธิบาย": "Changes or additions to an existing agreement.\nเอกสารแก้ไขหรือเพิ่มเติมสัญญาเดิม",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 7
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Description / คำอธิบาย": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Fixed SLA (Working Days)": "60 | 45 | 60",
+                        "Type of Contract": "Lease and Service Agreement | สัญญาเช่าและบริการ"
                   },
                   {
-                        "Category": "Day-to-day",
-                        "Type of Contract": "Rental Agreement",
-                        "Description / คำอธิบาย": "Short-term rental of property or equipment.\nสัญญาเช่าทรัพย์สินหรืออุปกรณ์ระยะสั้น",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 12
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Description / คำอธิบาย": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Fixed SLA (Working Days)": "30",
+                        "Type of Contract": "Area Rental Agreement | สัญญาเช่าพื้นที่"
                   },
                   {
-                        "Category": "Day-to-day",
-                        "Type of Contract": "Sale and Purchase Agreement",
-                        "Description / คำอธิบาย": "Agreement for the sale and purchase of goods or assets.\nสัญญาซื้อขายสินค้าหรือทรัพย์สิน",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 15
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Description / คำอธิบาย": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Fixed SLA (Working Days)": "30 | 60 | 10",
+                        "Type of Contract": "Lease Agreement | สัญญาเช่า"
                   },
                   {
-                        "Category": "Day-to-day",
-                        "Type of Contract": "Service Provider Agreement",
-                        "Description / คำอธิบาย": "Agreement appointing an external service provider.\nสัญญาแต่งตั้งผู้ให้บริการภายนอก",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 10
+                        "Category": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Description / คำอธิบาย": "Lease & Related Services | เช่าพื้นที่และบริการ",
+                        "Fixed SLA (Working Days)": "30",
+                        "Type of Contract": "Sublease Agreement | สัญญาเช่าช่วง"
                   },
                   {
-                        "Category": "Confidential",
-                        "Type of Contract": "Memorandum of Understanding",
-                        "Description / คำอธิบาย": "Initial framework for cooperation between parties.\nบันทึกกรอบความร่วมมือเบื้องต้นระหว่างคู่สัญญา",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 10
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Description / คำอธิบาย": "Support Services | งานสนับสนุน",
+                        "Fixed SLA (Working Days)": "10",
+                        "Type of Contract": "Rental Agreement | สัญญาเช่า"
                   },
                   {
-                        "Category": "Confidential",
-                        "Type of Contract": "Consultancy Agreement",
-                        "Description / คำอธิบาย": "Agreement for professional advisory services.\nสัญญาว่าจ้างที่ปรึกษาเฉพาะด้าน",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 12
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Description / คำอธิบาย": "Support Services | งานสนับสนุน",
+                        "Fixed SLA (Working Days)": "10",
+                        "Type of Contract": "Service Provider Agreement | สัญญาผู้ให้บริการ"
                   },
                   {
-                        "Category": "Confidential",
-                        "Type of Contract": "Confidentiality Agreement",
-                        "Description / คำอธิบาย": "Agreement protecting confidential information.\nสัญญารักษาความลับของข้อมูล",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 7
+                        "Category": "Support Services | งานสนับสนุน",
+                        "Description / คำอธิบาย": "Support Services | งานสนับสนุน",
+                        "Fixed SLA (Working Days)": "10",
+                        "Type of Contract": "Partner Service Agreement | สัญญาบริการพันธมิตร"
                   },
                   {
-                        "Category": "Confidential",
-                        "Type of Contract": "Management Agreement",
-                        "Description / คำอธิบาย": "Agreement for business or project management.\nสัญญาว่าจ้างบริหารกิจการหรือโครงการ",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 15
+                        "Category": "Insurance | ประกันภัย",
+                        "Description / คำอธิบาย": "Insurance | ประกันภัย",
+                        "Fixed SLA (Working Days)": "90 | 75 | 75",
+                        "Type of Contract": "Insurance Claim | การเรียกร้องค่าสินไหมประกันภัย"
                   },
                   {
-                        "Category": "Confidential",
-                        "Type of Contract": "Loan Agreement",
-                        "Description / คำอธิบาย": "Agreement covering a loan and repayment terms.\nสัญญากู้ยืมเงินและเงื่อนไขการชำระคืน",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 20
+                        "Category": "Business Management | บริหารธุรกิจ",
+                        "Description / คำอธิบาย": "Business Management | บริหารธุรกิจ",
+                        "Fixed SLA (Working Days)": "90 | 60 | 30 | 14 | 14 | 14 | 14 | 15",
+                        "Type of Contract": "Management Fee Agreement | สัญญาค่าธรรมเนียมการบริหาร"
                   },
                   {
-                        "Category": "Confidential",
-                        "Type of Contract": "Mergers and Acquisitions Agreement",
-                        "Description / คำอธิบาย": "Agreement for a merger or business acquisition.\nสัญญาควบรวมหรือซื้อกิจการ",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 30
+                        "Category": "Business Management | บริหารธุรกิจ",
+                        "Description / คำอธิบาย": "Business Management | บริหารธุรกิจ",
+                        "Fixed SLA (Working Days)": "10",
+                        "Type of Contract": "Delivery Platform Service Agreement | สัญญาบริการแพลตฟอร์มจัดส่งอาหาร"
                   },
                   {
-                        "Category": "Confidential",
-                        "Type of Contract": "Sharer Holder Agreement",
-                        "Description / คำอธิบาย": "Agreement governing shareholders’ rights and duties.\nสัญญากำหนดสิทธิและหน้าที่ของผู้ถือหุ้น",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 20
+                        "Category": "Business Management | บริหารธุรกิจ",
+                        "Description / คำอธิบาย": "Business Management | บริหารธุรกิจ",
+                        "Fixed SLA (Working Days)": "15",
+                        "Type of Contract": "Credit Card Promotion Agreement | สัญญาส่งเสริมการขายบัตรเครดิต"
                   },
                   {
-                        "Category": "Confidential",
-                        "Type of Contract": "Term Sheet",
-                        "Description / คำอธิบาย": "Summary of key terms before the final agreement.\nเอกสารสรุปเงื่อนไขหลักก่อนทำสัญญาฉบับเต็ม",
                         "Active": "Yes",
-                        "Fixed SLA (Working Days)": 15
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "12 | 10",
+                        "Type of Contract": "Consultancy Agreement | สัญญาให้คำปรึกษา"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "12",
+                        "Type of Contract": "Non-Disclosure Agreement | สัญญาไม่เปิดเผยข้อมูล"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "15",
+                        "Type of Contract": "Memorandum of Understanding | บันทึกความเข้าใจ"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "10",
+                        "Type of Contract": "Confidentiality Agreement | สัญญารักษาความลับ"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "12",
+                        "Type of Contract": "Management Agreement | สัญญาบริหารจัดการ"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "7",
+                        "Type of Contract": "Loan Agreement | สัญญาเงินกู้"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "15",
+                        "Type of Contract": "Mergers and Acquisitions Agreement | สัญญาการควบรวมและซื้อกิจการ"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "20",
+                        "Type of Contract": "Shareholders’ Agreement | สัญญาระหว่างผู้ถือหุ้น"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Description / คำอธิบาย": "Legal & Consultancy | กฎหมายและที่ปรึกษา",
+                        "Fixed SLA (Working Days)": "30",
+                        "Type of Contract": "Term Sheet | เอกสารสรุปเงื่อนไขเบื้องต้น"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Contract Amendment | แก้ไขสัญญา",
+                        "Description / คำอธิบาย": "Contract Amendment | แก้ไขสัญญา",
+                        "Fixed SLA (Working Days)": "20",
+                        "Type of Contract": "Amendment Agreement | สัญญาแก้ไขเพิ่มเติม"
+                  },
+                  {
+                        "Active": "Yes",
+                        "Category": "Sale & Purchase | ซื้อขาย",
+                        "Description / คำอธิบาย": "Sale & Purchase | ซื้อขาย",
+                        "Fixed SLA (Working Days)": "15",
+                        "Type of Contract": "Sale and Purchase Agreement | สัญญาซื้อขาย"
                   }
             ],
             "Fix Action SLA": [
@@ -9704,6 +10740,11 @@
     const masterData = {
       departments: [
       {
+            "Department / Restaurant": "ADMIN",
+            "Department Code": "ADMIN",
+            "Active": "Yes"
+      },
+      {
             "Department / Restaurant": "Information Technology",
             "Department Code": "IT",
             "Active": "Yes"
@@ -9749,6 +10790,11 @@
             "Active": "Yes"
       },
       {
+            "Department / Restaurant": "MKT",
+            "Department Code": "MKT",
+            "Active": "Yes"
+      },
+      {
             "Department / Restaurant": "Operation",
             "Department Code": "OP",
             "Active": "Yes"
@@ -9765,6 +10811,11 @@
       },
       {
             "Department / Restaurant": "Project Manager",
+            "Department Code": "PM",
+            "Active": "Yes"
+      },
+      {
+            "Department / Restaurant": "PM",
             "Department Code": "PM",
             "Active": "Yes"
       },
@@ -12232,6 +13283,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     const departmentCodeConfig = Object.freeze({
+      "ADMIN": "ADMIN",
       "Information Technology": "IT",
       "IT": "IT",
       "Legal": "LEGAL",
@@ -12241,10 +13293,12 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       "Administration": "ADMIN",
       "Business Development": "BD",
       "Marketing": "MKT",
+      "MKT": "MKT",
       "Operation": "OP",
       "Procurement": "PC",
       "Project Management": "PM",
       "Project Manager": "PM",
+      "PM": "PM",
       "Baan Turtle": "BT",
       "Table 1749": "T1749",
       "FSQ": "FSQ"
@@ -12987,7 +14041,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function fixedSlaValue(value) {
-      const number = Number(String(value ?? "").trim());
+      const match = String(value ?? "").trim().match(/\d+(?:\.\d+)?/);
+      const number = match ? Number(match[0]) : 0;
       return Number.isFinite(number) && number > 0 ? number : 0;
     }
 
@@ -13030,8 +14085,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           return {
             value: item.name,
             primary: item.name,
-            secondary: [access, item.type, item.workType].filter(Boolean).join(" · "),
-            description: `${access} contract${item.contractId ? ` · ${item.contractId}` : ""}`
+            secondary: [item.department, item.type, item.fixedSla ? `SLA ${item.fixedSla}` : "", access].filter(Boolean).join(" · "),
+            description: [item.group || item.category, item.vendor ? `Vendor: ${item.vendor}` : "", item.contractId ? `Contract ID: ${item.contractId}` : ""].filter(Boolean).join("\n")
           };
         })
         .sort((a, b) => {
@@ -13172,6 +14227,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const typeInput = document.querySelector("#addContractType");
       const workInput = document.querySelector("#addWorkType");
       const accessInput = document.querySelector("#addAccessLevel");
+      const departmentInput = document.querySelector("#addDepartment");
+      const vendorInput = document.querySelector("#addVendor");
       if (!nameInput || !typeInput || !workInput) return;
 
       const contractName = String(nameInput.value || "").trim();
@@ -13181,6 +14238,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         typeInput.value = "";
         workInput.value = "";
         if (accessInput) accessInput.value = "";
+        if (vendorInput) vendorInput.value = "";
         setAccessLevelBadge("");
         typeInput.disabled = true;
         typeInput.placeholder = "Waiting for Contract Name / รอชื่อสัญญา";
@@ -13201,10 +14259,17 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         if (template) {
           typeInput.value = template.type || "";
           workInput.value = template.workType || "Other";
+          if (departmentInput && template.department) {
+            departmentInput.value = template.department;
+            syncDepartmentOwnerOptions(true);
+            refreshEditableDropdown("addOwner");
+          }
+          if (vendorInput) vendorInput.value = template.vendor || "";
           typeInput.dataset.autoLinked = "true";
         } else {
           typeInput.value = "";
           workInput.value = "";
+          if (vendorInput) vendorInput.value = "";
           delete typeInput.dataset.autoLinked;
         }
       }
@@ -14023,7 +15088,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function contractTemplateCsvText() {
-      return objectsToCsv(["name", "type", "workType", "contractId", "accessLevel", "category", "fixedSla", "active"], masterData.contractTemplates || []);
+      return objectsToCsv(["name", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"], masterData.contractTemplates || []);
     }
 
     function driveDatabaseCsvPayload() {
@@ -14259,7 +15324,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           <tr>
             <td>${masterInput("Category", row.Category)}</td>
             <td>${masterInput("Type of Contract", row["Type of Contract"])}</td>
-            <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"], { type: "number" })}</td>
+            <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"])}</td>
             <td>${masterInput("Description / คำอธิบาย", row["Description / คำอธิบาย"], { multiline: true })}</td>
             <td>${masterActiveSelect("Active", row.Active)}</td>
             <td>${masterDeleteButton()}</td>
@@ -14272,7 +15337,10 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           <tr>
             <td>${masterInput("name", row.name)}</td>
             <td>${masterInput("type", row.type)}</td>
-            <td>${masterInput("fixedSla", row.fixedSla || row["Fixed SLA (Working Days)"], { type: "number" })}</td>
+            <td>${masterInput("department", row.department)}</td>
+            <td>${masterInput("vendor", row.vendor)}</td>
+            <td>${masterInput("group", row.group || row.category)}</td>
+            <td>${masterInput("fixedSla", row.fixedSla || row["Fixed SLA (Working Days)"])}</td>
             <td>${masterInput("accessLevel", row.accessLevel || accessLevelForContractType(row.type), { select: true, choices: ["Normal", "Confidential"] })}</td>
             <td>${masterActiveSelect("active", row.active)}</td>
             <td>${masterDeleteButton()}</td>
@@ -14364,8 +15432,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         .map(row => ({ ...row, email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" }));
       masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Category", "Type of Contract", "Fixed SLA (Working Days)", "Description / คำอธิบาย", "Active"], "Type of Contract")
         .map(row => ({ ...row, "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(), Active: row.Active || "Yes" }));
-      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "fixedSla", "accessLevel", "active"], "name")
-        .map(row => ({ ...row, fixedSla: String(row.fixedSla || "").trim(), workType: row.type || "Other", category: row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
+      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "department", "vendor", "group", "fixedSla", "accessLevel", "active"], "name")
+        .map(row => ({ ...row, fixedSla: String(row.fixedSla || "").trim(), workType: row.type || "Other", category: row.group || row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
       return true;
     }
 
@@ -14374,7 +15442,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
       if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
       if (kind === "contractTypes") masterData.contractTypes.push({ Category: "Day-to-day", "Type of Contract": "", "Fixed SLA (Working Days)": "", "Description / คำอธิบาย": "", Active: "Yes" });
-      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", fixedSla: "", active: "Yes" });
+      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", department: "", vendor: "", group: "", fixedSla: "", active: "Yes" });
       renderMasterData();
     }
 

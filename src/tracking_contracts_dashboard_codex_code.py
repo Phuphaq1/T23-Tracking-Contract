@@ -11,6 +11,7 @@ import pandas as pd
 ROOT = Path("/Users/tspphupha/Documents/Codex/2026-07-11/files-mentioned-by-the-user-tracking")
 SOURCE_HTML = Path("/Users/tspphupha/Downloads/tracking_contracts_dashboard_person_mixed_y_r_mockup_code.txt")
 SOURCE_XLSX = Path("/Users/tspphupha/Downloads/Contract_SLA_Input_With_Contract_ID_Design.xlsx")
+SOURCE_CONTRACT_MASTER_CSV = Path("/Users/tspphupha/Downloads/contract_master_with_total_sla.csv")
 OUTPUT_HTML = ROOT / "outputs" / "tracking_contracts_dashboard_real_excel_dropdowns.html"
 OUTPUT_CONTRACTS_CSV = ROOT / "outputs" / "tracking_contracts_contracts_db.csv"
 OUTPUT_LOGS_CSV = ROOT / "outputs" / "tracking_contracts_log_db.csv"
@@ -55,6 +56,7 @@ CUSTOM_CONTRACT_INPUT_ROWS = [
 ]
 
 DEPARTMENT_CODE_CONFIG = {
+    "ADMIN": "ADMIN",
     "Information Technology": "IT",
     "IT": "IT",
     "Legal": "LEGAL",
@@ -64,10 +66,12 @@ DEPARTMENT_CODE_CONFIG = {
     "Administration": "ADMIN",
     "Business Development": "BD",
     "Marketing": "MKT",
+    "MKT": "MKT",
     "Operation": "OP",
     "Procurement": "PC",
     "Project Management": "PM",
     "Project Manager": "PM",
+    "PM": "PM",
     "Baan Turtle": "BT",
     "Table 1749": "T1749",
     "FSQ": "FSQ",
@@ -122,6 +126,25 @@ def records(df):
             normalized["Contract Name / ชื่อสัญญา"] = CONTRACT_NAME_OVERRIDES[contract_name]
         normalized_rows.append(normalized)
     return normalized_rows
+
+
+def first_sla_number(value, default=""):
+    match = re.search(r"\d+(?:\.\d+)?", clean(value))
+    if not match:
+        return default
+    number_value = float(match.group(0))
+    return int(number_value) if number_value.is_integer() else number_value
+
+
+def read_contract_master_rows():
+    if not SOURCE_CONTRACT_MASTER_CSV.exists():
+        return []
+    with SOURCE_CONTRACT_MASTER_CSV.open("r", encoding="utf-8-sig", newline="") as handle:
+        return [
+            {clean(key): clean(value) for key, value in row.items()}
+            for row in csv.DictReader(handle)
+            if clean(row.get("Contract Name / ชื่อสัญญามาตรฐาน")) and clean(row.get("Type of Contract / ประเภทสัญญา"))
+        ]
 
 
 def js(value):
@@ -205,6 +228,7 @@ def main():
     for row in type_rows:
         row.setdefault("Active", "Yes")
     action_rows = records(action_sla_df)
+    contract_master_rows = read_contract_master_rows()
     rules_rows = [
         [clean(cell) for cell in row]
         for row in rules_raw_df.fillna("").values.tolist()
@@ -223,6 +247,30 @@ def main():
         for row in rules_rows
     ]
 
+    if contract_master_rows:
+        type_by_name = {}
+        for row in contract_master_rows:
+            contract_type = row.get("Type of Contract / ประเภทสัญญา", "")
+            if not contract_type:
+                continue
+            group = row.get("กลุ่มสัญญา", "")
+            sla_text = row.get("Total SLA / SLA รวม", "")
+            current = type_by_name.setdefault(contract_type, {
+                "Active": "Yes",
+                "Category": group or "Day-to-day",
+                "Description / คำอธิบาย": group,
+                "Fixed SLA (Working Days)": "",
+                "Type of Contract": contract_type,
+            })
+            if group and not current.get("Description / คำอธิบาย"):
+                current["Description / คำอธิบาย"] = group
+            if sla_text:
+                values = [item.strip() for item in str(current.get("Fixed SLA (Working Days)", "")).split(" | ") if item.strip()]
+                if sla_text not in values:
+                    values.append(sla_text)
+                current["Fixed SLA (Working Days)"] = " | ".join(values)
+        type_rows = list(type_by_name.values())
+
     type_descriptions = {
         row["Type of Contract"]: row.get("Description / คำอธิบาย", "")
         for row in type_rows
@@ -233,15 +281,29 @@ def main():
         for row in type_rows
         if row.get("Type of Contract")
     }
-    sla_input_rows = [
-        {
-            "Contract Name / ชื่อสัญญา": name,
-            "Type of Contract / ประเภทสัญญา": contract_type,
-            "Access Level / ระดับการเข้าถึง": access_level,
-            "Category": access_level,
-        }
-        for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
-    ]
+    if contract_master_rows:
+        sla_input_rows = [
+            {
+                "Contract Name / ชื่อสัญญา": row.get("Contract Name / ชื่อสัญญามาตรฐาน", ""),
+                "Type of Contract / ประเภทสัญญา": row.get("Type of Contract / ประเภทสัญญา", ""),
+                "Access Level / ระดับการเข้าถึง": "Normal",
+                "Category": row.get("กลุ่มสัญญา", ""),
+                "Department / Restaurant": row.get("Department / Restaurant", ""),
+                "Vendor / Counter Party / ผู้ขาย–คู่สัญญา": row.get("Vendor / Counter Party / ผู้ขาย–คู่สัญญา", ""),
+                "Total SLA / SLA รวม": row.get("Total SLA / SLA รวม", ""),
+            }
+            for row in contract_master_rows
+        ]
+    else:
+        sla_input_rows = [
+            {
+                "Contract Name / ชื่อสัญญา": name,
+                "Type of Contract / ประเภทสัญญา": contract_type,
+                "Access Level / ระดับการเข้าถึง": access_level,
+                "Category": access_level,
+            }
+            for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
+        ]
 
     contracts = []
     log_records = []
@@ -255,6 +317,16 @@ def main():
         }
         for name, code in DEPARTMENT_CODE_CONFIG.items()
     ]
+    known_departments = {row["Department / Restaurant"] for row in department_master_rows}
+    for row in contract_master_rows:
+        department = row.get("Department / Restaurant", "")
+        if department and department not in known_departments:
+            department_master_rows.append({
+                "Department / Restaurant": department,
+                "Department Code": department_code_for(department) or department.upper().replace(" ", "_"),
+                "Active": "Yes",
+            })
+            known_departments.add(department)
     source_html_for_people = SOURCE_HTML.read_text(encoding="utf-8")
     people_match = re.search(r"const employeeDirectory = (\[[\s\S]*?\]);", source_html_for_people)
     people_master_rows = []
@@ -348,19 +420,41 @@ def main():
             [],
         ])
 
-    contract_catalog = [
-        {
-            "name": name,
-            "type": contract_type,
-            "workType": contract_type,
-            "contractId": "",
-            "accessLevel": access_level,
-            "category": access_level,
-            "fixedSla": fixed_sla.get(contract_type, ""),
-            "active": "Yes",
-        }
-        for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
-    ]
+    if contract_master_rows:
+        contract_catalog = []
+        for row in contract_master_rows:
+            contract_type = row.get("Type of Contract / ประเภทสัญญา", "")
+            sla_text = row.get("Total SLA / SLA รวม", "")
+            if contract_type:
+                fixed_sla[contract_type] = first_sla_number(sla_text, fixed_sla.get(contract_type, ""))
+            contract_catalog.append({
+                "name": row.get("Contract Name / ชื่อสัญญามาตรฐาน", ""),
+                "type": contract_type,
+                "workType": contract_type,
+                "contractId": "",
+                "accessLevel": "Normal",
+                "category": row.get("กลุ่มสัญญา", "") or "Normal",
+                "department": row.get("Department / Restaurant", ""),
+                "vendor": row.get("Vendor / Counter Party / ผู้ขาย–คู่สัญญา", ""),
+                "group": row.get("กลุ่มสัญญา", ""),
+                "fixedSla": sla_text,
+                "remark": row.get("หมายเหตุ", ""),
+                "active": "Yes",
+            })
+    else:
+        contract_catalog = [
+            {
+                "name": name,
+                "type": contract_type,
+                "workType": contract_type,
+                "contractId": "",
+                "accessLevel": access_level,
+                "category": access_level,
+                "fixedSla": fixed_sla.get(contract_type, ""),
+                "active": "Yes",
+            }
+            for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
+        ]
     for row in type_rows:
         contract_type = row.get("Type of Contract", "")
         row["Fixed SLA (Working Days)"] = row.get("Fixed SLA (Working Days)") or fixed_sla.get(contract_type, "")
@@ -1082,7 +1176,8 @@ def main():
     }
 
     function fixedSlaValue(value) {
-      const number = Number(String(value ?? "").trim());
+      const match = String(value ?? "").trim().match(/\\d+(?:\\.\\d+)?/);
+      const number = match ? Number(match[0]) : 0;
       return Number.isFinite(number) && number > 0 ? number : 0;
     }
 
@@ -1125,8 +1220,8 @@ def main():
           return {
             value: item.name,
             primary: item.name,
-            secondary: [access, item.type, item.workType].filter(Boolean).join(" · "),
-            description: `${access} contract${item.contractId ? ` · ${item.contractId}` : ""}`
+            secondary: [item.department, item.type, item.fixedSla ? `SLA ${item.fixedSla}` : "", access].filter(Boolean).join(" · "),
+            description: [item.group || item.category, item.vendor ? `Vendor: ${item.vendor}` : "", item.contractId ? `Contract ID: ${item.contractId}` : ""].filter(Boolean).join("\\n")
           };
         })
         .sort((a, b) => {
@@ -1285,7 +1380,7 @@ def main():
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
-                    <thead><tr><th>Contract Name</th><th>Type</th><th>Fixed SLA</th><th>Access</th><th>Active</th><th></th></tr></thead>
+                    <thead><tr><th>Contract Name</th><th>Type</th><th>Department</th><th>Vendor</th><th>Group</th><th>Fixed SLA</th><th>Access</th><th>Active</th><th></th></tr></thead>
                     <tbody id="masterTemplateRows"></tbody>
                   </table>
                 </div>
@@ -1701,6 +1796,8 @@ def main():
         """      const typeInput = document.querySelector("#addContractType");
       const workInput = document.querySelector("#addWorkType");
       const accessInput = document.querySelector("#addAccessLevel");
+      const departmentInput = document.querySelector("#addDepartment");
+      const vendorInput = document.querySelector("#addVendor");
       if (!nameInput || !typeInput || !workInput) return;""",
     )
     html = html.replace(
@@ -1710,8 +1807,32 @@ def main():
         """        typeInput.value = "";
         workInput.value = "";
         if (accessInput) accessInput.value = "";
+        if (vendorInput) vendorInput.value = "";
         setAccessLevelBadge("");
         typeInput.disabled = true;""",
+    )
+    html = html.replace(
+        """          typeInput.value = template.type || "";
+          workInput.value = template.workType || "Other";
+          typeInput.dataset.autoLinked = "true";""",
+        """          typeInput.value = template.type || "";
+          workInput.value = template.workType || "Other";
+          if (departmentInput && template.department) {
+            departmentInput.value = template.department;
+            syncDepartmentOwnerOptions(true);
+            refreshEditableDropdown("addOwner");
+          }
+          if (vendorInput) vendorInput.value = template.vendor || "";
+          typeInput.dataset.autoLinked = "true";""",
+    )
+    html = html.replace(
+        """          typeInput.value = "";
+          workInput.value = "";
+          delete typeInput.dataset.autoLinked;""",
+        """          typeInput.value = "";
+          workInput.value = "";
+          if (vendorInput) vendorInput.value = "";
+          delete typeInput.dataset.autoLinked;""",
     )
     html = html.replace(
         """        setLinkedFlowStatus("linkedNameStatus", "Start here · เริ่มกรอกชื่อสัญญา", "waiting");
@@ -3226,7 +3347,7 @@ def main():
     }
 
     function contractTemplateCsvText() {
-      return objectsToCsv(["name", "type", "workType", "contractId", "accessLevel", "category", "fixedSla", "active"], masterData.contractTemplates || []);
+      return objectsToCsv(["name", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"], masterData.contractTemplates || []);
     }
 
     function driveDatabaseCsvPayload() {
@@ -3462,7 +3583,7 @@ def main():
           <tr>
             <td>${masterInput("Category", row.Category)}</td>
             <td>${masterInput("Type of Contract", row["Type of Contract"])}</td>
-            <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"], { type: "number" })}</td>
+            <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"])}</td>
             <td>${masterInput("Description / คำอธิบาย", row["Description / คำอธิบาย"], { multiline: true })}</td>
             <td>${masterActiveSelect("Active", row.Active)}</td>
             <td>${masterDeleteButton()}</td>
@@ -3475,7 +3596,10 @@ def main():
           <tr>
             <td>${masterInput("name", row.name)}</td>
             <td>${masterInput("type", row.type)}</td>
-            <td>${masterInput("fixedSla", row.fixedSla || row["Fixed SLA (Working Days)"], { type: "number" })}</td>
+            <td>${masterInput("department", row.department)}</td>
+            <td>${masterInput("vendor", row.vendor)}</td>
+            <td>${masterInput("group", row.group || row.category)}</td>
+            <td>${masterInput("fixedSla", row.fixedSla || row["Fixed SLA (Working Days)"])}</td>
             <td>${masterInput("accessLevel", row.accessLevel || accessLevelForContractType(row.type), { select: true, choices: ["Normal", "Confidential"] })}</td>
             <td>${masterActiveSelect("active", row.active)}</td>
             <td>${masterDeleteButton()}</td>
@@ -3567,8 +3691,8 @@ def main():
         .map(row => ({ ...row, email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" }));
       masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Category", "Type of Contract", "Fixed SLA (Working Days)", "Description / คำอธิบาย", "Active"], "Type of Contract")
         .map(row => ({ ...row, "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(), Active: row.Active || "Yes" }));
-      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "fixedSla", "accessLevel", "active"], "name")
-        .map(row => ({ ...row, fixedSla: String(row.fixedSla || "").trim(), workType: row.type || "Other", category: row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
+      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "department", "vendor", "group", "fixedSla", "accessLevel", "active"], "name")
+        .map(row => ({ ...row, fixedSla: String(row.fixedSla || "").trim(), workType: row.type || "Other", category: row.group || row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
       return true;
     }
 
@@ -3577,7 +3701,7 @@ def main():
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
       if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
       if (kind === "contractTypes") masterData.contractTypes.push({ Category: "Day-to-day", "Type of Contract": "", "Fixed SLA (Working Days)": "", "Description / คำอธิบาย": "", Active: "Yes" });
-      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", fixedSla: "", active: "Yes" });
+      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", department: "", vendor: "", group: "", fixedSla: "", active: "Yes" });
       renderMasterData();
     }
 
@@ -3843,7 +3967,7 @@ def main():
     write_csv(OUTPUT_TYPE_MASTER_CSV, type_rows, type_headers)
     write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Active"])
     write_csv(OUTPUT_PEOPLE_MASTER_CSV, people_master_rows, ["company", "department", "name", "email", "active"])
-    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["name", "type", "workType", "contractId", "accessLevel", "category", "fixedSla", "active"])
+    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["name", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"])
     OUTPUT_ATTACHMENT_APPS_SCRIPT.write_text(
         f"""const DEFAULT_FOLDER_ID = "{ATTACHMENT_CLOUD_FOLDER_ID}";
 const EMAIL_SENDER_NAME = "T23 Contract Tracking";
