@@ -11,7 +11,7 @@ import pandas as pd
 ROOT = Path("/Users/tspphupha/Documents/Codex/2026-07-11/files-mentioned-by-the-user-tracking")
 SOURCE_HTML = Path("/Users/tspphupha/Downloads/tracking_contracts_dashboard_person_mixed_y_r_mockup_code.txt")
 SOURCE_XLSX = Path("/Users/tspphupha/Downloads/Contract_SLA_Input_With_Contract_ID_Design.xlsx")
-SOURCE_CONTRACT_MASTER_CSV = Path("/Users/tspphupha/Downloads/contract_master_with_total_sla.csv")
+SOURCE_CONTRACT_MASTER_CSV = Path("/Users/tspphupha/Downloads/contract_master_sla_separated.csv")
 OUTPUT_HTML = ROOT / "outputs" / "tracking_contracts_dashboard_real_excel_dropdowns.html"
 OUTPUT_CONTRACTS_CSV = ROOT / "outputs" / "tracking_contracts_contracts_db.csv"
 OUTPUT_LOGS_CSV = ROOT / "outputs" / "tracking_contracts_log_db.csv"
@@ -422,20 +422,31 @@ def main():
 
     if contract_master_rows:
         contract_catalog = []
+        name_counts = {}
         for row in contract_master_rows:
+            name = row.get("Contract Name / ชื่อสัญญามาตรฐาน", "")
+            name_counts[name] = name_counts.get(name, 0) + 1
+        for row in contract_master_rows:
+            name = row.get("Contract Name / ชื่อสัญญามาตรฐาน", "")
             contract_type = row.get("Type of Contract / ประเภทสัญญา", "")
             sla_text = row.get("Total SLA / SLA รวม", "")
+            vendor = row.get("Vendor / Counter Party / ผู้ขาย–คู่สัญญา", "")
+            selection_label = name
+            if name_counts.get(name, 0) > 1:
+                selection_label = " — ".join([value for value in [name, vendor, f"SLA {sla_text}" if sla_text else ""] if value])
             if contract_type:
                 fixed_sla[contract_type] = first_sla_number(sla_text, fixed_sla.get(contract_type, ""))
             contract_catalog.append({
-                "name": row.get("Contract Name / ชื่อสัญญามาตรฐาน", ""),
+                "name": name,
+                "selectionLabel": selection_label,
+                "sourceRow": row.get("ลำดับ", ""),
                 "type": contract_type,
                 "workType": contract_type,
                 "contractId": "",
                 "accessLevel": "Normal",
                 "category": row.get("กลุ่มสัญญา", "") or "Normal",
                 "department": row.get("Department / Restaurant", ""),
-                "vendor": row.get("Vendor / Counter Party / ผู้ขาย–คู่สัญญา", ""),
+                "vendor": vendor,
                 "group": row.get("กลุ่มสัญญา", ""),
                 "fixedSla": sla_text,
                 "remark": row.get("หมายเหตุ", ""),
@@ -1185,7 +1196,7 @@ def main():
       const normalizedType = normalizeDirectoryValue(workType);
       const normalizedName = normalizeDirectoryValue(contractName);
       if (normalizedName) {
-        const template = activeMasterContractTemplates().find(item => normalizeDirectoryValue(item.name) === normalizedName);
+        const template = contractTemplateFor(contractName) || activeMasterContractTemplates().find(item => normalizeDirectoryValue(item.name) === normalizedName);
         const templateSla = fixedSlaValue(template?.fixedSla || template?.["Fixed SLA (Working Days)"] || template?.SLA);
         if (templateSla > 0) return templateSla;
       }
@@ -1218,7 +1229,7 @@ def main():
         .map(item => {
           const access = item.accessLevel || accessLevelForContractType(item.type) || "Normal";
           return {
-            value: item.name,
+            value: item.selectionLabel || item.name,
             primary: item.name,
             secondary: [item.department, item.type, item.fixedSla ? `SLA ${item.fixedSla}` : "", access].filter(Boolean).join(" · "),
             description: [item.group || item.category, item.vendor ? `Vendor: ${item.vendor}` : "", item.contractId ? `Contract ID: ${item.contractId}` : ""].filter(Boolean).join("\\n")
@@ -1256,6 +1267,86 @@ def main():
     }""",
     )
     html = html.replace(
+        """    function getContractFormCatalog() {
+      const merged = new Map();
+      [...contractInputCatalog, ...activeMasterContractTemplates()]
+        .forEach(item => {
+          const name = String(item?.name || "").trim();
+          if (!name) return;
+          if (!merged.has(name)) merged.set(name, {
+            name,
+            type: item.type || "",
+            workType: item.workType || "Other",
+            contractId: item.contractId || "",
+            accessLevel: item.accessLevel || "",
+            category: item.category || ""
+          });
+        });
+      return [...merged.values()].sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    function contractTemplateFor(name) {
+      const normalized = String(name || "").trim().toLowerCase();
+      return getContractFormCatalog().find(item => item.name.toLowerCase() === normalized) || null;
+    }""",
+        """    function getContractFormCatalog() {
+      const rows = [];
+      const seen = new Set();
+      [...contractInputCatalog, ...activeMasterContractTemplates()]
+        .forEach(item => {
+          const name = String(item?.name || "").trim();
+          if (!name) return;
+          const selectionLabel = String(item.selectionLabel || item.displayName || name).trim();
+          const key = normalizeDirectoryValue([
+            selectionLabel,
+            item.sourceRow,
+            item.vendor,
+            item.fixedSla,
+            item.type
+          ].filter(Boolean).join("|"));
+          if (seen.has(key)) return;
+          seen.add(key);
+          rows.push({
+            ...item,
+            name,
+            selectionLabel,
+            type: item.type || "",
+            workType: item.workType || item.type || "Other",
+            contractId: item.contractId || "",
+            accessLevel: item.accessLevel || "",
+            category: item.category || "",
+            department: item.department || "",
+            vendor: item.vendor || "",
+            group: item.group || item.category || "",
+            fixedSla: item.fixedSla || item["Fixed SLA (Working Days)"] || "",
+            remark: item.remark || "",
+            sourceRow: item.sourceRow || ""
+          });
+        });
+      const nameCounts = rows.reduce((map, item) => {
+        const key = normalizeDirectoryValue(item.name);
+        map.set(key, (map.get(key) || 0) + 1);
+        return map;
+      }, new Map());
+      rows.forEach(item => {
+        const key = normalizeDirectoryValue(item.name);
+        if (nameCounts.get(key) > 1 && normalizeDirectoryValue(item.selectionLabel) === key) {
+          item.selectionLabel = [item.name, item.vendor, item.fixedSla ? `SLA ${item.fixedSla}` : ""].filter(Boolean).join(" — ");
+        }
+      });
+      return rows.sort((a, b) => String(a.selectionLabel || a.name).localeCompare(String(b.selectionLabel || b.name)));
+    }
+
+    function contractTemplateFor(value) {
+      const normalized = normalizeDirectoryValue(value);
+      if (!normalized) return null;
+      const catalog = getContractFormCatalog();
+      return catalog.find(item => normalizeDirectoryValue(item.selectionLabel || item.name) === normalized)
+        || catalog.find(item => normalizeDirectoryValue(item.name) === normalized)
+        || null;
+    }""",
+    )
+    html = html.replace(
         """      // Type of Contract links to the hidden Work Type, which determines the fixed SLA.
       const sla = totalSlaFor(workType);
       const systemDue = addBusinessDays(lockedInDate, sla);""",
@@ -1269,6 +1360,34 @@ def main():
       const lockedInDate = todayInputValue();""",
         """      const totalSla = totalSlaFor(workType, String(form.get("name") || "").trim());
       const lockedInDate = todayInputValue();""",
+    )
+    html = html.replace(
+        """      const owner = String(form.get("owner") || "").trim();
+      const to = String(form.get("to") || "").trim();""",
+        """      const owner = String(form.get("owner") || "").trim();
+      const to = String(form.get("to") || "").trim();
+      const selectedAddTemplate = contractTemplateFor(String(form.get("name") || "").trim());
+      const contractName = selectedAddTemplate?.name || String(form.get("name") || "").trim();""",
+    )
+    html = html.replace(
+        """      const contractType = String(form.get("type") || "").trim();
+      const accessLevel = String(form.get("accessLevel") || accessLevelForContractType(contractType) || "Normal").trim();""",
+        """      const contractType = String(form.get("type") || "").trim();
+      const selectedAddTemplate = contractTemplateFor(String(form.get("name") || "").trim());
+      const contractName = selectedAddTemplate?.name || String(form.get("name") || "").trim();
+      const accessLevel = String(form.get("accessLevel") || selectedAddTemplate?.accessLevel || accessLevelForContractType(contractType) || "Normal").trim();""",
+    )
+    html = html.replace(
+        """      const totalSla = totalSlaFor(workType, String(form.get("name") || "").trim());""",
+        """      const totalSla = totalSlaFor(workType, contractName);""",
+    )
+    html = html.replace(
+        """        name: form.get("name"),""",
+        """        name: contractName,""",
+    )
+    html = html.replace(
+        """        vendor: form.get("vendor"),""",
+        """        vendor: String(form.get("vendor") || selectedAddTemplate?.vendor || "").trim(),""",
     )
     html = html.replace(
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
@@ -3347,7 +3466,7 @@ def main():
     }
 
     function contractTemplateCsvText() {
-      return objectsToCsv(["name", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"], masterData.contractTemplates || []);
+      return objectsToCsv(["name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"], masterData.contractTemplates || []);
     }
 
     function driveDatabaseCsvPayload() {
@@ -3594,7 +3713,7 @@ def main():
       if (templateBody) {
         templateBody.innerHTML = (masterData.contractTemplates || []).map(row => `
           <tr>
-            <td>${masterInput("name", row.name)}</td>
+            <td><input type="hidden" data-master-field="selectionLabel" value="${escapeHtml(row.selectionLabel || "")}"><input type="hidden" data-master-field="sourceRow" value="${escapeHtml(row.sourceRow || "")}">${masterInput("name", row.name)}</td>
             <td>${masterInput("type", row.type)}</td>
             <td>${masterInput("department", row.department)}</td>
             <td>${masterInput("vendor", row.vendor)}</td>
@@ -3691,7 +3810,7 @@ def main():
         .map(row => ({ ...row, email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" }));
       masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Category", "Type of Contract", "Fixed SLA (Working Days)", "Description / คำอธิบาย", "Active"], "Type of Contract")
         .map(row => ({ ...row, "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(), Active: row.Active || "Yes" }));
-      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "type", "department", "vendor", "group", "fixedSla", "accessLevel", "active"], "name")
+      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "selectionLabel", "sourceRow", "type", "department", "vendor", "group", "fixedSla", "accessLevel", "active"], "name")
         .map(row => ({ ...row, fixedSla: String(row.fixedSla || "").trim(), workType: row.type || "Other", category: row.group || row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
       return true;
     }
@@ -3701,7 +3820,7 @@ def main():
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
       if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
       if (kind === "contractTypes") masterData.contractTypes.push({ Category: "Day-to-day", "Type of Contract": "", "Fixed SLA (Working Days)": "", "Description / คำอธิบาย": "", Active: "Yes" });
-      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", department: "", vendor: "", group: "", fixedSla: "", active: "Yes" });
+      if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", selectionLabel: "", sourceRow: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", department: "", vendor: "", group: "", fixedSla: "", active: "Yes" });
       renderMasterData();
     }
 
@@ -3967,7 +4086,7 @@ def main():
     write_csv(OUTPUT_TYPE_MASTER_CSV, type_rows, type_headers)
     write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Active"])
     write_csv(OUTPUT_PEOPLE_MASTER_CSV, people_master_rows, ["company", "department", "name", "email", "active"])
-    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["name", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"])
+    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"])
     OUTPUT_ATTACHMENT_APPS_SCRIPT.write_text(
         f"""const DEFAULT_FOLDER_ID = "{ATTACHMENT_CLOUD_FOLDER_ID}";
 const EMAIL_SENDER_NAME = "T23 Contract Tracking";
