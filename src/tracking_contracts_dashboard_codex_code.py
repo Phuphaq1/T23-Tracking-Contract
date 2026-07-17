@@ -810,24 +810,29 @@ def main():
 
                   <div class="add-case-smart-summary" id="addCaseSmartSummary" aria-live="polite">
                     <div class="summary-cell">
-                      <span>Group Contract</span>
-                      <strong id="addSummaryGroup">All groups</strong>
-                      <small id="addSummaryGroupTh">แสดงทุกกลุ่ม</small>
-                    </div>
-                    <div class="summary-cell">
                       <span>Classification</span>
-                      <strong id="addSummaryClassification">Waiting</strong>
-                      <small id="addSummaryClassificationTh">รอข้อมูลประเภทสัญญา</small>
+                      <strong id="addSummaryClassification">Day-to-day Work</strong>
+                      <small id="addSummaryClassificationTh">งานดำเนินงานทั่วไป</small>
                     </div>
                     <div class="summary-cell">
-                      <span>Type / Sub Type</span>
+                      <span>Type of Contract</span>
                       <strong id="addSummaryType">-</strong>
-                      <small id="addSummarySubType">-</small>
+                      <small id="addSummaryTypeTh">เลือกประเภทสัญญา</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>Sub Type</span>
+                      <strong id="addSummarySubType">-</strong>
+                      <small id="addSummarySubTypeTh">ประเภทย่อย</small>
                     </div>
                     <div class="summary-cell">
                       <span>SLA / Due</span>
                       <strong id="addSummarySla">-</strong>
                       <small id="addSummaryDue">-</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>Contract Name</span>
+                      <strong id="addSummaryContractName">-</strong>
+                      <small>ชื่อสัญญา</small>
                     </div>
                     <div class="summary-cell">
                       <span>Department</span>
@@ -854,8 +859,108 @@ def main():
                   <div class="case-form-section-title"><span class="section-index">2</span>Ownership <small>ผู้รับผิดชอบสัญญา</small></div>""",
     )
     html = html.replace(
+        """                  <div class="case-form-section-title"><span class="section-index">1</span>Contract classification flow <small>Group Contract → Contract Name → Type of Contract → Vendor / Counter party</small></div>
+                  <div class="linked-contract-flow full">
+                    <label class="form-field full linked-flow-field" data-flow-order="0">
+                      <span class="linked-flow-head">
+                        <span class="bilingual-label"><span>Group Contract</span><span>กลุ่มสัญญา</span></span>
+                      </span>
+                      <input class="input" name="group" id="addContractGroup" list="contractGroupOptions" autocomplete="off" placeholder="Select Group Contract to filter / เลือกกลุ่มสัญญาเพื่อค้นหา">
+                      <small class="linked-flow-status" id="linkedGroupStatus">All groups · แสดงทุกกลุ่ม</small>
+                    </label>
+                    <label class="form-field full linked-flow-field" data-flow-order="1">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">1</span>
+                        <span class="bilingual-label"><span>Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                      </span>
+                      <input class="input" name="name" id="addContractName" list="contractNameOptions" required autocomplete="off" placeholder="Select an existing Contract Name or type a new name">
+                      <small class="linked-flow-status" id="linkedNameStatus">Select Contract Name · เลือกชื่อสัญญา</small>
+                    </label>
+                    <label class="form-field full linked-flow-field" data-flow-order="2">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">2</span>
+                        <span class="bilingual-label"><span>Type of Contract<span class="field-required-mark" aria-hidden="true">*</span></span><span>ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                      </span>
+                      <input class="input" name="type" id="addContractType" list="contractTypeOptions" required autocomplete="off" placeholder="Waiting for Contract Name / รอชื่อสัญญา" disabled>
+                      <input type="hidden" name="accessLevel" id="addAccessLevel" value="">
+                      <div class="inline-access-status" aria-label="Access Level / ระดับการเข้าถึง">
+                        <small class="access-level-chip waiting" id="addAccessLevelBadge">Waiting</small>
+                        <small class="linked-flow-status waiting compact-access-status" id="linkedAccessStatus">Waiting for Type · รอประเภท</small>
+                      </div>
+                      <small class="linked-flow-status waiting" id="linkedTypeStatus">Waiting for Contract Name · รอชื่อสัญญา</small>
+                    </label>
+                    <label class="form-field full linked-flow-field" data-flow-order="3">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">3</span>
+                        <span class="bilingual-label"><span>Vendor / Counter party</span><span>ผู้ขาย / คู่สัญญา</span></span>
+                      </span>
+                      <input class="input" name="vendor" id="addVendor" autocomplete="off" placeholder="Enter Vendor or Counter party / ระบุผู้ขายหรือคู่สัญญา">
+                      <small class="linked-flow-status">Enter the contract counter party · ระบุผู้ขายหรือคู่สัญญา</small>
+                    </label>
+                    <input type="hidden" name="workType" id="addWorkType" value="">
+                  </div>""",
+        """                  <div class="case-form-section-title"><span class="section-index">1</span>Contract classification flow <small>Contract Classification → Type of Contract → Sub Type → Contract Name → Vendor / Counter party</small></div>
+                  <div class="linked-contract-flow full">
+                    <label class="form-field full linked-flow-field classification-flow-field" data-flow-order="1">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">1</span>
+                        <span class="bilingual-label"><span>Contract Classification<span class="field-required-mark" aria-hidden="true">*</span></span><span>การจำแนกสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                      </span>
+                      <input type="hidden" name="classification" id="addContractClassification" value="Day-to-day Work">
+                      <div class="classification-choice-group" role="radiogroup" aria-label="Contract Classification">
+                        <button class="classification-choice active" type="button" data-classification-value="Day-to-day Work" aria-pressed="true">
+                          <strong>Day-to-day Work</strong>
+                          <span>งานดำเนินงานทั่วไป</span>
+                        </button>
+                        <button class="classification-choice" type="button" data-classification-value="Confidential" aria-pressed="false">
+                          <strong>Confidential</strong>
+                          <span>สัญญาลับ</span>
+                        </button>
+                      </div>
+                      <input type="hidden" name="accessLevel" id="addAccessLevel" value="Normal">
+                      <div class="inline-access-status" aria-label="Access Level / ระดับการเข้าถึง">
+                        <small class="access-level-chip normal" id="addAccessLevelBadge">Normal</small>
+                        <small class="linked-flow-status linked compact-access-status" id="linkedAccessStatus">Day-to-day Work · งานดำเนินงานทั่วไป</small>
+                      </div>
+                    </label>
+                    <label class="form-field full linked-flow-field" data-flow-order="2">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">2</span>
+                        <span class="bilingual-label"><span>Type of Contract<span class="field-required-mark" aria-hidden="true">*</span></span><span>ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                      </span>
+                      <input class="input" name="type" id="addContractType" list="contractTypeOptions" required autocomplete="off" placeholder="Select Type of Contract / เลือกประเภทสัญญา">
+                      <small class="linked-flow-status waiting" id="linkedTypeStatus">Select Type to calculate SLA · เลือกประเภทเพื่อคำนวณ SLA</small>
+                    </label>
+                    <label class="form-field full linked-flow-field" data-flow-order="3">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">3</span>
+                        <span class="bilingual-label"><span>Sub Type of Contract</span><span>ประเภทย่อยของสัญญา</span></span>
+                      </span>
+                      <input class="input" name="subType" id="addContractSubType" list="contractSubTypeOptions" autocomplete="off" placeholder="Select Sub Type / เลือกประเภทย่อย">
+                      <small class="linked-flow-status waiting" id="linkedSubTypeStatus">Optional when Type has no Sub Type · ไม่บังคับเมื่อไม่มีประเภทย่อย</small>
+                    </label>
+                    <label class="form-field full linked-flow-field" data-flow-order="4">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">4</span>
+                        <span class="bilingual-label"><span>Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                      </span>
+                      <input class="input" name="name" id="addContractName" list="contractNameOptions" required autocomplete="off" placeholder="Select Contract Name / เลือกชื่อสัญญา">
+                      <small class="linked-flow-status waiting" id="linkedNameStatus">Filtered by Type and Sub Type · กรองจากประเภทที่เลือก</small>
+                    </label>
+                    <label class="form-field full linked-flow-field" data-flow-order="5">
+                      <span class="linked-flow-head">
+                        <span class="linked-flow-number">5</span>
+                        <span class="bilingual-label"><span>Vendor / Counter party</span><span>ผู้ขาย / คู่สัญญา</span></span>
+                      </span>
+                      <input class="input" name="vendor" id="addVendor" autocomplete="off" placeholder="Enter Vendor or Counter party / ระบุผู้ขายหรือคู่สัญญา">
+                      <small class="linked-flow-status">Enter the contract counter party · ระบุผู้ขายหรือคู่สัญญา</small>
+                    </label>
+                    <input type="hidden" name="workType" id="addWorkType" value="">
+                  </div>""",
+    )
+    html = html.replace(
         """                <datalist id="contractNameOptions"></datalist>""",
-        """                <datalist id="contractGroupOptions"></datalist>
+        """                <datalist id="contractSubTypeOptions"></datalist>
                 <datalist id="contractNameOptions"></datalist>""",
     )
     html = html.replace(
@@ -917,6 +1022,55 @@ def main():
       margin-top: 0;
       font-size: 10px;
       line-height: 1.25;
+    }
+
+    .classification-flow-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .classification-choice-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .classification-choice {
+      min-width: 0;
+      min-height: 54px;
+      padding: 8px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+    }
+
+    .classification-choice strong,
+    .classification-choice span {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .classification-choice strong {
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .classification-choice span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.25;
+    }
+
+    .classification-choice.active {
+      border-color: var(--primary);
+      background: #f3f8de;
+      box-shadow: 0 0 0 2px rgba(184, 214, 61, .22);
     }
 
     .add-case-smart-summary {
@@ -1063,34 +1217,38 @@ def main():
       const form = document.querySelector("#addCaseForm");
       if (!form) return;
       const selectedTemplate = contractTemplateFor(String(form.elements.name?.value || "").trim());
-      const group = selectedContractGroup() || selectedTemplate?.group || selectedTemplate?.category || "";
-      const type = String(form.elements.type?.value || selectedTemplate?.type || "").trim();
+      const type = String(effectiveAddCaseContractType() || selectedTemplate?.type || "").trim();
       const typeInfo = contractTypeMasterV2Match(type);
-      const classificationEn = typeInfo?.["Contract Classification EN"]
-        || (selectedTemplate?.accessLevel === "Confidential" ? "Confidential" : "");
-      const classificationTh = typeInfo?.["Contract Classification TH"]
-        || (classificationEn === "Confidential" ? "สัญญาลับ" : "");
-      const typeDisplay = typeInfo
-        ? contractTypeMasterV2Display(typeInfo, "type")
-        : type;
-      const subTypeDisplay = typeInfo
-        ? contractTypeMasterV2Display(typeInfo, "sub")
-        : "";
+      const selectedClassification = selectedContractClassification();
+      const classificationEn = typeInfo?.["Contract Classification EN"] || selectedClassification || (selectedTemplate?.accessLevel === "Confidential" ? "Confidential" : "Day-to-day Work");
+      const classificationTh = typeInfo?.["Contract Classification TH"] || classificationThaiFor(classificationEn);
+      const typeDisplay = selectedContractTypeGroup() || (typeInfo ? contractTypeMasterV2Display(typeInfo, "type") : type);
+      const subTypeDisplay = selectedContractSubType() || (typeInfo ? subTypeForRow(typeInfo) : "");
+      const contractName = selectedTemplate?.name || String(form.elements.name?.value || "").trim();
       const sla = String(form.elements.sla?.value || "").trim();
       const due = String(form.elements.due?.value || "").trim();
-      setAddCaseSummaryText("addSummaryGroup", group || "All groups");
-      setAddCaseSummaryText("addSummaryGroupTh", group ? "เลือกกลุ่มแล้ว" : "แสดงทุกกลุ่ม");
       setAddCaseSummaryText("addSummaryClassification", classificationEn || "Waiting");
       setAddCaseSummaryText("addSummaryClassificationTh", classificationTh || "รอข้อมูลประเภทสัญญา");
       setAddCaseSummaryText("addSummaryType", typeDisplay || "-");
-      setAddCaseSummaryText("addSummarySubType", subTypeDisplay || "No sub type");
+      setAddCaseSummaryText("addSummaryTypeTh", typeDisplay ? "ประเภทสัญญา" : "เลือกประเภทสัญญา");
+      setAddCaseSummaryText("addSummarySubType", subTypeDisplay || "No Sub Type");
+      setAddCaseSummaryText("addSummarySubTypeTh", subTypeDisplay ? "ประเภทย่อยของสัญญา" : "ไม่มีประเภทย่อย");
       setAddCaseSummaryText("addSummarySla", sla ? `${sla} Working Days` : "-");
       setAddCaseSummaryText("addSummaryDue", due ? `Due ${due}` : "รอการคำนวณวันครบกำหนด");
+      setAddCaseSummaryText("addSummaryContractName", contractName || "-");
       setAddCaseSummaryText("addSummaryDepartment", String(form.elements.department?.value || selectedTemplate?.department || "").trim());
       setAddCaseSummaryText("addSummaryVendor", String(form.elements.vendor?.value || selectedTemplate?.vendor || "").trim());
       setAddCaseSummaryText("addSummaryOwner", String(form.elements.owner?.value || "").trim());
       setAddCaseSummaryText("addSummaryContractId", document.querySelector("#newCaseId")?.textContent || "-");
     }""",
+    )
+    html = html.replace(
+        """      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 0;""",
+        """      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      padding: 0;""",
     )
     html = html.replace(
         """      [...contractInputCatalog, ...contracts.map(item => ({ name: item.name, type: item.type, workType: item.workType }))]
@@ -1678,6 +1836,237 @@ def main():
       const sla = totalSlaFor(workType, contractName);
       const systemDue = addBusinessDays(lockedInDate, sla);""",
     )
+    html = replace_between(
+        html,
+        """    function fixedSlaFromMasterData(workType, contractName = "") {""",
+        """
+
+    function accessLevelForAddCase(template, contractType) {""",
+        """    function englishContractPart(value) {
+      return String(value || "").split("|")[0].trim();
+    }
+
+    function masterContractTypeFor(typeValue) {
+      const normalizedType = normalizeDirectoryValue(typeValue);
+      if (!normalizedType) return null;
+      const rows = activeMasterContractTypes();
+      const exact = rows.find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalizedType);
+      if (exact) return exact;
+      const typeInfo = contractTypeMasterV2Match(typeValue);
+      const englishCandidates = [
+        englishContractPart(typeValue),
+        typeInfo?.["Sub Type of Contract EN"],
+        typeInfo?.["Type of Contract EN"]
+      ].map(normalizeDirectoryValue).filter(Boolean);
+      return rows.find(row => {
+        const rowEnglish = normalizeDirectoryValue(englishContractPart(row["Type of Contract"]));
+        return englishCandidates.includes(rowEnglish);
+      }) || null;
+    }
+
+    function fixedSlaFromMasterData(workType, contractName = "") {
+      const normalizedType = normalizeDirectoryValue(workType);
+      const normalizedName = normalizeDirectoryValue(contractName);
+      if (normalizedName) {
+        const template = contractTemplateFor(contractName) || activeMasterContractTemplates().find(item => normalizeDirectoryValue(item.name) === normalizedName);
+        const templateSla = fixedSlaValue(template?.fixedSla || template?.["Fixed SLA (Working Days)"] || template?.SLA);
+        if (templateSla > 0) return templateSla;
+      }
+      if (normalizedType) {
+        const typeRow = masterContractTypeFor(workType);
+        const typeSla = fixedSlaValue(typeRow?.["Fixed SLA (Working Days)"] || typeRow?.FixedSLA || typeRow?.SLA);
+        if (typeSla > 0) return typeSla;
+      }
+      return 0;
+    }""",
+    )
+    html = replace_between(
+        html,
+        """    function accessLevelForAddCase(template, contractType) {""",
+        """
+
+    function actionDropdownOptions() {""",
+        """    function classificationAccessLevelFor(classification = "") {
+      return normalizeDirectoryValue(classification) === "confidential" ? "Confidential" : "Normal";
+    }
+
+    function classificationThaiFor(classification = "") {
+      return normalizeDirectoryValue(classification) === "confidential" ? "สัญญาลับ" : "งานดำเนินงานทั่วไป";
+    }
+
+    function selectedContractClassification() {
+      return String(document.querySelector("#addContractClassification")?.value || "Day-to-day Work").trim();
+    }
+
+    function typeGroupForRow(row) {
+      return contractTypeMasterV2Display(row, "type");
+    }
+
+    function subTypeForRow(row) {
+      const subType = contractTypeMasterV2Display(row, "sub");
+      const typeGroup = typeGroupForRow(row);
+      return subType && normalizeDirectoryValue(subType) !== normalizeDirectoryValue(typeGroup) ? subType : "";
+    }
+
+    function contractTypeValuesMatch(left = "", right = "") {
+      const leftNorm = normalizeDirectoryValue(left);
+      const rightNorm = normalizeDirectoryValue(right);
+      if (!leftNorm || !rightNorm) return false;
+      if (leftNorm === rightNorm || leftNorm.includes(rightNorm) || rightNorm.includes(leftNorm)) return true;
+      const leftEnglish = normalizeDirectoryValue(englishContractPart(left));
+      const rightEnglish = normalizeDirectoryValue(englishContractPart(right));
+      return Boolean(leftEnglish && rightEnglish && leftEnglish === rightEnglish);
+    }
+
+    function contractTypeRowsForSelection() {
+      const classification = selectedContractClassification();
+      const typeGroup = selectedContractTypeGroup();
+      return contractTypeMasterV2.filter(row => {
+        const rowClassification = String(row["Contract Classification EN"] || "").trim();
+        if (classification && rowClassification !== classification) return false;
+        if (typeGroup && !contractTypeValuesMatch(typeGroupForRow(row), typeGroup)) return false;
+        return true;
+      });
+    }
+
+    function setContractClassificationButtons(classification = selectedContractClassification()) {
+      const normalized = classification || "Day-to-day Work";
+      const input = document.querySelector("#addContractClassification");
+      if (input) input.value = normalized;
+      document.querySelectorAll("[data-classification-value]").forEach(button => {
+        const active = button.dataset.classificationValue === normalized;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+      const accessLevel = classificationAccessLevelFor(normalized);
+      const accessInput = document.querySelector("#addAccessLevel");
+      if (accessInput) accessInput.value = accessLevel;
+      setAccessLevelBadge(accessLevel);
+      setLinkedFlowStatus("linkedAccessStatus", `${normalized} · ${classificationThaiFor(normalized)}`, accessLevel === "Confidential" ? "waiting" : "linked");
+    }
+
+    function accessLevelForAddCase(template, contractType) {
+      const selectedLevel = classificationAccessLevelFor(selectedContractClassification());
+      const typeAccessLevel = accessLevelForContractType(contractType);
+      if (selectedLevel === "Confidential" || typeAccessLevel === "Confidential" || template?.accessLevel === "Confidential") return "Confidential";
+      return selectedLevel || typeAccessLevel || template?.accessLevel || "Normal";
+    }
+
+    function contractTypeDropdownOptions() {
+      const classification = selectedContractClassification();
+      const seen = new Set();
+      const options = [];
+      contractTypeMasterV2
+        .filter(row => !classification || row["Contract Classification EN"] === classification)
+        .forEach(row => {
+          const value = typeGroupForRow(row);
+          const key = normalizeDirectoryValue(value);
+          if (!value || seen.has(key)) return;
+          seen.add(key);
+          const subtypeCount = contractTypeMasterV2
+            .filter(item => item["Contract Classification EN"] === row["Contract Classification EN"] && contractTypeValuesMatch(typeGroupForRow(item), value) && subTypeForRow(item))
+            .length;
+          options.push({
+            value,
+            primary: value,
+            secondary: `${row["Contract Classification EN"] || ""} / ${row["Contract Classification TH"] || ""}${subtypeCount ? ` · ${subtypeCount} Sub Type` : ""}`,
+            description: contractTypeMasterV2
+              .filter(item => item["Contract Classification EN"] === row["Contract Classification EN"] && contractTypeValuesMatch(typeGroupForRow(item), value))
+              .map(item => subTypeForRow(item))
+              .filter(Boolean)
+              .slice(0, 5)
+              .join("\\n")
+          });
+        });
+      activeMasterContractTypes().forEach(row => {
+        const value = row["Type of Contract"];
+        const key = normalizeDirectoryValue(value);
+        if (!value || seen.has(key)) return;
+        if (classification === "Confidential" && accessLevelForContractType(value) !== "Confidential") return;
+        seen.add(key);
+        options.push({
+          value,
+          primary: value,
+          secondary: row.Category || "Contract Type",
+          description: row["Description / คำอธิบาย"] || ""
+        });
+      });
+      return options;
+    }
+
+    function selectedContractTypeGroup() {
+      return String(document.querySelector("#addContractType")?.value || "").trim();
+    }
+
+    function selectedContractSubType() {
+      return String(document.querySelector("#addContractSubType")?.value || "").trim();
+    }
+
+    function contractSubTypeDropdownOptions() {
+      const rows = contractTypeRowsForSelection();
+      const seen = new Set();
+      return rows.map(row => {
+        const value = subTypeForRow(row);
+        if (!value) return null;
+        const key = normalizeDirectoryValue(value);
+        if (seen.has(key)) return null;
+        seen.add(key);
+        return {
+          value,
+          primary: value,
+          secondary: typeGroupForRow(row),
+          description: `${row["Contract Classification EN"] || ""} / ${row["Contract Classification TH"] || ""}`
+        };
+      }).filter(Boolean);
+    }
+
+    function selectedContractGroup() {
+      return "";
+    }
+
+    function groupContractDropdownOptions() {
+      return [];
+    }
+
+    function effectiveAddCaseContractType() {
+      return selectedContractSubType() || selectedContractTypeGroup();
+    }
+
+    function templateMatchesAddCaseFilters(item) {
+      const classification = selectedContractClassification();
+      const typeGroup = selectedContractTypeGroup();
+      const subType = selectedContractSubType();
+      const itemType = String(item?.type || "").trim();
+      const itemInfo = contractTypeMasterV2Match(itemType);
+      const itemClassification = itemInfo?.["Contract Classification EN"]
+        || (item.accessLevel === "Confidential" ? "Confidential" : "Day-to-day Work");
+      if (classification && itemClassification !== classification) return false;
+      if (typeGroup) {
+        const itemTypeGroup = itemInfo ? typeGroupForRow(itemInfo) : itemType;
+        if (!contractTypeValuesMatch(itemTypeGroup, typeGroup) && !contractTypeValuesMatch(itemType, typeGroup)) return false;
+      }
+      if (subType) {
+        const itemSubType = itemInfo ? (subTypeForRow(itemInfo) || typeGroupForRow(itemInfo)) : itemType;
+        if (!contractTypeValuesMatch(itemSubType, subType) && !contractTypeValuesMatch(itemType, subType)) return false;
+      }
+      return true;
+    }
+
+    function contractNameDropdownOptions() {
+      return getContractFormCatalog()
+        .filter(templateMatchesAddCaseFilters)
+        .map(item => {
+          const access = item.accessLevel || accessLevelForContractType(item.type) || "Normal";
+          return {
+            value: item.selectionLabel || item.name,
+            primary: item.name,
+            secondary: [item.department, item.type, item.fixedSla ? `SLA ${item.fixedSla}` : "", access].filter(Boolean).join(" · "),
+            description: [item.group || item.category, item.vendor ? `Vendor: ${item.vendor}` : "", item.contractId ? `Contract ID: ${item.contractId}` : ""].filter(Boolean).join("\\n")
+          };
+        })
+        .sort((a, b) => String(a.primary || "").localeCompare(String(b.primary || "")));
+    }""",
+    )
     html = html.replace(
         """      const totalSla = totalSlaFor(workType);
       const lockedInDate = todayInputValue();""",
@@ -1716,14 +2105,14 @@ def main():
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
-      attachEditableDropdown("addContractGroup", groupContractDropdownOptions, () => syncAddCaseGroupFilter(), {
-        ariaLabel: "Group Contract / กลุ่มสัญญา"
+      attachEditableDropdown("addContractType", contractTypeDropdownOptions, () => syncAddCaseLinkedFields("type"), {
+        ariaLabel: "Type of Contract / ประเภทสัญญา"
+      });
+      attachEditableDropdown("addContractSubType", contractSubTypeDropdownOptions, () => syncAddCaseLinkedFields("subType"), {
+        ariaLabel: "Sub Type of Contract / ประเภทย่อยของสัญญา"
       });
       attachEditableDropdown("addContractName", contractNameDropdownOptions, () => syncAddCaseLinkedFields("name"), {
         ariaLabel: "Contract Name / ชื่อสัญญา"
-      });
-      attachEditableDropdown("addContractType", contractTypeDropdownOptions, () => syncAddCaseLinkedFields("type"), {
-        ariaLabel: "Type of Contract / ประเภทสัญญา"
       });
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
     )
@@ -1733,8 +2122,9 @@ def main():
       fillDatalist("contractNameOptions", contractCatalog.map(item => ({ value: item.name, label: `${item.type} · ${item.workType}` })));""",
         """      const contractCatalog = getContractFormCatalog();
       const contractTypes = orderedUniqueList(contractCatalog.map(item => item.type).filter(Boolean));
-      fillDatalist("contractGroupOptions", orderedUniqueList(contractCatalog.map(item => item.group || item.category).filter(Boolean)));
-      fillDatalist("contractNameOptions", contractCatalog.map(item => ({ value: item.selectionLabel || item.name, label: [item.group || item.category, item.type, item.fixedSla ? `SLA ${item.fixedSla}` : ""].filter(Boolean).join(" · ") })));""",
+      fillDatalist("contractTypeOptions", contractTypeDropdownOptions().map(item => ({ value: item.value, label: item.secondary || "" })));
+      fillDatalist("contractSubTypeOptions", contractSubTypeDropdownOptions().map(item => ({ value: item.value, label: item.secondary || "" })));
+      fillDatalist("contractNameOptions", contractNameDropdownOptions().map(item => ({ value: item.value, label: item.secondary || "" })));""",
     )
     html = html.replace(
         """        <button class="nav-button" data-view="user" title="User Case Action">
@@ -1924,6 +2314,144 @@ def main():
       }
       renderAddCaseSmartSummary();
     }""",
+    )
+    html = replace_between(
+        html,
+        """    function syncAddCaseLinkedFields(source = "init") {""",
+        """
+
+    function syncAddCaseSystemFields() {""",
+        """    function syncAddCaseGroupFilter() {
+      syncAddCaseLinkedFields("classification");
+    }
+
+    function syncAddCaseLinkedFields(source = "init") {
+      const form = document.querySelector("#addCaseForm");
+      if (!form) return;
+      const nameInput = document.querySelector("#addContractName");
+      const typeInput = document.querySelector("#addContractType");
+      const subTypeInput = document.querySelector("#addContractSubType");
+      const workInput = document.querySelector("#addWorkType");
+      const accessInput = document.querySelector("#addAccessLevel");
+      const departmentInput = document.querySelector("#addDepartment");
+      const vendorInput = document.querySelector("#addVendor");
+      if (!nameInput || !typeInput || !subTypeInput || !workInput) return;
+
+      setContractClassificationButtons(selectedContractClassification());
+
+      if (source === "classification") {
+        typeInput.value = "";
+        subTypeInput.value = "";
+        nameInput.value = "";
+        if (vendorInput) vendorInput.value = "";
+        workInput.value = "";
+      }
+
+      if (source === "type") {
+        subTypeInput.value = "";
+        nameInput.value = "";
+        if (vendorInput) vendorInput.value = "";
+        workInput.value = "";
+      }
+
+      if (source === "subType") {
+        nameInput.value = "";
+        if (vendorInput) vendorInput.value = "";
+      }
+
+      const selectedName = String(nameInput.value || "").trim();
+      const template = contractTemplateFor(selectedName);
+      if (source === "name" && template) {
+        const templateInfo = contractTypeMasterV2Match(template.type);
+        if (templateInfo) {
+          const templateClassification = templateInfo["Contract Classification EN"] || selectedContractClassification();
+          const classificationInput = document.querySelector("#addContractClassification");
+          if (classificationInput) classificationInput.value = templateClassification;
+          setContractClassificationButtons(templateClassification);
+          typeInput.value = typeGroupForRow(templateInfo) || template.type || "";
+          subTypeInput.value = subTypeForRow(templateInfo) || "";
+        } else if (!typeInput.value) {
+          typeInput.value = template.type || "";
+          subTypeInput.value = "";
+        }
+        workInput.value = template.type || effectiveAddCaseContractType() || "Other";
+        if (departmentInput && template.department) {
+          departmentInput.value = template.department;
+          syncDepartmentOwnerOptions(true);
+          refreshEditableDropdown("addOwner");
+        }
+        if (vendorInput) vendorInput.value = template.vendor || "";
+      }
+
+      const typeGroup = selectedContractTypeGroup();
+      const subOptions = contractSubTypeDropdownOptions();
+      const selectedSubType = selectedContractSubType();
+      subTypeInput.disabled = !typeGroup || subOptions.length === 0;
+      subTypeInput.placeholder = !typeGroup
+        ? "Waiting for Type of Contract / รอประเภทสัญญา"
+        : subOptions.length
+          ? "Select Sub Type / เลือกประเภทย่อย"
+          : "No Sub Type for this Type / ไม่มีประเภทย่อย";
+      if (!subOptions.length && source !== "name") subTypeInput.value = "";
+      if (selectedSubType && !subOptions.some(item => contractTypeValuesMatch(item.value, selectedSubType))) {
+        subTypeInput.value = "";
+      }
+
+      refreshEditableDropdown("addContractType");
+      refreshEditableDropdown("addContractSubType");
+      refreshEditableDropdown("addContractName");
+
+      const effectiveType = effectiveAddCaseContractType();
+      workInput.value = template?.type || effectiveType || "";
+
+      if (!typeGroup) {
+        if (accessInput) accessInput.value = classificationAccessLevelFor(selectedContractClassification());
+        setLinkedFlowStatus("linkedTypeStatus", "Select Type to calculate SLA · เลือกประเภทเพื่อคำนวณ SLA", "waiting");
+        setLinkedFlowStatus("linkedSubTypeStatus", "Waiting for Type · รอประเภทสัญญา", "waiting");
+        setLinkedFlowStatus("linkedNameStatus", "Filtered by Type and Sub Type · กรองจากประเภทที่เลือก", "waiting");
+        syncAddCaseSystemFields();
+        return;
+      }
+
+      const accessLevel = accessLevelForAddCase(template, effectiveType || typeGroup);
+      if (accessInput) accessInput.value = accessLevel;
+      setAccessLevelBadge(accessLevel);
+      setLinkedFlowStatus("linkedAccessStatus", `${selectedContractClassification()} · ${classificationThaiFor(selectedContractClassification())}`, accessLevel === "Confidential" ? "waiting" : "linked");
+      setLinkedFlowStatus("linkedTypeStatus", "Type selected · SLA from master data", "linked");
+      setLinkedFlowStatus(
+        "linkedSubTypeStatus",
+        subOptions.length
+          ? (selectedContractSubType() ? "Sub Type selected · กรองชื่อสัญญาแล้ว" : `${subOptions.length} Sub Type option(s) · เลือกประเภทย่อยเพื่อค้นหา`)
+          : "No Sub Type · ใช้ Type นี้คำนวณ SLA",
+        selectedContractSubType() || !subOptions.length ? "linked" : "waiting"
+      );
+      const nameCount = contractNameDropdownOptions().length;
+      setLinkedFlowStatus(
+        "linkedNameStatus",
+        selectedName
+          ? (template ? "Contract Name linked · เชื่อมข้อมูลชื่อสัญญาแล้ว" : "New Contract Name · ชื่อสัญญาใหม่")
+          : `${nameCount} Contract Name option(s) · เลือกชื่อสัญญา`,
+        selectedName ? "linked" : "waiting"
+      );
+
+      syncAddCaseSystemFields();
+    }""",
+    )
+    html = html.replace(
+        """      const workType = String(form.elements.workType?.value || "").trim();
+      const contractType = String(form.elements.type?.value || "").trim();""",
+        """      const workType = String(form.elements.workType?.value || effectiveAddCaseContractType() || "").trim();
+      const contractType = String(effectiveAddCaseContractType() || form.elements.type?.value || "").trim();""",
+    )
+    html = html.replace(
+        """      const workType = String(form.get("workType") || "Other").trim();
+      const contractType = String(form.get("type") || "").trim();""",
+        """      const workType = String(form.get("workType") || form.get("subType") || form.get("type") || "Other").trim();
+      const contractType = String(form.get("subType") || form.get("type") || "").trim();""",
+    )
+    html = html.replace(
+        """        type: form.get("type"),""",
+        """        type: contractType,""",
     )
     html = html.replace(
         """      const accessLevel = String(form.get("accessLevel") || accessLevelForContractType(contractType) || "Normal").trim();
@@ -2325,7 +2853,7 @@ def main():
         syncAddCaseSystemFields();""",
     )
     html = html.replace(
-        """    function syncAddCaseLinkedFields(source = "init") {""",
+        """    function syncAddCaseLinkedFields__legacy_group_insertion_disabled(source = "init") {""",
         """    function syncAddCaseGroupFilter() {
       const groupInput = document.querySelector("#addContractGroup");
       const nameInput = document.querySelector("#addContractName");
@@ -3370,13 +3898,21 @@ def main():
     )
     html = html.replace(
         """    document.querySelector("#addContractName")?.addEventListener("input", () => {""",
-        """    document.querySelector("#addContractGroup")?.addEventListener("input", () => {
-      resetInitialDueDateOverride();
-      syncAddCaseGroupFilter();
+        """    document.querySelectorAll("[data-classification-value]").forEach(button => {
+      button.addEventListener("click", () => {
+        const input = document.querySelector("#addContractClassification");
+        if (input) input.value = button.dataset.classificationValue || "Day-to-day Work";
+        resetInitialDueDateOverride();
+        syncAddCaseLinkedFields("classification");
+      });
     });
-    document.querySelector("#addContractGroup")?.addEventListener("change", () => {
+    document.querySelector("#addContractSubType")?.addEventListener("input", () => {
       resetInitialDueDateOverride();
-      syncAddCaseGroupFilter();
+      syncAddCaseLinkedFields("subType");
+    });
+    document.querySelector("#addContractSubType")?.addEventListener("change", () => {
+      resetInitialDueDateOverride();
+      syncAddCaseLinkedFields("subType");
     });
     document.querySelector("#addContractName")?.addEventListener("input", () => {""",
     )
@@ -3400,6 +3936,15 @@ def main():
         """      if (form.id === "addCaseForm" && !validateAddCaseContractId()) return;
       if (form.id === "updateStatusForm" && !validateUpdateReasonBeforeAction()) return;
       openActionConfirmModal(form);""",
+    )
+    html = html.replace(
+        """          ["Contract Owner", value("owner")],
+          ["Type of Contract", value("type")],
+          ["SLA", `${value("sla", "0")} Working Days`],""",
+        """          ["Contract Owner", value("owner")],
+          ["Type of Contract", value("type")],
+          ["Sub Type of Contract", value("subType"), true],
+          ["SLA", `${value("sla", "0")} Working Days`],""",
     )
     html = html.replace(
         """    function openStatusEmailClient() {
