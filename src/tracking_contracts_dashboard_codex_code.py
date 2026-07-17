@@ -12,6 +12,7 @@ ROOT = Path("/Users/tspphupha/Documents/Codex/2026-07-11/files-mentioned-by-the-
 SOURCE_HTML = Path("/Users/tspphupha/Downloads/tracking_contracts_dashboard_person_mixed_y_r_mockup_code.txt")
 SOURCE_XLSX = Path("/Users/tspphupha/Downloads/Contract_SLA_Input_With_Contract_ID_Design.xlsx")
 SOURCE_CONTRACT_MASTER_CSV = ROOT / "outputs" / "contract_master_sla_separated_2_export.csv"
+SOURCE_CONTRACT_TYPE_MASTER_V2_CSV = Path("/Users/tspphupha/Downloads/contract_type_master_v2.csv")
 OUTPUT_HTML = ROOT / "outputs" / "tracking_contracts_dashboard_real_excel_dropdowns.html"
 OUTPUT_CONTRACTS_CSV = ROOT / "outputs" / "tracking_contracts_contracts_db.csv"
 OUTPUT_LOGS_CSV = ROOT / "outputs" / "tracking_contracts_log_db.csv"
@@ -19,6 +20,7 @@ OUTPUT_TYPE_MASTER_CSV = ROOT / "outputs" / "tracking_contracts_type_master_db.c
 OUTPUT_DEPARTMENT_MASTER_CSV = ROOT / "outputs" / "tracking_contracts_department_master_db.csv"
 OUTPUT_PEOPLE_MASTER_CSV = ROOT / "outputs" / "tracking_contracts_people_master_db.csv"
 OUTPUT_CONTRACT_TEMPLATE_CSV = ROOT / "outputs" / "tracking_contracts_contract_template_master_db.csv"
+OUTPUT_CONTRACT_TYPE_MASTER_V2_CSV = ROOT / "outputs" / "contract_type_master_v2.csv"
 OUTPUT_CODE = ROOT / "outputs" / "tracking_contracts_dashboard_codex_code.py"
 OUTPUT_README = ROOT / "outputs" / "tracking_contracts_database_readme.txt"
 OUTPUT_ATTACHMENT_APPS_SCRIPT = ROOT / "outputs" / "tracking_contracts_attachment_upload_apps_script.js"
@@ -147,6 +149,28 @@ def read_contract_master_rows():
         ]
 
 
+def read_contract_type_master_v2_rows():
+    if not SOURCE_CONTRACT_TYPE_MASTER_V2_CSV.exists():
+        return []
+    with SOURCE_CONTRACT_TYPE_MASTER_V2_CSV.open("r", encoding="utf-8-sig", newline="") as handle:
+        rows = []
+        for row in csv.DictReader(handle):
+            normalized = {clean(key): clean(value) for key, value in row.items()}
+            if normalized.get("Type of Contract EN") or normalized.get("Sub Type of Contract EN"):
+                rows.append(normalized)
+        classification_order = {
+            "day-to-day work": 0,
+            "confidential": 1,
+        }
+        return sorted(rows, key=lambda item: (
+            classification_order.get(item.get("Contract Classification EN", "").lower(), 9),
+            number(item.get("Type Sort Order"), 999),
+            number(item.get("Sub Type Sort Order"), 999),
+            item.get("Type of Contract EN", ""),
+            item.get("Sub Type of Contract EN", ""),
+        ))
+
+
 def contract_group(row):
     return (
         row.get("Group Contract / กลุ่มสัญญา")
@@ -239,6 +263,7 @@ def main():
         row.setdefault("Active", "Yes")
     action_rows = records(action_sla_df)
     contract_master_rows = read_contract_master_rows()
+    contract_type_master_v2_rows = read_contract_type_master_v2_rows()
     rules_rows = [
         [clean(cell) for cell in row]
         for row in rules_raw_df.fillna("").values.tolist()
@@ -544,6 +569,7 @@ def main():
             "Contract Register": register_rows,
             "Contract SLA Input": sla_input_rows,
             "Contract Type Master": type_rows,
+            "Contract Type Master V2": contract_type_master_v2_rows,
             "Fix Action SLA": action_rows,
             "Contract ID Rules": rules_rows,
         },
@@ -609,7 +635,7 @@ def main():
         html,
         "    const contractInputCatalog = [",
         "\n    ];\n    const requestedRole",
-        f"    const contractInputCatalog = {js(contract_catalog)};\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
+        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
     )
     html = html.replace(
         "    const requestedRole",
@@ -775,6 +801,59 @@ def main():
         """<small class="linked-flow-status" id="linkedNameStatus">Select Contract Name · เลือกชื่อสัญญา</small>""",
     )
     html = html.replace(
+        """                    <input type="hidden" name="workType" id="addWorkType" value="">
+                  </div>
+
+                  <div class="case-form-section-title"><span class="section-index">2</span>Ownership <small>ผู้รับผิดชอบสัญญา</small></div>""",
+        """                    <input type="hidden" name="workType" id="addWorkType" value="">
+                  </div>
+
+                  <div class="add-case-smart-summary" id="addCaseSmartSummary" aria-live="polite">
+                    <div class="summary-cell">
+                      <span>Group Contract</span>
+                      <strong id="addSummaryGroup">All groups</strong>
+                      <small id="addSummaryGroupTh">แสดงทุกกลุ่ม</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>Classification</span>
+                      <strong id="addSummaryClassification">Waiting</strong>
+                      <small id="addSummaryClassificationTh">รอข้อมูลประเภทสัญญา</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>Type / Sub Type</span>
+                      <strong id="addSummaryType">-</strong>
+                      <small id="addSummarySubType">-</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>SLA / Due</span>
+                      <strong id="addSummarySla">-</strong>
+                      <small id="addSummaryDue">-</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>Department</span>
+                      <strong id="addSummaryDepartment">-</strong>
+                      <small>แผนก / ร้านอาหาร</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>Vendor / Counter party</span>
+                      <strong id="addSummaryVendor">-</strong>
+                      <small>ผู้ขาย / คู่สัญญา</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>Contract Owner</span>
+                      <strong id="addSummaryOwner">-</strong>
+                      <small>เจ้าของสัญญา</small>
+                    </div>
+                    <div class="summary-cell">
+                      <span>New Contract ID</span>
+                      <strong id="addSummaryContractId">-</strong>
+                      <small>รันตาม Department + Access</small>
+                    </div>
+                  </div>
+
+                  <div class="case-form-section-title"><span class="section-index">2</span>Ownership <small>ผู้รับผิดชอบสัญญา</small></div>""",
+    )
+    html = html.replace(
         """                <datalist id="contractNameOptions"></datalist>""",
         """                <datalist id="contractGroupOptions"></datalist>
                 <datalist id="contractNameOptions"></datalist>""",
@@ -838,6 +917,63 @@ def main():
       margin-top: 0;
       font-size: 10px;
       line-height: 1.25;
+    }
+
+    .add-case-smart-summary {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcf8;
+    }
+
+    .add-case-smart-summary .summary-cell {
+      min-width: 0;
+      padding: 8px 9px;
+      border: 1px solid #e4e8d8;
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .add-case-smart-summary span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .add-case-smart-summary strong {
+      display: block;
+      margin-top: 3px;
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .add-case-smart-summary small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 960px) {
+      .add-case-smart-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .add-case-smart-summary {
+        grid-template-columns: 1fr;
+      }
     }""",
     )
     html = html.replace(
@@ -864,6 +1000,96 @@ def main():
       badge.classList.toggle("normal", normalized === "Normal");
       badge.classList.toggle("confidential", normalized === "Confidential");
       badge.classList.toggle("waiting", !normalized);
+    }
+
+    function contractTypeMasterV2Display(row, level = "sub") {
+      if (!row) return "";
+      const enKey = level === "type" ? "Type of Contract EN" : "Sub Type of Contract EN";
+      const thKey = level === "type" ? "Type of Contract TH" : "Sub Type of Contract TH";
+      const en = String(row[enKey] || row["Type of Contract EN"] || "").trim();
+      const th = String(row[thKey] || row["Type of Contract TH"] || "").trim();
+      return [en, th].filter(Boolean).join(" | ");
+    }
+
+    function contractTypeMasterV2Candidates(row) {
+      if (!row) return [];
+      return [
+        contractTypeMasterV2Display(row, "sub"),
+        contractTypeMasterV2Display(row, "type"),
+        row["Sub Type of Contract EN"],
+        row["Sub Type of Contract TH"],
+        row["Type of Contract EN"],
+        row["Type of Contract TH"]
+      ].map(value => String(value || "").trim()).filter(Boolean);
+    }
+
+    function contractTypeMasterV2Match(typeValue = "") {
+      const normalized = normalizeDirectoryValue(typeValue);
+      if (!normalized) return null;
+      const parts = String(typeValue || "")
+        .split(/[|/·•,;()\\[\\]–—-]+/)
+        .map(normalizeDirectoryValue)
+        .filter(Boolean);
+      const scoreRow = row => {
+        const weightedCandidates = [
+          [contractTypeMasterV2Display(row, "sub"), 120],
+          [row["Sub Type of Contract EN"], 115],
+          [contractTypeMasterV2Display(row, "type"), 105],
+          [row["Type of Contract EN"], 100],
+          [row["Sub Type of Contract TH"], 90],
+          [row["Type of Contract TH"], 80]
+        ].map(([value, weight]) => [normalizeDirectoryValue(value), weight])
+          .filter(([value]) => value);
+        return weightedCandidates.reduce((best, [candidate, weight]) => {
+          if (candidate === normalized || parts.includes(candidate)) return Math.max(best, weight + 100);
+          if (normalized.includes(candidate)) return Math.max(best, weight + 20);
+          if (candidate.includes(normalized)) return Math.max(best, weight + 5);
+          return best;
+        }, 0);
+      };
+      return contractTypeMasterV2
+        .map(row => ({ row, score: scoreRow(row) }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score)[0]?.row || null;
+    }
+
+    function setAddCaseSummaryText(id, value, fallback = "-") {
+      const node = document.querySelector(`#${id}`);
+      if (!node) return;
+      node.textContent = value || fallback;
+    }
+
+    function renderAddCaseSmartSummary() {
+      const form = document.querySelector("#addCaseForm");
+      if (!form) return;
+      const selectedTemplate = contractTemplateFor(String(form.elements.name?.value || "").trim());
+      const group = selectedContractGroup() || selectedTemplate?.group || selectedTemplate?.category || "";
+      const type = String(form.elements.type?.value || selectedTemplate?.type || "").trim();
+      const typeInfo = contractTypeMasterV2Match(type);
+      const classificationEn = typeInfo?.["Contract Classification EN"]
+        || (selectedTemplate?.accessLevel === "Confidential" ? "Confidential" : "");
+      const classificationTh = typeInfo?.["Contract Classification TH"]
+        || (classificationEn === "Confidential" ? "สัญญาลับ" : "");
+      const typeDisplay = typeInfo
+        ? contractTypeMasterV2Display(typeInfo, "type")
+        : type;
+      const subTypeDisplay = typeInfo
+        ? contractTypeMasterV2Display(typeInfo, "sub")
+        : "";
+      const sla = String(form.elements.sla?.value || "").trim();
+      const due = String(form.elements.due?.value || "").trim();
+      setAddCaseSummaryText("addSummaryGroup", group || "All groups");
+      setAddCaseSummaryText("addSummaryGroupTh", group ? "เลือกกลุ่มแล้ว" : "แสดงทุกกลุ่ม");
+      setAddCaseSummaryText("addSummaryClassification", classificationEn || "Waiting");
+      setAddCaseSummaryText("addSummaryClassificationTh", classificationTh || "รอข้อมูลประเภทสัญญา");
+      setAddCaseSummaryText("addSummaryType", typeDisplay || "-");
+      setAddCaseSummaryText("addSummarySubType", subTypeDisplay || "No sub type");
+      setAddCaseSummaryText("addSummarySla", sla ? `${sla} Working Days` : "-");
+      setAddCaseSummaryText("addSummaryDue", due ? `Due ${due}` : "รอการคำนวณวันครบกำหนด");
+      setAddCaseSummaryText("addSummaryDepartment", String(form.elements.department?.value || selectedTemplate?.department || "").trim());
+      setAddCaseSummaryText("addSummaryVendor", String(form.elements.vendor?.value || selectedTemplate?.vendor || "").trim());
+      setAddCaseSummaryText("addSummaryOwner", String(form.elements.owner?.value || "").trim());
+      setAddCaseSummaryText("addSummaryContractId", document.querySelector("#newCaseId")?.textContent || "-");
     }""",
     )
     html = html.replace(
@@ -1212,6 +1438,14 @@ def main():
     function contractTypeDescriptionFor(typeValue) {
       const normalized = normalizeDirectoryValue(typeValue);
       if (!normalized) return "";
+      const typeInfo = contractTypeMasterV2Match(typeValue);
+      if (typeInfo) {
+        return [
+          `${typeInfo["Contract Classification EN"] || ""} / ${typeInfo["Contract Classification TH"] || ""}`.trim(),
+          contractTypeMasterV2Display(typeInfo, "type"),
+          contractTypeMasterV2Display(typeInfo, "sub")
+        ].filter(Boolean).join("\\n");
+      }
       const rows = activeMasterContractTypes();
       const match = rows.find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalized);
       return match?.["Description / คำอธิบาย"] || "";
@@ -1220,6 +1454,8 @@ def main():
     function contractTypeCategoryFor(typeValue) {
       const normalized = normalizeDirectoryValue(typeValue);
       if (!normalized) return "";
+      const typeInfo = contractTypeMasterV2Match(typeValue);
+      if (typeInfo) return typeInfo["Contract Classification EN"] || "";
       const rows = activeMasterContractTypes();
       const match = rows.find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalized);
       return match?.Category || "";
@@ -1253,19 +1489,44 @@ def main():
     }
 
     function accessLevelForAddCase(template, contractType) {
-      return template?.accessLevel || accessLevelForContractType(contractType);
+      const typeAccessLevel = accessLevelForContractType(contractType);
+      if (typeAccessLevel === "Confidential" || template?.accessLevel === "Confidential") return "Confidential";
+      return typeAccessLevel || template?.accessLevel || "Normal";
     }
 
     function contractTypeDropdownOptions() {
+      const seen = new Set();
+      const options = [];
+      contractTypeMasterV2.forEach(row => {
+        const value = contractTypeMasterV2Display(row, "sub") || contractTypeMasterV2Display(row, "type");
+        const key = normalizeDirectoryValue(value);
+        if (!value || seen.has(key)) return;
+        seen.add(key);
+        const classification = [row["Contract Classification EN"], row["Contract Classification TH"]].filter(Boolean).join(" / ");
+        const typeGroup = contractTypeMasterV2Display(row, "type");
+        options.push({
+          value,
+          primary: value,
+          secondary: [classification, typeGroup && typeGroup !== value ? typeGroup : ""].filter(Boolean).join(" · "),
+          description: [typeGroup, contractTypeMasterV2Display(row, "sub")].filter(Boolean).join("\\n")
+        });
+      });
       const rows = realWorkbookData?.sheets?.["Contract Type Master"] || [];
-      return rows
+      rows
         .filter(row => row["Type of Contract"])
-        .map(row => ({
-          value: row["Type of Contract"],
-          primary: row["Type of Contract"],
-          secondary: row.Category || "Contract Type",
-          description: row["Description / คำอธิบาย"] || ""
-        }));
+        .forEach(row => {
+          const value = row["Type of Contract"];
+          const key = normalizeDirectoryValue(value);
+          if (seen.has(key)) return;
+          seen.add(key);
+          options.push({
+            value,
+            primary: value,
+            secondary: row.Category || "Contract Type",
+            description: row["Description / คำอธิบาย"] || ""
+          });
+        });
+      return options;
     }
 
     function selectedContractGroup() {
@@ -1641,6 +1902,28 @@ def main():
       const form = document.querySelector("#addCaseForm");
       if (!form) return;
       refreshNewCaseIdPreview();""",
+    )
+    html = html.replace(
+        """        if (preview) preview.textContent = "Waiting for Type of Contract · รอข้อมูลประเภทสัญญาเพื่อคำนวณ SLA และ Due Date";
+        return;""",
+        """        if (preview) preview.textContent = "Waiting for Type of Contract · รอข้อมูลประเภทสัญญาเพื่อคำนวณ SLA และ Due Date";
+        renderAddCaseSmartSummary();
+        return;""",
+    )
+    html = html.replace(
+        """      if (preview) {
+        const selectedDue = dueInput?.value || systemDue;
+        const adjusted = Boolean(selectedDue && systemDue && selectedDue !== systemDue);
+        preview.innerHTML = `Type of Contract: ${escapeHtml(contractType)} · SLA ${sla} Working Days · System Due ${escapeHtml(systemDue)}${adjusted ? ` · Initial Due Date adjusted to ${escapeHtml(selectedDue)}` : " · Initial Due Date can be edited before Add Case"}`;
+      }
+    }""",
+        """      if (preview) {
+        const selectedDue = dueInput?.value || systemDue;
+        const adjusted = Boolean(selectedDue && systemDue && selectedDue !== systemDue);
+        preview.innerHTML = `Type of Contract: ${escapeHtml(contractType)} · SLA ${sla} Working Days · System Due ${escapeHtml(systemDue)}${adjusted ? ` · Initial Due Date adjusted to ${escapeHtml(selectedDue)}` : " · Initial Due Date can be edited before Add Case"}`;
+      }
+      renderAddCaseSmartSummary();
+    }""",
     )
     html = html.replace(
         """      const accessLevel = String(form.get("accessLevel") || accessLevelForContractType(contractType) || "Normal").trim();
@@ -4211,6 +4494,20 @@ def main():
     write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Active"])
     write_csv(OUTPUT_PEOPLE_MASTER_CSV, people_master_rows, ["company", "department", "name", "email", "active"])
     write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"])
+    write_csv(
+        OUTPUT_CONTRACT_TYPE_MASTER_V2_CSV,
+        contract_type_master_v2_rows,
+        [
+            "Contract Classification EN",
+            "Contract Classification TH",
+            "Type of Contract EN",
+            "Type of Contract TH",
+            "Sub Type of Contract EN",
+            "Sub Type of Contract TH",
+            "Type Sort Order",
+            "Sub Type Sort Order",
+        ],
+    )
     OUTPUT_ATTACHMENT_APPS_SCRIPT.write_text(
         f"""const DEFAULT_FOLDER_ID = "{ATTACHMENT_CLOUD_FOLDER_ID}";
 const EMAIL_SENDER_NAME = "T23 Contract Tracking";
