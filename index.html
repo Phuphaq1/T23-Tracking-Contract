@@ -6315,8 +6315,8 @@
                         <span class="linked-flow-number">4</span>
                         <span class="bilingual-label"><span>Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
                       </span>
-                      <input class="input" name="name" id="addContractName" list="contractNameOptions" required autocomplete="off" placeholder="Select Contract Name / เลือกชื่อสัญญา">
-                      <small class="linked-flow-status waiting" id="linkedNameStatus">Filtered by Type and Sub Type · กรองจากประเภทที่เลือก</small>
+                      <input class="input" name="name" id="addContractName" required autocomplete="off" placeholder="Enter Contract Name / ระบุชื่อสัญญา">
+                      <small class="linked-flow-status waiting" id="linkedNameStatus">Enter Contract Name · ระบุชื่อสัญญา</small>
                     </label>
                     <label class="form-field full linked-flow-field" data-flow-order="5">
                       <span class="linked-flow-head">
@@ -6434,9 +6434,9 @@
                   <label class="form-field update-contract-select-field">
                     <span class="update-numbered-heading">
                       <span class="section-index" aria-hidden="true">1</span>
-                      <span class="bilingual-stack update-bilingual-label"><span class="en">Contract ID / Contract Name / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span></span><span class="th">รหัสสัญญา / ชื่อสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                      <span class="bilingual-stack update-bilingual-label"><span class="en">Contract ID / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span> / Contract Name / Department</span><span class="th">รหัสสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span> / ชื่อสัญญา / แผนก</span></span>
                     </span>
-                    <select class="select" name="contractId" id="updateContract" required aria-label="Contract ID / Contract Name / Type of Contract / รหัสสัญญา / ชื่อสัญญา / ประเภทสัญญา"></select>
+                    <select class="select" name="contractId" id="updateContract" required aria-label="Contract ID / Type of Contract / Contract Name / Department / รหัสสัญญา / ประเภทสัญญา / ชื่อสัญญา / แผนก"></select>
                   </label>
                   <div class="form-summary compact-dropdown-detail update-contract-detail" id="updateContractSummary"></div>
 
@@ -6585,8 +6585,8 @@
                 <form class="form-grid case-form reference-compact-form" id="closeCaseForm">
                   <div class="case-form-section-title"><span class="section-index">1</span>Select contract <small>ตรวจสอบข้อมูลก่อนปิดเคส</small></div>
                   <label class="form-field compact-dropdown-field close-contract-select-field">
-                    <span class="bilingual-label"><span>Contract ID / Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>รหัสสัญญา / ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
-                    <select class="select" name="contractId" id="closeContract" required></select>
+                    <span class="bilingual-label"><span>Contract ID / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span> / Contract Name / Department</span><span>รหัสสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span> / ชื่อสัญญา / แผนก</span></span>
+                    <select class="select" name="contractId" id="closeContract" required aria-label="Contract ID / Type of Contract / Contract Name / Department / รหัสสัญญา / ประเภทสัญญา / ชื่อสัญญา / แผนก"></select>
                   </label>
                   <div class="form-summary compact-dropdown-detail close-contract-detail" id="closeContractSummary"></div>
 
@@ -6700,8 +6700,8 @@
                 <form class="form-grid case-form reference-compact-form" id="dueDateAdjustmentForm">
                   <div class="case-form-section-title"><span class="section-index">1</span>Select contract <small>เลือกสัญญาที่ต้องการขอปรับวัน</small></div>
                   <label class="form-field compact-dropdown-field due-contract-select-field">
-                    <span class="bilingual-label"><span>Contract ID / Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>รหัสสัญญา / ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
-                    <select class="select" name="contractId" id="adjustDueContract" required></select>
+                    <span class="bilingual-label"><span>Contract ID / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span> / Contract Name / Department</span><span>รหัสสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span> / ชื่อสัญญา / แผนก</span></span>
+                    <select class="select" name="contractId" id="adjustDueContract" required aria-label="Contract ID / Type of Contract / Contract Name / Department / รหัสสัญญา / ประเภทสัญญา / ชื่อสัญญา / แผนก"></select>
                   </label>
                   <div class="form-summary compact-dropdown-detail due-contract-detail" id="adjustDueContractSummary"></div>
 
@@ -7924,66 +7924,6 @@
 
     const slaDetailConfig = [
       [
-            "Rental Agreement|Submit to Review|Any",
-            "Rental Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Rental Agreement|Return|Any",
-            "Rental Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Rental Agreement|Resubmit|Any",
-            "Rental Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Rental Agreement|Forward|Any",
-            "Rental Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Rental Agreement|Approved|Any",
-            "Rental Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
             "Loan Agreement|Submit to Review|Any",
             "Loan Agreement",
             1,
@@ -8034,426 +7974,6 @@
       [
             "Loan Agreement|Approved|Any",
             "Loan Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Memorandum of Understanding|Submit to Review|Any",
-            "Memorandum of Understanding",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Memorandum of Understanding|Return|Any",
-            "Memorandum of Understanding",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Memorandum of Understanding|Resubmit|Any",
-            "Memorandum of Understanding",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Memorandum of Understanding|Forward|Any",
-            "Memorandum of Understanding",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Memorandum of Understanding|Approved|Any",
-            "Memorandum of Understanding",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Service Agreement|Submit to Review|Any",
-            "Service Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Service Agreement|Return|Any",
-            "Service Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Service Agreement|Resubmit|Any",
-            "Service Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Service Agreement|Forward|Any",
-            "Service Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Service Agreement|Approved|Any",
-            "Service Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Confidentiality Agreement|Submit to Review|Any",
-            "Confidentiality Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Confidentiality Agreement|Return|Any",
-            "Confidentiality Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Confidentiality Agreement|Resubmit|Any",
-            "Confidentiality Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Confidentiality Agreement|Forward|Any",
-            "Confidentiality Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Confidentiality Agreement|Approved|Any",
-            "Confidentiality Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Term Sheet|Submit to Review|Any",
-            "Term Sheet",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Term Sheet|Return|Any",
-            "Term Sheet",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Term Sheet|Resubmit|Any",
-            "Term Sheet",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Term Sheet|Forward|Any",
-            "Term Sheet",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Term Sheet|Approved|Any",
-            "Term Sheet",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Submit to Review|Any",
-            "Mergers and Acquisitions Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Return|Any",
-            "Mergers and Acquisitions Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Resubmit|Any",
-            "Mergers and Acquisitions Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Forward|Any",
-            "Mergers and Acquisitions Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Approved|Any",
-            "Mergers and Acquisitions Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Management Agreement|Submit to Review|Any",
-            "Management Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Management Agreement|Return|Any",
-            "Management Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Management Agreement|Resubmit|Any",
-            "Management Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Management Agreement|Forward|Any",
-            "Management Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Management Agreement|Approved|Any",
-            "Management Agreement",
-            5,
-            "Approved",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
-      ],
-      [
-            "Lease Agreement|Submit to Review|Any",
-            "Lease Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Lease Agreement|Return|Any",
-            "Lease Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Lease Agreement|Resubmit|Any",
-            "Lease Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Lease Agreement|Forward|Any",
-            "Lease Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Lease Agreement|Approved|Any",
-            "Lease Agreement",
             5,
             "Approved",
             "Current Owner",
@@ -8524,8 +8044,8 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
-            "Lease Asset Agreement|Submit to Review|Any",
-            "Lease Asset Agreement",
+            "Management Agreement|Submit to Review|Any",
+            "Management Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8536,8 +8056,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Lease Asset Agreement|Return|Any",
-            "Lease Asset Agreement",
+            "Management Agreement|Return|Any",
+            "Management Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8548,8 +8068,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Lease Asset Agreement|Resubmit|Any",
-            "Lease Asset Agreement",
+            "Management Agreement|Resubmit|Any",
+            "Management Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8560,8 +8080,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Lease Asset Agreement|Forward|Any",
-            "Lease Asset Agreement",
+            "Management Agreement|Forward|Any",
+            "Management Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8572,8 +8092,128 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Lease Asset Agreement|Approved|Any",
-            "Lease Asset Agreement",
+            "Management Agreement|Approved|Any",
+            "Management Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Consultancy Agreement|Submit to Review|Any",
+            "Consultancy Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Consultancy Agreement|Return|Any",
+            "Consultancy Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Consultancy Agreement|Resubmit|Any",
+            "Consultancy Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Consultancy Agreement|Forward|Any",
+            "Consultancy Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Consultancy Agreement|Approved|Any",
+            "Consultancy Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Lease Agreement|Submit to Review|Any",
+            "Lease Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Lease Agreement|Return|Any",
+            "Lease Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Lease Agreement|Resubmit|Any",
+            "Lease Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Lease Agreement|Forward|Any",
+            "Lease Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Lease Agreement|Approved|Any",
+            "Lease Agreement",
             5,
             "Approved",
             "Current Owner",
@@ -8644,8 +8284,8 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
-            "Service Provider Agreement|Submit to Review|Any",
-            "Service Provider Agreement",
+            "Amendment|Submit to Review|Any",
+            "Amendment",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8656,8 +8296,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Service Provider Agreement|Return|Any",
-            "Service Provider Agreement",
+            "Amendment|Return|Any",
+            "Amendment",
             2,
             "Return",
             "Current Owner",
@@ -8668,8 +8308,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Service Provider Agreement|Resubmit|Any",
-            "Service Provider Agreement",
+            "Amendment|Resubmit|Any",
+            "Amendment",
             3,
             "Resubmit",
             "Current Owner",
@@ -8680,8 +8320,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Service Provider Agreement|Forward|Any",
-            "Service Provider Agreement",
+            "Amendment|Forward|Any",
+            "Amendment",
             4,
             "Forward",
             "Current Owner",
@@ -8692,8 +8332,68 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Service Provider Agreement|Approved|Any",
-            "Service Provider Agreement",
+            "Amendment|Approved|Any",
+            "Amendment",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Submit to Review|Any",
+            "Mergers and Acquisitions Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Return|Any",
+            "Mergers and Acquisitions Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Resubmit|Any",
+            "Mergers and Acquisitions Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Forward|Any",
+            "Mergers and Acquisitions Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Approved|Any",
+            "Mergers and Acquisitions Agreement",
             5,
             "Approved",
             "Current Owner",
@@ -8764,8 +8464,8 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
-            "Amendment|Submit to Review|Any",
-            "Amendment",
+            "Term Sheet|Submit to Review|Any",
+            "Term Sheet",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8776,8 +8476,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Amendment|Return|Any",
-            "Amendment",
+            "Term Sheet|Return|Any",
+            "Term Sheet",
             2,
             "Return",
             "Current Owner",
@@ -8788,8 +8488,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Amendment|Resubmit|Any",
-            "Amendment",
+            "Term Sheet|Resubmit|Any",
+            "Term Sheet",
             3,
             "Resubmit",
             "Current Owner",
@@ -8800,8 +8500,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Amendment|Forward|Any",
-            "Amendment",
+            "Term Sheet|Forward|Any",
+            "Term Sheet",
             4,
             "Forward",
             "Current Owner",
@@ -8812,8 +8512,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Amendment|Approved|Any",
-            "Amendment",
+            "Term Sheet|Approved|Any",
+            "Term Sheet",
             5,
             "Approved",
             "Current Owner",
@@ -8824,8 +8524,8 @@
             "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
       ],
       [
-            "Consultancy Agreement|Submit to Review|Any",
-            "Consultancy Agreement",
+            "Confidentiality Agreement|Submit to Review|Any",
+            "Confidentiality Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8836,8 +8536,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Consultancy Agreement|Return|Any",
-            "Consultancy Agreement",
+            "Confidentiality Agreement|Return|Any",
+            "Confidentiality Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8848,8 +8548,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Consultancy Agreement|Resubmit|Any",
-            "Consultancy Agreement",
+            "Confidentiality Agreement|Resubmit|Any",
+            "Confidentiality Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8860,8 +8560,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Consultancy Agreement|Forward|Any",
-            "Consultancy Agreement",
+            "Confidentiality Agreement|Forward|Any",
+            "Confidentiality Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8872,8 +8572,308 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Consultancy Agreement|Approved|Any",
-            "Consultancy Agreement",
+            "Confidentiality Agreement|Approved|Any",
+            "Confidentiality Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Lease Asset Agreement|Submit to Review|Any",
+            "Lease Asset Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Lease Asset Agreement|Return|Any",
+            "Lease Asset Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Lease Asset Agreement|Resubmit|Any",
+            "Lease Asset Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Lease Asset Agreement|Forward|Any",
+            "Lease Asset Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Lease Asset Agreement|Approved|Any",
+            "Lease Asset Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Memorandum of Understanding|Submit to Review|Any",
+            "Memorandum of Understanding",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Memorandum of Understanding|Return|Any",
+            "Memorandum of Understanding",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Memorandum of Understanding|Resubmit|Any",
+            "Memorandum of Understanding",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Memorandum of Understanding|Forward|Any",
+            "Memorandum of Understanding",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Memorandum of Understanding|Approved|Any",
+            "Memorandum of Understanding",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Rental Agreement|Submit to Review|Any",
+            "Rental Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Rental Agreement|Return|Any",
+            "Rental Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Rental Agreement|Resubmit|Any",
+            "Rental Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Rental Agreement|Forward|Any",
+            "Rental Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Rental Agreement|Approved|Any",
+            "Rental Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Service Provider Agreement|Submit to Review|Any",
+            "Service Provider Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Service Provider Agreement|Return|Any",
+            "Service Provider Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Service Provider Agreement|Resubmit|Any",
+            "Service Provider Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Service Provider Agreement|Forward|Any",
+            "Service Provider Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Service Provider Agreement|Approved|Any",
+            "Service Provider Agreement",
+            5,
+            "Approved",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "สัญญาผ่านการตรวจสอบหรืออนุมัติ และปิดขั้นตอน"
+      ],
+      [
+            "Service Agreement|Submit to Review|Any",
+            "Service Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Service Agreement|Return|Any",
+            "Service Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Service Agreement|Resubmit|Any",
+            "Service Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Service Agreement|Forward|Any",
+            "Service Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Service Agreement|Approved|Any",
+            "Service Agreement",
             5,
             "Approved",
             "Current Owner",
@@ -15257,9 +15257,6 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       attachEditableDropdown("addContractSubType", contractSubTypeDropdownOptions, () => syncAddCaseLinkedFields("subType"), {
         ariaLabel: "Sub Type of Contract / ประเภทย่อยของสัญญา"
       });
-      attachEditableDropdown("addContractName", contractNameDropdownOptions, () => syncAddCaseLinkedFields("name"), {
-        ariaLabel: "Contract Name / ชื่อสัญญา"
-      });
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));
 
       document.addEventListener("click", event => {
@@ -15271,11 +15268,11 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
 
     function populateUserControls() {
       refreshNewCaseIdPreview();
-      // Contract selectors show Contract ID, Contract Name, and Type of Contract for easier search.
+      // Contract selectors show Contract ID, Type of Contract, Contract Name, and Department for easier search.
       // Owner, Department, Stage and Status remain linked in the background only.
       const contractOptions = contracts.map(item => ({
         value: item.id,
-        label: [item.id, item.name, item.type].map(value => String(value || "").trim()).filter(Boolean).join(" / ")
+        label: [item.id, contractPrimaryTypeDisplay(item.type), item.name, item.department].map(value => String(value || "").trim()).filter(Boolean).join(" / ")
       }));
       const workTypes = orderedUniqueList([...Object.keys(fixedSlaConfig), ...uniqueWorkTypes()]);
       const contractCatalog = getContractFormCatalog();
@@ -15301,7 +15298,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         if (!select) return;
         [...select.options].forEach(option => {
           const contract = contracts.find(item => item.id === option.value);
-          if (contract) option.textContent = [contract.id, contract.name, contract.type].map(value => String(value || "").trim()).filter(Boolean).join(" / ");
+          if (contract) option.textContent = [contract.id, contractPrimaryTypeDisplay(contract.type), contract.name, contract.department].map(value => String(value || "").trim()).filter(Boolean).join(" / ");
         });
       });
       const dueApproverSelect = document.querySelector("#dueApprovalTo");

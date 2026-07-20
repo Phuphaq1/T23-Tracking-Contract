@@ -707,24 +707,32 @@ def main():
         value: item.id,
         label: `${String(item.id || "").trim()} / ${String(item.name || "").trim()}`
       }));""",
-        """      // Contract selectors show Contract ID, Contract Name, and Type of Contract for easier search.
+        """      // Contract selectors show Contract ID, Type of Contract, Contract Name, and Department for easier search.
       // Owner, Department, Stage and Status remain linked in the background only.
       const contractOptions = contracts.map(item => ({
         value: item.id,
-        label: [item.id, item.name, item.type].map(value => String(value || "").trim()).filter(Boolean).join(" / ")
+        label: [item.id, contractPrimaryTypeDisplay(item.type), item.name, item.department].map(value => String(value || "").trim()).filter(Boolean).join(" / ")
       }));""",
     )
     html = html.replace(
         """          if (contract) option.textContent = `${String(contract.id || "").trim()} / ${String(contract.name || "").trim()}`;""",
-        """          if (contract) option.textContent = [contract.id, contract.name, contract.type].map(value => String(value || "").trim()).filter(Boolean).join(" / ");""",
+        """          if (contract) option.textContent = [contract.id, contractPrimaryTypeDisplay(contract.type), contract.name, contract.department].map(value => String(value || "").trim()).filter(Boolean).join(" / ");""",
     )
     html = html.replace(
         """<span class="bilingual-stack update-bilingual-label"><span class="en">Contract ID / Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span class="th">รหัสสัญญา / ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
                     </span>
                     <select class="select" name="contractId" id="updateContract" required aria-label="Contract ID / Contract Name / รหัสสัญญา / ชื่อสัญญา"></select>""",
+        """<span class="bilingual-stack update-bilingual-label"><span class="en">Contract ID / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span> / Contract Name / Department</span><span class="th">รหัสสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span> / ชื่อสัญญา / แผนก</span></span>
+                    </span>
+                    <select class="select" name="contractId" id="updateContract" required aria-label="Contract ID / Type of Contract / Contract Name / Department / รหัสสัญญา / ประเภทสัญญา / ชื่อสัญญา / แผนก"></select>""",
+    )
+    html = html.replace(
         """<span class="bilingual-stack update-bilingual-label"><span class="en">Contract ID / Contract Name / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span></span><span class="th">รหัสสัญญา / ชื่อสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
                     </span>
                     <select class="select" name="contractId" id="updateContract" required aria-label="Contract ID / Contract Name / Type of Contract / รหัสสัญญา / ชื่อสัญญา / ประเภทสัญญา"></select>""",
+        """<span class="bilingual-stack update-bilingual-label"><span class="en">Contract ID / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span> / Contract Name / Department</span><span class="th">รหัสสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span> / ชื่อสัญญา / แผนก</span></span>
+                    </span>
+                    <select class="select" name="contractId" id="updateContract" required aria-label="Contract ID / Type of Contract / Contract Name / Department / รหัสสัญญา / ประเภทสัญญา / ชื่อสัญญา / แผนก"></select>""",
     )
     html = html.replace(
         """            <div class="panel-header">
@@ -741,6 +749,18 @@ def main():
               </div>
             </div>
             <div class="table-wrap">""",
+    )
+    html = html.replace(
+        """<span class="bilingual-label"><span>Contract ID / Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>รหัสสัญญา / ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                    <select class="select" name="contractId" id="closeContract" required></select>""",
+        """<span class="bilingual-label"><span>Contract ID / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span> / Contract Name / Department</span><span>รหัสสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span> / ชื่อสัญญา / แผนก</span></span>
+                    <select class="select" name="contractId" id="closeContract" required aria-label="Contract ID / Type of Contract / Contract Name / Department / รหัสสัญญา / ประเภทสัญญา / ชื่อสัญญา / แผนก"></select>""",
+    )
+    html = html.replace(
+        """<span class="bilingual-label"><span>Contract ID / Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>รหัสสัญญา / ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                    <select class="select" name="contractId" id="adjustDueContract" required></select>""",
+        """<span class="bilingual-label"><span>Contract ID / Type of Contract<span class="field-required-mark" aria-hidden="true">*</span> / Contract Name / Department</span><span>รหัสสัญญา / ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span> / ชื่อสัญญา / แผนก</span></span>
+                    <select class="select" name="contractId" id="adjustDueContract" required aria-label="Contract ID / Type of Contract / Contract Name / Department / รหัสสัญญา / ประเภทสัญญา / ชื่อสัญญา / แผนก"></select>""",
     )
     html = html.replace(
         """      [...contractInputCatalog, ...contracts.map(item => ({ name: item.name, type: item.type, workType: item.workType }))]
@@ -959,8 +979,8 @@ def main():
                         <span class="linked-flow-number">4</span>
                         <span class="bilingual-label"><span>Contract Name<span class="field-required-mark" aria-hidden="true">*</span></span><span>ชื่อสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
                       </span>
-                      <input class="input" name="name" id="addContractName" list="contractNameOptions" required autocomplete="off" placeholder="Select Contract Name / เลือกชื่อสัญญา">
-                      <small class="linked-flow-status waiting" id="linkedNameStatus">Filtered by Type and Sub Type · กรองจากประเภทที่เลือก</small>
+                      <input class="input" name="name" id="addContractName" required autocomplete="off" placeholder="Enter Contract Name / ระบุชื่อสัญญา">
+                      <small class="linked-flow-status waiting" id="linkedNameStatus">Enter Contract Name · ระบุชื่อสัญญา</small>
                     </label>
                     <label class="form-field full linked-flow-field" data-flow-order="5">
                       <span class="linked-flow-head">
@@ -2162,9 +2182,6 @@ def main():
       });
       attachEditableDropdown("addContractSubType", contractSubTypeDropdownOptions, () => syncAddCaseLinkedFields("subType"), {
         ariaLabel: "Sub Type of Contract / ประเภทย่อยของสัญญา"
-      });
-      attachEditableDropdown("addContractName", contractNameDropdownOptions, () => syncAddCaseLinkedFields("name"), {
-        ariaLabel: "Contract Name / ชื่อสัญญา"
       });
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
     )
