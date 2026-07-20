@@ -1370,11 +1370,12 @@ def main():
     }
 
     .th-filter-popover {
-      position: absolute;
-      z-index: 40;
-      top: calc(100% + 6px);
-      left: 0;
+      position: fixed;
+      z-index: 900;
+      top: var(--filter-popover-top, 0);
+      left: var(--filter-popover-left, 0);
       min-width: 185px;
+      max-width: min(320px, calc(100vw - 24px));
       padding: 8px;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -3164,6 +3165,42 @@ def main():
       if (event.target.closest("[data-filter-menu]")) return;
       document.querySelectorAll("[data-filter-menu][open]").forEach(menu => menu.removeAttribute("open"));
     });
+
+    function positionContractFilterMenu(menu) {
+      const summary = menu?.querySelector("summary");
+      const popover = menu?.querySelector(".th-filter-popover");
+      if (!summary || !popover || !menu.open) return;
+      const summaryRect = summary.getBoundingClientRect();
+      const popoverWidth = Math.max(185, Math.min(popover.offsetWidth || 185, window.innerWidth - 24));
+      const left = Math.min(Math.max(12, summaryRect.left), Math.max(12, window.innerWidth - popoverWidth - 12));
+      const topBelow = summaryRect.bottom + 6;
+      const estimatedHeight = Math.max(popover.offsetHeight || 48, 48);
+      const top = topBelow + estimatedHeight + 12 > window.innerHeight
+        ? Math.max(12, summaryRect.top - estimatedHeight - 6)
+        : topBelow;
+      popover.style.setProperty("--filter-popover-left", `${left}px`);
+      popover.style.setProperty("--filter-popover-top", `${top}px`);
+    }
+
+    function positionOpenContractFilterMenus() {
+      document.querySelectorAll("[data-filter-menu][open]").forEach(positionContractFilterMenu);
+    }
+
+    document.querySelectorAll("[data-filter-menu]").forEach(menu => {
+      menu.addEventListener("toggle", () => {
+        if (!menu.open) return;
+        document.querySelectorAll("[data-filter-menu][open]").forEach(otherMenu => {
+          if (otherMenu !== menu) otherMenu.removeAttribute("open");
+        });
+        requestAnimationFrame(() => positionContractFilterMenu(menu));
+      });
+      menu.querySelector("summary")?.addEventListener("click", () => {
+        requestAnimationFrame(() => positionContractFilterMenu(menu));
+      });
+    });
+
+    window.addEventListener("resize", positionOpenContractFilterMenus);
+    document.querySelector("#contracts .table-wrap")?.addEventListener("scroll", positionOpenContractFilterMenus);
 
     document.querySelectorAll("[data-filter-menu] .select, [data-filter-menu] .input").forEach(control => {
       control.addEventListener("click", event => event.stopPropagation());
