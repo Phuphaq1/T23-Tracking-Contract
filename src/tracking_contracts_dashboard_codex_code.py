@@ -904,7 +904,7 @@ def main():
                     <label class="form-field full linked-flow-field classification-flow-field" data-flow-order="1">
                       <span class="linked-flow-head">
                         <span class="linked-flow-number">1</span>
-                        <span class="bilingual-label"><span>Contract Classification<span class="field-required-mark" aria-hidden="true">*</span></span><span>การจำแนกสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                        <span class="bilingual-label"><span>Contract Classification<span class="field-required-mark" aria-hidden="true">*</span></span><span>กลุ่มสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
                       </span>
                       <input type="hidden" name="classification" id="addContractClassification" value="Day-to-day Work">
                       <div class="classification-choice-group" role="radiogroup" aria-label="Contract Classification">
@@ -1978,19 +1978,6 @@ def main():
               .join("\\n")
           });
         });
-      activeMasterContractTypes().forEach(row => {
-        const value = row["Type of Contract"];
-        const key = normalizeDirectoryValue(value);
-        if (!value || seen.has(key)) return;
-        if (classification === "Confidential" && accessLevelForContractType(value) !== "Confidential") return;
-        seen.add(key);
-        options.push({
-          value,
-          primary: value,
-          secondary: row.Category || "Contract Type",
-          description: row["Description / คำอธิบาย"] || ""
-        });
-      });
       return options;
     }
 
