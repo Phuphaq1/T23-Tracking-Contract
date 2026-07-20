@@ -906,17 +906,7 @@ def main():
                         <span class="linked-flow-number">1</span>
                         <span class="bilingual-label"><span>Contract Classification<span class="field-required-mark" aria-hidden="true">*</span></span><span>กลุ่มสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
                       </span>
-                      <input type="hidden" name="classification" id="addContractClassification" value="Day-to-day Work">
-                      <div class="classification-choice-group" role="radiogroup" aria-label="Contract Classification">
-                        <button class="classification-choice active" type="button" data-classification-value="Day-to-day Work" aria-pressed="true">
-                          <strong>Day-to-day Work</strong>
-                          <span>งานดำเนินงานทั่วไป</span>
-                        </button>
-                        <button class="classification-choice" type="button" data-classification-value="Confidential" aria-pressed="false">
-                          <strong>Confidential</strong>
-                          <span>สัญญาลับ</span>
-                        </button>
-                      </div>
+                      <input class="input" name="classification" id="addContractClassification" list="contractClassificationOptions" required autocomplete="off" value="Day-to-day Work / งานดำเนินงานทั่วไป" placeholder="Select Contract Classification / เลือกกลุ่มสัญญา">
                       <input type="hidden" name="accessLevel" id="addAccessLevel" value="Normal">
                       <div class="inline-access-status" aria-label="Access Level / ระดับการเข้าถึง">
                         <small class="access-level-chip normal" id="addAccessLevelBadge">Normal</small>
@@ -960,7 +950,8 @@ def main():
     )
     html = html.replace(
         """                <datalist id="contractNameOptions"></datalist>""",
-        """                <datalist id="contractSubTypeOptions"></datalist>
+        """                <datalist id="contractClassificationOptions"></datalist>
+                <datalist id="contractSubTypeOptions"></datalist>
                 <datalist id="contractNameOptions"></datalist>""",
     )
     html = html.replace(
@@ -1162,7 +1153,7 @@ def main():
       const thKey = level === "type" ? "Type of Contract TH" : "Sub Type of Contract TH";
       const en = String(row[enKey] || row["Type of Contract EN"] || "").trim();
       const th = String(row[thKey] || row["Type of Contract TH"] || "").trim();
-      return [en, th].filter(Boolean).join(" | ");
+      return [en, th].filter(Boolean).join(" / ");
     }
 
     function contractTypeMasterV2Candidates(row) {
@@ -1886,20 +1877,39 @@ def main():
         """
 
     function actionDropdownOptions() {""",
-        """    function classificationAccessLevelFor(classification = "") {
-      return normalizeDirectoryValue(classification) === "confidential" ? "Confidential" : "Normal";
+        """    function classificationEnFromValue(classification = "") {
+      const text = String(classification || "").trim();
+      const english = text.split("|")[0].split("/")[0].trim();
+      const normalized = normalizeDirectoryValue(english || text);
+      return normalized === "confidential" ? "Confidential" : "Day-to-day Work";
+    }
+
+    function classificationDisplayValue(classification = "") {
+      const en = classificationEnFromValue(classification);
+      return `${en} / ${classificationThaiFor(en)}`;
+    }
+
+    function classificationAccessLevelFor(classification = "") {
+      return classificationEnFromValue(classification) === "Confidential" ? "Confidential" : "Normal";
     }
 
     function classificationThaiFor(classification = "") {
-      return normalizeDirectoryValue(classification) === "confidential" ? "สัญญาลับ" : "งานดำเนินงานทั่วไป";
+      return classificationEnFromValue(classification) === "Confidential" ? "สัญญาลับ" : "งานดำเนินงานทั่วไป";
     }
 
     function selectedContractClassification() {
-      return String(document.querySelector("#addContractClassification")?.value || "Day-to-day Work").trim();
+      return classificationEnFromValue(document.querySelector("#addContractClassification")?.value || "Day-to-day Work");
+    }
+
+    function contractClassificationDropdownOptions() {
+      return [
+        { value: "Day-to-day Work / งานดำเนินงานทั่วไป", primary: "Day-to-day Work", secondary: "งานดำเนินงานทั่วไป" },
+        { value: "Confidential / สัญญาลับ", primary: "Confidential", secondary: "สัญญาลับ" }
+      ];
     }
 
     function typeGroupForRow(row) {
-      return contractTypeMasterV2Display(row, "type");
+      return contractTypeMasterV2Display(row, "type") || contractTypeMasterV2Display(row, "sub");
     }
 
     function subTypeForRow(row) {
@@ -1930,9 +1940,9 @@ def main():
     }
 
     function setContractClassificationButtons(classification = selectedContractClassification()) {
-      const normalized = classification || "Day-to-day Work";
+      const normalized = classificationEnFromValue(classification || "Day-to-day Work");
       const input = document.querySelector("#addContractClassification");
-      if (input) input.value = normalized;
+      if (input) input.value = classificationDisplayValue(normalized);
       document.querySelectorAll("[data-classification-value]").forEach(button => {
         const active = button.dataset.classificationValue === normalized;
         button.classList.toggle("active", active);
@@ -2092,6 +2102,11 @@ def main():
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
+      attachEditableDropdown("addContractClassification", contractClassificationDropdownOptions, () => syncAddCaseLinkedFields("classification"), {
+        ariaLabel: "Contract Classification / กลุ่มสัญญา",
+        strict: true,
+        defaultValue: "Day-to-day Work / งานดำเนินงานทั่วไป"
+      });
       attachEditableDropdown("addContractType", contractTypeDropdownOptions, () => syncAddCaseLinkedFields("type"), {
         ariaLabel: "Type of Contract / ประเภทสัญญา"
       });
@@ -2109,6 +2124,7 @@ def main():
       fillDatalist("contractNameOptions", contractCatalog.map(item => ({ value: item.name, label: `${item.type} · ${item.workType}` })));""",
         """      const contractCatalog = getContractFormCatalog();
       const contractTypes = orderedUniqueList(contractCatalog.map(item => item.type).filter(Boolean));
+      fillDatalist("contractClassificationOptions", contractClassificationDropdownOptions().map(item => ({ value: item.value, label: item.secondary || "" })));
       fillDatalist("contractTypeOptions", contractTypeDropdownOptions().map(item => ({ value: item.value, label: item.secondary || "" })));
       fillDatalist("contractSubTypeOptions", contractSubTypeDropdownOptions().map(item => ({ value: item.value, label: item.secondary || "" })));
       fillDatalist("contractNameOptions", contractNameDropdownOptions().map(item => ({ value: item.value, label: item.secondary || "" })));""",
@@ -3885,13 +3901,9 @@ def main():
     )
     html = html.replace(
         """    document.querySelector("#addContractName")?.addEventListener("input", () => {""",
-        """    document.querySelectorAll("[data-classification-value]").forEach(button => {
-      button.addEventListener("click", () => {
-        const input = document.querySelector("#addContractClassification");
-        if (input) input.value = button.dataset.classificationValue || "Day-to-day Work";
-        resetInitialDueDateOverride();
-        syncAddCaseLinkedFields("classification");
-      });
+        """    document.querySelector("#addContractClassification")?.addEventListener("change", () => {
+      resetInitialDueDateOverride();
+      syncAddCaseLinkedFields("classification");
     });
     document.querySelector("#addContractSubType")?.addEventListener("input", () => {
       resetInitialDueDateOverride();
