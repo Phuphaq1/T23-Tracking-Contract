@@ -171,6 +171,29 @@ def read_contract_type_master_v2_rows():
         ))
 
 
+def bilingual_value(en, th):
+    values = [clean(en), clean(th)]
+    return " / ".join(value for value in values if value)
+
+
+def type_rows_from_contract_type_master_v2(rows):
+    type_rows = []
+    for row in rows:
+        classification = bilingual_value(row.get("Contract Classification EN"), row.get("Contract Classification TH"))
+        type_value = bilingual_value(row.get("Type of Contract EN"), row.get("Type of Contract TH"))
+        sub_type_value = bilingual_value(row.get("Sub Type of Contract EN"), row.get("Sub Type of Contract TH"))
+        type_rows.append({
+            "Active": "Yes",
+            "Contract Classification": classification,
+            "Category": classification,
+            "Type of Contract": type_value,
+            "Sub Type of Contract": sub_type_value,
+            "Fixed SLA (Working Days)": "",
+            "Description / คำอธิบาย": type_value,
+        })
+    return type_rows
+
+
 def contract_group(row):
     return (
         row.get("Group Contract / กลุ่มสัญญา")
@@ -282,7 +305,9 @@ def main():
         for row in rules_rows
     ]
 
-    if contract_master_rows:
+    if contract_type_master_v2_rows:
+        type_rows = type_rows_from_contract_type_master_v2(contract_type_master_v2_rows)
+    elif contract_master_rows:
         type_by_name = {}
         for row in contract_master_rows:
             contract_type = row.get("Type of Contract / ประเภทสัญญา", "")
@@ -1558,7 +1583,21 @@ def main():
     }
 
     function activeMasterContractTypes() {
-      return (masterData.contractTypes || []).filter(row => row["Type of Contract"] && isMasterActive(row.Active));
+      return (masterData.contractTypes || []).filter(row => masterContractTypeValue(row) && isMasterActive(row.Active));
+    }
+
+    function masterContractTypeValue(row = {}) {
+      return String(row["Type of Contract"] || row["Sub Type of Contract"] || "").trim();
+    }
+
+    function contractPrimaryTypeDisplay(typeValue = "") {
+      const typeInfo = contractTypeMasterV2Match(typeValue);
+      return typeInfo ? typeGroupForRow(typeInfo) : String(typeValue || "").trim();
+    }
+
+    function contractSubTypeDisplay(typeValue = "") {
+      const typeInfo = contractTypeMasterV2Match(typeValue);
+      return typeInfo ? subTypeForRow(typeInfo) : "";
     }
 
     function activeMasterContractTemplates() {
@@ -1596,7 +1635,7 @@ def main():
         ].filter(Boolean).join("\\n");
       }
       const rows = activeMasterContractTypes();
-      const match = rows.find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalized);
+      const match = rows.find(row => normalizeDirectoryValue(masterContractTypeValue(row)) === normalized);
       return match?.["Description / คำอธิบาย"] || "";
     }
 
@@ -1606,7 +1645,7 @@ def main():
       const typeInfo = contractTypeMasterV2Match(typeValue);
       if (typeInfo) return typeInfo["Contract Classification EN"] || "";
       const rows = activeMasterContractTypes();
-      const match = rows.find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalized);
+      const match = rows.find(row => normalizeDirectoryValue(masterContractTypeValue(row)) === normalized);
       return match?.Category || "";
     }
 
@@ -1630,7 +1669,14 @@ def main():
         if (templateSla > 0) return templateSla;
       }
       if (normalizedType) {
-        const typeRow = activeMasterContractTypes().find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalizedType);
+        const typeRow = activeMasterContractTypes().find(row => {
+          const candidates = [
+            masterContractTypeValue(row),
+            row["Sub Type of Contract"],
+            row["Description / คำอธิบาย"]
+          ];
+          return candidates.some(value => normalizeDirectoryValue(value) === normalizedType || contractTypeValuesMatch(value, workType));
+        });
         const typeSla = fixedSlaValue(typeRow?.["Fixed SLA (Working Days)"] || typeRow?.FixedSLA || typeRow?.SLA);
         if (typeSla > 0) return typeSla;
       }
@@ -1834,14 +1880,15 @@ def main():
 
     function accessLevelForAddCase(template, contractType) {""",
         """    function englishContractPart(value) {
-      return String(value || "").split("|")[0].trim();
+      return String(value || "").split("|")[0].split("/")[0].trim();
     }
 
     function masterContractTypeFor(typeValue) {
       const normalizedType = normalizeDirectoryValue(typeValue);
       if (!normalizedType) return null;
       const rows = activeMasterContractTypes();
-      const exact = rows.find(row => normalizeDirectoryValue(row["Type of Contract"]) === normalizedType);
+      const exact = rows.find(row => [masterContractTypeValue(row), row["Sub Type of Contract"], row["Description / คำอธิบาย"]]
+        .some(value => normalizeDirectoryValue(value) === normalizedType || contractTypeValuesMatch(value, typeValue)));
       if (exact) return exact;
       const typeInfo = contractTypeMasterV2Match(typeValue);
       const englishCandidates = [
@@ -1850,8 +1897,11 @@ def main():
         typeInfo?.["Type of Contract EN"]
       ].map(normalizeDirectoryValue).filter(Boolean);
       return rows.find(row => {
-        const rowEnglish = normalizeDirectoryValue(englishContractPart(row["Type of Contract"]));
-        return englishCandidates.includes(rowEnglish);
+        const rowEnglishValues = [masterContractTypeValue(row), row["Sub Type of Contract"], row["Description / คำอธิบาย"]]
+          .map(englishContractPart)
+          .map(normalizeDirectoryValue)
+          .filter(Boolean);
+        return rowEnglishValues.some(value => englishCandidates.includes(value));
       }) || null;
     }
 
@@ -2211,7 +2261,7 @@ def main():
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
-                    <thead><tr><th>Category</th><th>Type of Contract</th><th>Fixed SLA</th><th>Description</th><th>Active</th><th></th></tr></thead>
+                    <thead><tr><th>Contract Classification</th><th>Type of Contract</th><th>Sub Type of Contract</th><th>Fixed SLA</th><th>Active</th><th></th></tr></thead>
                     <tbody id="masterContractTypeRows"></tbody>
                   </table>
                 </div>
@@ -2995,7 +3045,7 @@ def main():
       setContractMasterFilterOptions("contractIdFilter", "Contract ID", uniqueContractMasterValues(item => item.id));
       setContractMasterFilterOptions("departmentFilter", "Department / Restaurant", uniqueContractMasterValues(item => item.department));
       setContractMasterFilterOptions("ownerFilter", "Contract Owner", uniqueContractMasterValues(item => item.owner));
-      setContractMasterFilterOptions("typeFilter", "Type of Contract", uniqueContractMasterValues(item => item.type));
+      setContractMasterFilterOptions("typeFilter", "Type of Contract", uniqueContractMasterValues(item => contractPrimaryTypeDisplay(item.type)));
       setContractMasterFilterOptions("stageFilter", "Stage", uniqueContractMasterValues(item => item.stage));
       setContractMasterFilterOptions("statusFilter", "Status Update", uniqueContractMasterValues(item => item.status));
       setContractMasterFilterOptions("stationOwnerFilter", "Station Owner", uniqueContractMasterValues(item => {
@@ -3012,6 +3062,10 @@ def main():
     function matchesContractMasterFilter(value, selected) {
       return selected === "all" || String(value || "").trim() === selected;
     }""",
+    )
+    html = html.replace(
+        """            <td>${item.type}</td>""",
+        """            <td>${contractPrimaryTypeDisplay(item.type)}</td>""",
     )
     html = html.replace(
         """      const stage = document.querySelector("#stageFilter").value;
@@ -3039,7 +3093,7 @@ def main():
         return matchesContractMasterFilter(item.id, filters.contractId)
           && matchesContractMasterFilter(item.department, filters.department)
           && matchesContractMasterFilter(item.owner, filters.owner)
-          && matchesContractMasterFilter(item.type, filters.type)
+          && matchesContractMasterFilter(contractPrimaryTypeDisplay(item.type), filters.type)
           && matchesContractMasterFilter(item.stage, filters.stage)
           && matchesContractMasterFilter(item.status, filters.status)
           && matchesContractMasterFilter(latestStationOwner, filters.stationOwner)
@@ -4201,7 +4255,7 @@ def main():
         "Contract Name": item.name,
         "Department / Restaurant": item.department,
         "Contract Owner": item.owner,
-        "Type of Contract": item.type,
+        "Type of Contract": contractPrimaryTypeDisplay(item.type),
         "Vendor / Counter party": item.vendor,
         "Stage": item.stage,
         "Cycle": item.cycle,
@@ -4226,7 +4280,8 @@ def main():
 
     function contractFromDbRow(row) {
       const id = String(row["Contract ID"] || "").trim();
-      const type = String(row["Type of Contract"] || row["Work Type"] || "Other").trim();
+      const rawType = String(row["Type of Contract"] || row["Work Type"] || "Other").trim();
+      const type = contractPrimaryTypeDisplay(rawType) || rawType || "Other";
       const owner = String(row["Contract Owner"] || row["Station Owner"] || "").trim();
       const stationOwner = String(row["Station Owner"] || "Legal").trim();
       const totalSla = Number(row["Total SLA"] || totalSlaFor(type)) || 0;
@@ -4383,6 +4438,13 @@ def main():
           if (Array.isArray(parsed.masterData.contractTemplates)) masterData.contractTemplates = parsed.masterData.contractTemplates;
         }
         const migratedCount = migrateContractIdsToDepartmentFormat(parsedContracts, parsedLogs);
+        parsedContracts.forEach(item => {
+          const normalizedType = contractPrimaryTypeDisplay(item.type);
+          if (normalizedType) {
+            item.type = normalizedType;
+            item.category = contractTypeCategoryFor(normalizedType) || item.category || "";
+          }
+        });
         contracts.splice(0, contracts.length, ...parsedContracts);
         if (Array.isArray(parsed.logRecords)) logRecords.splice(0, logRecords.length, ...parsedLogs);
         if (migratedCount) saveContractsDatabase();
@@ -4399,12 +4461,7 @@ def main():
 
     function typeMasterCsvText() {
       const rows = masterData.contractTypes || [];
-      const headers = rows.length
-        ? Array.from(rows.reduce((set, row) => {
-          Object.keys(row || {}).forEach(key => set.add(key));
-          return set;
-        }, new Set()))
-        : ["Type of Contract", "Category", "Description / คำอธิบาย"];
+      const headers = ["Contract Classification", "Type of Contract", "Sub Type of Contract", "Fixed SLA (Working Days)", "Active", "Category", "Description / คำอธิบาย"];
       return objectsToCsv(headers, rows);
     }
 
@@ -4614,7 +4671,7 @@ def main():
             <td>${masterInput("name", contract.name)}</td>
             <td>${masterInput("department", contract.department)}</td>
             <td>${masterInput("owner", contract.owner)}</td>
-            <td>${masterInput("type", contract.type)}</td>
+            <td>${masterInput("type", contractPrimaryTypeDisplay(contract.type))}</td>
             <td>${masterInput("stage", contract.stage)}</td>
             <td>${masterInput("status", contract.status)}</td>
             <td>${masterInput("stationOwner", stationOwnerForMasterContract(contract))}</td>
@@ -4651,10 +4708,10 @@ def main():
       if (typeBody) {
         typeBody.innerHTML = (masterData.contractTypes || []).map(row => `
           <tr>
-            <td>${masterInput("Category", row.Category)}</td>
-            <td>${masterInput("Type of Contract", row["Type of Contract"])}</td>
+            <td>${masterInput("Contract Classification", row["Contract Classification"] || row.Category)}</td>
+            <td>${masterInput("Type of Contract", contractPrimaryTypeDisplay(row["Type of Contract"]))}</td>
+            <td>${masterInput("Sub Type of Contract", row["Sub Type of Contract"] || contractSubTypeDisplay(row["Type of Contract"]))}</td>
             <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"])}</td>
-            <td>${masterInput("Description / คำอธิบาย", row["Description / คำอธิบาย"], { multiline: true })}</td>
             <td>${masterActiveSelect("Active", row.Active)}</td>
             <td>${masterDeleteButton()}</td>
           </tr>`).join("");
@@ -4710,7 +4767,7 @@ def main():
         }
         keptIds.add(id);
         const original = originalContracts.get(originalId) || {};
-        const type = String(row.type || original.type || "Other").trim();
+        const type = contractPrimaryTypeDisplay(row.type || original.type || "Other") || "Other";
         const owner = String(row.owner || original.owner || "").trim();
         const stationOwner = String(row.stationOwner || stationOwnerForMasterContract(original) || "Legal").trim();
         const totalSla = Number(original.totalSla || totalSlaFor(type)) || 0;
@@ -4759,8 +4816,15 @@ def main():
         .map(row => ({ ...row, "Department Code": String(row["Department Code"] || "").trim().toUpperCase(), Active: row.Active || "Yes" }));
       masterData.people = readMasterRows("#masterPeopleRows", ["company", "department", "name", "email", "active"], "name")
         .map(row => ({ ...row, email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" }));
-      masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Category", "Type of Contract", "Fixed SLA (Working Days)", "Description / คำอธิบาย", "Active"], "Type of Contract")
-        .map(row => ({ ...row, "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(), Active: row.Active || "Yes" }));
+      masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Contract Classification", "Type of Contract", "Sub Type of Contract", "Fixed SLA (Working Days)", "Active"], "Contract Classification")
+        .filter(row => String(row["Type of Contract"] || row["Sub Type of Contract"] || "").trim())
+        .map(row => ({
+          ...row,
+          Category: row["Contract Classification"] || "",
+          "Description / คำอธิบาย": row["Type of Contract"] || "",
+          "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(),
+          Active: row.Active || "Yes"
+        }));
       masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["name", "selectionLabel", "sourceRow", "type", "department", "vendor", "group", "fixedSla", "accessLevel", "active"], "name")
         .map(row => ({ ...row, fixedSla: String(row.fixedSla || "").trim(), workType: row.type || "Other", category: row.group || row.accessLevel || accessLevelForContractType(row.type), contractId: "", active: row.active || "Yes" }));
       return true;
@@ -4770,7 +4834,7 @@ def main():
       if (!normalizeMasterDataFromUi()) return;
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
       if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
-      if (kind === "contractTypes") masterData.contractTypes.push({ Category: "Day-to-day", "Type of Contract": "", "Fixed SLA (Working Days)": "", "Description / คำอธิบาย": "", Active: "Yes" });
+      if (kind === "contractTypes") masterData.contractTypes.push({ "Contract Classification": "Day-to-day Work / งานดำเนินงานทั่วไป", Category: "Day-to-day Work / งานดำเนินงานทั่วไป", "Type of Contract": "", "Sub Type of Contract": "", "Fixed SLA (Working Days)": "", "Description / คำอธิบาย": "", Active: "Yes" });
       if (kind === "contractTemplates") masterData.contractTemplates.push({ name: "", selectionLabel: "", sourceRow: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Normal", department: "", vendor: "", group: "", fixedSla: "", active: "Yes" });
       renderMasterData();
     }
@@ -5028,7 +5092,15 @@ def main():
         for row in log_records
     ]
 
-    type_headers = sorted({key for row in type_rows for key in row.keys()})
+    type_headers = [
+        "Contract Classification",
+        "Type of Contract",
+        "Sub Type of Contract",
+        "Fixed SLA (Working Days)",
+        "Active",
+        "Category",
+        "Description / คำอธิบาย",
+    ]
 
     OUTPUT_HTML.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_HTML.write_text(html, encoding="utf-8")
