@@ -1,21 +1,21 @@
 ﻿Contract Classification,Type of Contract,Sub Type of Contract,Fixed SLA (Working Days),Active,Category,Description / คำอธิบาย
-Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Lease Agreement / สัญญาเช่า,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
-Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Sub Lease Agreement / สัญญาเช่าช่วง,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
-Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Lease Asset Agreement / สัญญาเช่าทรัพย์สิน,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
-Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Rental Agreement / สัญญาเช่าทั่วไป,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
-Day-to-day Work / งานดำเนินงานทั่วไป,Service Agreement / สัญญาให้บริการ,,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Service Agreement / สัญญาให้บริการ
-Day-to-day Work / งานดำเนินงานทั่วไป,Amendment Agreement / สัญญาแก้ไขเพิ่มเติม,,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Amendment Agreement / สัญญาแก้ไขเพิ่มเติม
-Day-to-day Work / งานดำเนินงานทั่วไป,Sale and Purchase Agreement / สัญญาซื้อขาย,,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Sale and Purchase Agreement / สัญญาซื้อขาย
-Day-to-day Work / งานดำเนินงานทั่วไป,Service Provider Agreement / สัญญาผู้ให้บริการ,,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Service Provider Agreement / สัญญาผู้ให้บริการ
-Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ,Consultancy Agreement / สัญญาให้คำปรึกษา,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ
-Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ,Confidentiality Agreement / สัญญารักษาความลับ,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ
-Day-to-day Work / งานดำเนินงานทั่วไป,Others / อื่น ๆ,,,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Others / อื่น ๆ
-Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น,Memorandum of Understanding / บันทึกความเข้าใจ,,Yes,Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น
-Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น,Term Sheet / เอกสารสรุปเงื่อนไขเบื้องต้น,,Yes,Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Consultancy Agreement / สัญญาให้คำปรึกษา,,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Confidentiality Agreement / สัญญารักษาความลับ,,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Management Agreement / สัญญาบริหารจัดการ,,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Loan Agreement / สัญญาเงินกู้,,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Mergers and Acquisitions Agreement / สัญญาการควบรวมและซื้อกิจการ,,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Shareholders’ Agreement / สัญญาระหว่างผู้ถือหุ้น,,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Lease Agreement / สัญญาเช่า,54,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
+Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Sub Lease Agreement / สัญญาเช่าช่วง,30,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
+Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Lease Asset Agreement / สัญญาเช่าทรัพย์สิน,10,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
+Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Rental Agreement / สัญญาเช่าทั่วไป,25,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
+Day-to-day Work / งานดำเนินงานทั่วไป,Service Agreement / สัญญาให้บริการ,,63,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Service Agreement / สัญญาให้บริการ
+Day-to-day Work / งานดำเนินงานทั่วไป,Amendment Agreement / สัญญาแก้ไขเพิ่มเติม,,20,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Amendment Agreement / สัญญาแก้ไขเพิ่มเติม
+Day-to-day Work / งานดำเนินงานทั่วไป,Sale and Purchase Agreement / สัญญาซื้อขาย,,15,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Sale and Purchase Agreement / สัญญาซื้อขาย
+Day-to-day Work / งานดำเนินงานทั่วไป,Service Provider Agreement / สัญญาผู้ให้บริการ,,10,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Service Provider Agreement / สัญญาผู้ให้บริการ
+Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ,Consultancy Agreement / สัญญาให้คำปรึกษา,51,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ
+Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ,Confidentiality Agreement / สัญญารักษาความลับ,12,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ
+Day-to-day Work / งานดำเนินงานทั่วไป,Others / อื่น ๆ,,80,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Others / อื่น ๆ
+Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น,Memorandum of Understanding / บันทึกความเข้าใจ,15,Yes,Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น
+Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น,Term Sheet / เอกสารสรุปเงื่อนไขเบื้องต้น,30,Yes,Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Consultancy Agreement / สัญญาให้คำปรึกษา,10,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Confidentiality Agreement / สัญญารักษาความลับ,10,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Management Agreement / สัญญาบริหารจัดการ,12,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Loan Agreement / สัญญาเงินกู้,7,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Mergers and Acquisitions Agreement / สัญญาการควบรวมและซื้อกิจการ,15,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Shareholders’ Agreement / สัญญาระหว่างผู้ถือหุ้น,20,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
 Confidential / สัญญาลับ,,Others / อื่น ๆ,,Yes,Confidential / สัญญาลับ,
