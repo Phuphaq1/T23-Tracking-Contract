@@ -2028,14 +2028,15 @@ def main():
 
 """,
     )
-    html = html.replace(
-	        """      // Type of Contract links to the hidden Work Type, which determines the fixed SLA.
-	      const sla = totalSlaFor(workType);
-      const systemDue = addBusinessDays(lockedInDate, sla);""",
+    html = replace_between(
+        html,
+        """      // Type of Contract links to the hidden Work Type, which determines the fixed SLA.""",
+        """      form.elements.sla.value = sla;""",
         """      // Fixed SLA follows the selected Type/Sub Type master; Contract Name only helps choose the template.
       const contractName = String(form.elements.name?.value || "").trim();
-	      const sla = totalSlaFor(workType, contractName, selectedContractClassification());
-      const systemDue = addBusinessDays(lockedInDate, sla);""",
+      const sla = totalSlaFor(workType, contractName, selectedContractClassification());
+      const systemDue = addBusinessDays(lockedInDate, sla);
+""",
     )
     html = replace_between(
         html,
