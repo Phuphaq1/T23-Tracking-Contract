@@ -203,6 +203,62 @@ def type_rows_from_contract_type_master_v2(rows):
     return type_rows
 
 
+def norm_contract_key(value):
+    return re.sub(r"[^a-z0-9]+", "", clean(value).split("|")[0].split("/")[0].casefold())
+
+
+def contract_classification_from_template(row):
+    text = " ".join([
+        row.get("Access Level / ระดับการเข้าถึง", ""),
+        row.get("Category", ""),
+        contract_group(row),
+        row.get("หมายเหตุ", ""),
+        row.get("Contract Name / ชื่อสัญญามาตรฐาน", ""),
+    ]).casefold()
+    return "Confidential" if "confident" in text or "confidential" in text or "สัญญาลับ" in text else "Day-to-day Work"
+
+
+def contract_type_flow_from_v2(rows, type_value, classification=""):
+    normalized = norm_contract_key(type_value)
+    if not normalized:
+        return {}
+    classification = clean(classification)
+    candidates = []
+    for row in rows:
+        if classification and row.get("Contract Classification EN") != classification:
+            continue
+        type_display = bilingual_value(row.get("Type of Contract EN"), row.get("Type of Contract TH"))
+        sub_type_display = bilingual_value(row.get("Sub Type of Contract EN"), row.get("Sub Type of Contract TH"))
+        match_values = [sub_type_display, row.get("Sub Type of Contract EN"), row.get("Sub Type of Contract TH")]
+        if not sub_type_display:
+            match_values.extend([type_display, row.get("Type of Contract EN"), row.get("Type of Contract TH")])
+        score = 0
+        for value in match_values:
+            if norm_contract_key(value) == normalized:
+                score = max(score, 100)
+        if score:
+            candidates.append((score, row, type_display, sub_type_display))
+    if not candidates:
+        return {}
+    _, row, type_display, sub_type_display = sorted(candidates, key=lambda item: item[0], reverse=True)[0]
+    classification_display = bilingual_value(row.get("Contract Classification EN"), row.get("Contract Classification TH"))
+    standard_sla = first_sla_number(
+        row.get("Standard SLA")
+        or row.get("Standard SLA / SLA รวม")
+        or row.get("Standard SLA (Working Days)")
+        or row.get("Total SLA / SLA รวม"),
+        "",
+    )
+    return {
+        "classification": classification_display,
+        "typeGroup": type_display,
+        "subType": sub_type_display,
+        "type": sub_type_display or type_display,
+        "fixedSla": standard_sla,
+        "accessLevel": "Confidential" if row.get("Contract Classification EN") == "Confidential" else "Normal",
+    }
+
+
 def contract_group(row):
     return (
         row.get("Group Contract / กลุ่มสัญญา")
@@ -503,24 +559,33 @@ def main():
             contract_type = row.get("Type of Contract / ประเภทสัญญา", "")
             sla_text = row.get("Total SLA / SLA รวม", "")
             vendor = row.get("Vendor / Counter Party / ผู้ขาย–คู่สัญญา", "")
+            template_classification = contract_classification_from_template(row)
+            classification_fallback = bilingual_value(
+                template_classification,
+                "สัญญาลับ" if template_classification == "Confidential" else "งานดำเนินงานทั่วไป",
+            )
+            type_flow = contract_type_flow_from_v2(contract_type_master_v2_rows, contract_type, template_classification)
             selection_label = name
             if name_counts.get(name, 0) > 1:
-                selection_label = " — ".join([value for value in [name, vendor, f"SLA {sla_text}" if sla_text else ""] if value])
+                selection_label = " — ".join([value for value in [name, vendor, f"SLA {type_flow.get('fixedSla', '')}" if type_flow.get("fixedSla") else ""] if value])
             if contract_type:
                 fixed_sla[contract_type] = first_sla_number(sla_text, fixed_sla.get(contract_type, ""))
             contract_catalog.append({
+                "classification": type_flow.get("classification") or classification_fallback,
+                "typeGroup": type_flow.get("typeGroup", ""),
+                "subType": type_flow.get("subType", ""),
                 "name": name,
                 "selectionLabel": selection_label,
                 "sourceRow": row.get("ลำดับ", ""),
-                "type": contract_type,
-                "workType": contract_type,
+                "type": type_flow.get("type", contract_type),
+                "workType": type_flow.get("type", contract_type),
                 "contractId": "",
-                "accessLevel": "Normal",
-                "category": contract_group(row) or "Normal",
+                "accessLevel": type_flow.get("accessLevel", template_classification),
+                "category": type_flow.get("classification") or contract_group(row) or template_classification,
                 "department": row.get("Department / Restaurant", ""),
                 "vendor": vendor,
-                "group": contract_group(row),
-                "fixedSla": sla_text,
+                "group": type_flow.get("typeGroup") or contract_group(row),
+                "fixedSla": type_flow.get("fixedSla", ""),
                 "remark": row.get("หมายเหตุ", ""),
                 "active": "Yes",
             })
@@ -1892,29 +1957,10 @@ def main():
       return 0;
     }""",
     )
-    html = html.replace(
-        """    function getContractFormCatalog() {
-      const merged = new Map();
-      [...contractInputCatalog, ...activeMasterContractTemplates()]
-        .forEach(item => {
-          const name = String(item?.name || "").trim();
-          if (!name) return;
-          if (!merged.has(name)) merged.set(name, {
-            name,
-            type: item.type || "",
-            workType: item.workType || "Other",
-            contractId: item.contractId || "",
-            accessLevel: item.accessLevel || "",
-            category: item.category || ""
-          });
-        });
-      return [...merged.values()].sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    function contractTemplateFor(name) {
-      const normalized = String(name || "").trim().toLowerCase();
-      return getContractFormCatalog().find(item => item.name.toLowerCase() === normalized) || null;
-    }""",
+    html = replace_between(
+        html,
+        """    function getContractFormCatalog() {""",
+        """    function contractSummaryMarkup(contract, options = {}) {""",
         """    function getContractFormCatalog() {
       const rows = [];
       const seen = new Set();
@@ -1923,11 +1969,17 @@ def main():
           const name = String(item?.name || "").trim();
           if (!name) return;
           const selectionLabel = String(item.selectionLabel || item.displayName || name).trim();
+          const classification = item.classification || item.category || item.accessLevel || "";
+          const typeValue = item.subType || item.type || item.typeGroup || "";
+          const typeInfo = contractTypeMasterV2Match(typeValue, classification);
+          const typeGroup = item.typeGroup || (typeInfo ? typeGroupForRow(typeInfo) : contractPrimaryTypeDisplay(item.type));
+          const subType = item.subType || (typeInfo ? subTypeForRow(typeInfo) : contractSubTypeDisplay(item.type));
+          const fixedSla = standardSlaFromContractTypeMasterV2(subType || typeGroup || item.type, classification) || "";
           const key = normalizeDirectoryValue([
             selectionLabel,
             item.sourceRow,
             item.vendor,
-            item.fixedSla,
+            fixedSla,
             item.type
           ].filter(Boolean).join("|"));
           if (seen.has(key)) return;
@@ -1936,15 +1988,17 @@ def main():
             ...item,
             name,
             selectionLabel,
-            type: item.type || "",
-            workType: item.workType || item.type || "Other",
+            type: subType || typeGroup || item.type || "",
+            workType: subType || typeGroup || item.workType || item.type || "Other",
             contractId: item.contractId || "",
             accessLevel: item.accessLevel || "",
             category: item.category || "",
             department: item.department || "",
             vendor: item.vendor || "",
-            group: item.group || item.category || "",
-            fixedSla: item.fixedSla || item["Fixed SLA (Working Days)"] || "",
+            group: typeGroup || item.group || item.category || "",
+            typeGroup,
+            subType,
+            fixedSla,
             remark: item.remark || "",
             sourceRow: item.sourceRow || ""
           });
@@ -1970,13 +2024,15 @@ def main():
       return catalog.find(item => normalizeDirectoryValue(item.selectionLabel || item.name) === normalized)
         || catalog.find(item => normalizeDirectoryValue(item.name) === normalized)
         || null;
-    }""",
+    }
+
+""",
     )
     html = html.replace(
-        """      // Type of Contract links to the hidden Work Type, which determines the fixed SLA.
-      const sla = totalSlaFor(workType);
+	        """      // Type of Contract links to the hidden Work Type, which determines the fixed SLA.
+	      const sla = totalSlaFor(workType);
       const systemDue = addBusinessDays(lockedInDate, sla);""",
-        """      // Contract Name SLA overrides Type SLA when configured in Master Data.
+        """      // Fixed SLA follows the selected Type/Sub Type master; Contract Name only helps choose the template.
       const contractName = String(form.elements.name?.value || "").trim();
 	      const sla = totalSlaFor(workType, contractName, selectedContractClassification());
       const systemDue = addBusinessDays(lockedInDate, sla);""",
@@ -2042,22 +2098,22 @@ def main():
 
     function fixedSlaFromMasterData(workType, contractName = "", classification = "") {
       const normalizedType = normalizeDirectoryValue(workType);
+      if (normalizedType) {
+        const typeRow = masterContractTypeFor(workType, classification);
+        const typeSla = fixedSlaValue(typeRow?.["Fixed SLA (Working Days)"] || typeRow?.FixedSLA || typeRow?.SLA);
+        if (typeSla > 0) return typeSla;
+        const standardSla = standardSlaFromContractTypeMasterV2(workType, classification);
+        if (standardSla > 0) return standardSla;
+        if (typeRow || contractTypeMasterV2Match(workType, classification)) return 0;
+      }
       const normalizedName = normalizeDirectoryValue(contractName);
       if (normalizedName) {
         const template = contractTemplateFor(contractName) || activeMasterContractTemplates().find(item => normalizeDirectoryValue(item.name) === normalizedName);
         const templateSla = fixedSlaValue(template?.fixedSla || template?.["Fixed SLA (Working Days)"] || template?.SLA);
         if (templateSla > 0) return templateSla;
       }
-	      if (normalizedType) {
-		        const typeRow = masterContractTypeFor(workType, classification);
-	        const typeSla = fixedSlaValue(typeRow?.["Fixed SLA (Working Days)"] || typeRow?.FixedSLA || typeRow?.SLA);
-	        if (typeSla > 0) return typeSla;
-        const standardSla = standardSlaFromContractTypeMasterV2(workType, classification);
-        if (standardSla > 0) return standardSla;
-        if (typeRow || contractTypeMasterV2Match(workType, classification)) return 0;
-	      }
-	      return null;
-	    }""",
+      return null;
+    }""",
     )
     html = replace_between(
         html,
@@ -4956,15 +5012,17 @@ def main():
 	          </tr>`).join("");
 	      }
 
-	      const templateBody = document.querySelector("#masterTemplateRows");
-	      if (templateBody) {
-	        templateBody.innerHTML = (masterData.contractTemplates || []).map(row => {
-	          const typeInfo = contractTypeMasterV2Match(row.type, row.classification || row.category || row.group || row.accessLevel);
-	          const classification = row.classification || (typeInfo ? classificationDisplayValue(typeInfo["Contract Classification EN"]) : classificationDisplayValue(row.accessLevel === "Confidential" ? "Confidential" : "Day-to-day Work"));
-	          const typeGroup = row.typeGroup || row.group || (typeInfo ? typeGroupForRow(typeInfo) : contractPrimaryTypeDisplay(row.type));
-	          const subType = row.subType || (typeInfo ? subTypeForRow(typeInfo) : contractSubTypeDisplay(row.type));
-	          const access = row.accessLevel || classificationAccessLevelFor(classification);
-	          return `
+		      const templateBody = document.querySelector("#masterTemplateRows");
+		      if (templateBody) {
+		        templateBody.innerHTML = (masterData.contractTemplates || []).map(row => {
+		          const classificationHint = row.classification || row.category || row.accessLevel;
+		          const typeInfo = contractTypeMasterV2Match(row.subType || row.type || row.typeGroup, classificationHint);
+		          const classification = row.classification || (typeInfo ? classificationDisplayValue(typeInfo["Contract Classification EN"]) : classificationDisplayValue(row.accessLevel === "Confidential" ? "Confidential" : "Day-to-day Work"));
+		          const typeGroup = row.typeGroup || (typeInfo ? typeGroupForRow(typeInfo) : contractPrimaryTypeDisplay(row.type));
+		          const subType = row.subType || (typeInfo ? subTypeForRow(typeInfo) : contractSubTypeDisplay(row.type));
+		          const fixedSla = standardSlaFromContractTypeMasterV2(subType || typeGroup || row.type, classification) || "";
+		          const access = row.accessLevel || classificationAccessLevelFor(classification);
+		          return `
 	          <tr>
 	            <td><input type="hidden" data-master-field="selectionLabel" value="${escapeHtml(row.selectionLabel || "")}"><input type="hidden" data-master-field="sourceRow" value="${escapeHtml(row.sourceRow || "")}">${masterInput("classification", classification)}</td>
 	            <td>${masterInput("typeGroup", typeGroup)}</td>
@@ -4972,7 +5030,7 @@ def main():
 	            <td>${masterInput("name", row.name)}</td>
 	            <td>${masterInput("vendor", row.vendor)}</td>
 	            <td>${masterInput("department", row.department)}</td>
-	            <td>${masterInput("fixedSla", row.fixedSla || row["Fixed SLA (Working Days)"] || standardSlaFromContractTypeMasterV2(subType || typeGroup, classification) || "")}</td>
+		            <td>${masterInput("fixedSla", fixedSla)}</td>
 	            <td>${masterInput("accessLevel", access, { select: true, choices: ["Normal", "Confidential"] })}</td>
 	            <td>${masterActiveSelect("active", row.active)}</td>
 	            <td>${masterDeleteButton()}</td>
@@ -5079,15 +5137,16 @@ def main():
 	          "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(),
 	          Active: row.Active || "Yes"
 	        }));
-	      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["selectionLabel", "sourceRow", "classification", "typeGroup", "subType", "name", "vendor", "department", "fixedSla", "accessLevel", "active"], "name")
-	        .map(row => {
-	          const classification = row.classification || classificationDisplayValue(row.accessLevel === "Confidential" ? "Confidential" : "Day-to-day Work");
-	          const type = String(row.subType || row.typeGroup || "").trim();
-	          return {
-	            ...row,
-	            type,
-	            workType: type || "Other",
-	            fixedSla: String(row.fixedSla || "").trim(),
+		      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["selectionLabel", "sourceRow", "classification", "typeGroup", "subType", "name", "vendor", "department", "fixedSla", "accessLevel", "active"], "name")
+		        .map(row => {
+		          const classification = row.classification || classificationDisplayValue(row.accessLevel === "Confidential" ? "Confidential" : "Day-to-day Work");
+		          const type = String(row.subType || row.typeGroup || "").trim();
+		          const fixedSla = standardSlaFromContractTypeMasterV2(type, classification) || "";
+		          return {
+		            ...row,
+		            type,
+		            workType: type || "Other",
+		            fixedSla: String(fixedSla || "").trim(),
 	            category: classification,
 	            group: row.typeGroup || "",
 	            contractId: "",
