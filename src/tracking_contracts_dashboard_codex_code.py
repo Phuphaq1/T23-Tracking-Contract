@@ -182,13 +182,20 @@ def type_rows_from_contract_type_master_v2(rows):
         classification = bilingual_value(row.get("Contract Classification EN"), row.get("Contract Classification TH"))
         type_value = bilingual_value(row.get("Type of Contract EN"), row.get("Type of Contract TH"))
         sub_type_value = bilingual_value(row.get("Sub Type of Contract EN"), row.get("Sub Type of Contract TH"))
+        standard_sla = first_sla_number(
+            row.get("Standard SLA")
+            or row.get("Standard SLA / SLA รวม")
+            or row.get("Standard SLA (Working Days)")
+            or row.get("Total SLA / SLA รวม"),
+            "",
+        )
         type_rows.append({
             "Active": "Yes",
             "Contract Classification": classification,
             "Category": classification,
             "Type of Contract": type_value,
             "Sub Type of Contract": sub_type_value,
-            "Fixed SLA (Working Days)": "",
+            "Fixed SLA (Working Days)": standard_sla,
             "Description / คำอธิบาย": type_value,
         })
     return type_rows
@@ -1213,9 +1220,10 @@ def main():
       ].map(value => String(value || "").trim()).filter(Boolean);
     }
 
-    function contractTypeMasterV2Match(typeValue = "") {
+    function contractTypeMasterV2Match(typeValue = "", classification = "") {
       const normalized = normalizeDirectoryValue(typeValue);
       if (!normalized) return null;
+      const classificationEn = classification ? classificationEnFromValue(classification) : "";
       const parts = String(typeValue || "")
         .split(/[|/·•,;()\\[\\]–—-]+/)
         .map(normalizeDirectoryValue)
@@ -1238,6 +1246,7 @@ def main():
         }, 0);
       };
       return contractTypeMasterV2
+        .filter(row => !classificationEn || row["Contract Classification EN"] === classificationEn)
         .map(row => ({ row, score: scoreRow(row) }))
         .filter(item => item.score > 0)
         .sort((a, b) => b.score - a.score)[0]?.row || null;
@@ -1254,8 +1263,8 @@ def main():
       if (!form) return;
       const selectedTemplate = contractTemplateFor(String(form.elements.name?.value || "").trim());
       const type = String(effectiveAddCaseContractType() || selectedTemplate?.type || "").trim();
-      const typeInfo = contractTypeMasterV2Match(type);
-      const selectedClassification = selectedContractClassification();
+	      const selectedClassification = selectedContractClassification();
+	      const typeInfo = contractTypeMasterV2Match(type, selectedClassification);
       const classificationEn = typeInfo?.["Contract Classification EN"] || selectedClassification || (selectedTemplate?.accessLevel === "Confidential" ? "Confidential" : "Day-to-day Work");
       const classificationTh = typeInfo?.["Contract Classification TH"] || classificationThaiFor(classificationEn);
       const typeDisplay = selectedContractTypeGroup() || (typeInfo ? contractTypeMasterV2Display(typeInfo, "type") : type);
@@ -1681,11 +1690,21 @@ def main():
       return Number.isFinite(number) && number > 0 ? number : 0;
     }
 
-    function fixedSlaFromMasterData(workType, contractName = "") {
-      const normalizedType = normalizeDirectoryValue(workType);
-      const normalizedName = normalizeDirectoryValue(contractName);
-      if (normalizedName) {
-        const template = contractTemplateFor(contractName) || activeMasterContractTemplates().find(item => normalizeDirectoryValue(item.name) === normalizedName);
+    function standardSlaFromContractTypeMasterV2(typeValue = "", classification = "") {
+      const typeInfo = contractTypeMasterV2Match(typeValue, classification);
+      return fixedSlaValue(
+        typeInfo?.["Standard SLA"] ||
+        typeInfo?.["Standard SLA / SLA รวม"] ||
+        typeInfo?.["Standard SLA (Working Days)"] ||
+        typeInfo?.["Total SLA / SLA รวม"]
+      );
+    }
+
+	    function fixedSlaFromMasterData(workType, contractName = "") {
+	      const normalizedType = normalizeDirectoryValue(workType);
+	      const normalizedName = normalizeDirectoryValue(contractName);
+	      if (normalizedName) {
+	        const template = contractTemplateFor(contractName) || activeMasterContractTemplates().find(item => normalizeDirectoryValue(item.name) === normalizedName);
         const templateSla = fixedSlaValue(template?.fixedSla || template?.["Fixed SLA (Working Days)"] || template?.SLA);
         if (templateSla > 0) return templateSla;
       }
@@ -1700,8 +1719,11 @@ def main():
         });
         const typeSla = fixedSlaValue(typeRow?.["Fixed SLA (Working Days)"] || typeRow?.FixedSLA || typeRow?.SLA);
         if (typeSla > 0) return typeSla;
+        const standardSla = standardSlaFromContractTypeMasterV2(workType);
+        if (standardSla > 0) return standardSla;
+        if (typeRow || contractTypeMasterV2Match(workType)) return 0;
       }
-      return 0;
+      return null;
     }
 
     function accessLevelForAddCase(template, contractType) {
@@ -1795,14 +1817,14 @@ def main():
       }
       return Number(fixedSlaConfig.Other);
     }""",
-        """    function totalSlaFor(workType, contractName = "") {
-      const masterSla = fixedSlaFromMasterData(workType, contractName);
-      if (masterSla > 0) return masterSla;
-      const normalized = String(workType || "").trim();
-      if (Object.prototype.hasOwnProperty.call(fixedSlaConfig, normalized)) {
-        return Number(fixedSlaConfig[normalized]);
-      }
-      return Number(fixedSlaConfig.Other);
+	        """    function totalSlaFor(workType, contractName = "", classification = "") {
+	      const masterSla = fixedSlaFromMasterData(workType, contractName, classification);
+	      if (masterSla !== null && masterSla !== undefined) return Number(masterSla) || 0;
+	      const normalized = String(workType || "").trim();
+	      if (Object.prototype.hasOwnProperty.call(fixedSlaConfig, normalized)) {
+	        return Number(fixedSlaConfig[normalized]);
+	      }
+	      return Number(fixedSlaConfig.Other);
     }""",
     )
     html = html.replace(
@@ -1891,7 +1913,7 @@ def main():
       const systemDue = addBusinessDays(lockedInDate, sla);""",
         """      // Contract Name SLA overrides Type SLA when configured in Master Data.
       const contractName = String(form.elements.name?.value || "").trim();
-      const sla = totalSlaFor(workType, contractName);
+	      const sla = totalSlaFor(workType, contractName, selectedContractClassification());
       const systemDue = addBusinessDays(lockedInDate, sla);""",
     )
     html = replace_between(
@@ -1904,29 +1926,56 @@ def main():
       return String(value || "").split("|")[0].split("/")[0].trim();
     }
 
-    function masterContractTypeFor(typeValue) {
-      const normalizedType = normalizeDirectoryValue(typeValue);
-      if (!normalizedType) return null;
-      const rows = activeMasterContractTypes();
-      const exact = rows.find(row => [masterContractTypeValue(row), row["Sub Type of Contract"], row["Description / คำอธิบาย"]]
-        .some(value => normalizeDirectoryValue(value) === normalizedType || contractTypeValuesMatch(value, typeValue)));
-      if (exact) return exact;
-      const typeInfo = contractTypeMasterV2Match(typeValue);
-      const englishCandidates = [
-        englishContractPart(typeValue),
-        typeInfo?.["Sub Type of Contract EN"],
-        typeInfo?.["Type of Contract EN"]
-      ].map(normalizeDirectoryValue).filter(Boolean);
-      return rows.find(row => {
-        const rowEnglishValues = [masterContractTypeValue(row), row["Sub Type of Contract"], row["Description / คำอธิบาย"]]
-          .map(englishContractPart)
-          .map(normalizeDirectoryValue)
-          .filter(Boolean);
-        return rowEnglishValues.some(value => englishCandidates.includes(value));
-      }) || null;
-    }
+		    function masterContractTypeFor(typeValue, classification = "") {
+		      const normalizedType = normalizeDirectoryValue(typeValue);
+		      if (!normalizedType) return null;
+		      const classificationEn = classification ? classificationEnFromValue(classification) : "";
+		      const rows = activeMasterContractTypes().filter(row => {
+		        if (!classificationEn) return true;
+		        return classificationEnFromValue(row["Contract Classification"] || row.Category) === classificationEn;
+		      });
+	      const normalizedEnglish = normalizeDirectoryValue(englishContractPart(typeValue));
+	      const exactSubType = rows.find(row => {
+	        const subType = row["Sub Type of Contract"];
+	        if (!subType) return false;
+	        return [subType, englishContractPart(subType)]
+	          .some(value => normalizeDirectoryValue(value) === normalizedType || normalizeDirectoryValue(value) === normalizedEnglish);
+	      });
+	      if (exactSubType) return exactSubType;
+	      const exactTypeWithoutSubType = rows.find(row => {
+	        if (String(row["Sub Type of Contract"] || "").trim()) return false;
+	        const type = row["Type of Contract"];
+	        return [type, englishContractPart(type)]
+	          .some(value => normalizeDirectoryValue(value) === normalizedType || normalizeDirectoryValue(value) === normalizedEnglish);
+	      });
+	      if (exactTypeWithoutSubType) return exactTypeWithoutSubType;
+	      const exact = rows.find(row => [masterContractTypeValue(row), row["Description / คำอธิบาย"]]
+	        .some(value => normalizeDirectoryValue(value) === normalizedType || normalizeDirectoryValue(englishContractPart(value)) === normalizedEnglish));
+	      if (exact) return exact;
+		      const typeInfo = contractTypeMasterV2Match(typeValue, classification);
+	      const englishCandidates = [
+	        englishContractPart(typeValue),
+	        typeInfo?.["Sub Type of Contract EN"],
+	        typeInfo?.["Type of Contract EN"]
+	      ].map(normalizeDirectoryValue).filter(Boolean);
+	      const bySubType = rows.find(row => {
+	        const rowEnglishValues = [row["Sub Type of Contract"]]
+	          .map(englishContractPart)
+	          .map(normalizeDirectoryValue)
+	          .filter(Boolean);
+	        return rowEnglishValues.some(value => englishCandidates.includes(value));
+	      });
+	      if (bySubType) return bySubType;
+	      return rows.find(row => {
+	        const rowEnglishValues = [masterContractTypeValue(row), row["Description / คำอธิบาย"]]
+	          .map(englishContractPart)
+	          .map(normalizeDirectoryValue)
+	          .filter(Boolean);
+	        return rowEnglishValues.some(value => englishCandidates.includes(value));
+	      }) || null;
+	    }
 
-    function fixedSlaFromMasterData(workType, contractName = "") {
+    function fixedSlaFromMasterData(workType, contractName = "", classification = "") {
       const normalizedType = normalizeDirectoryValue(workType);
       const normalizedName = normalizeDirectoryValue(contractName);
       if (normalizedName) {
@@ -1934,13 +1983,16 @@ def main():
         const templateSla = fixedSlaValue(template?.fixedSla || template?.["Fixed SLA (Working Days)"] || template?.SLA);
         if (templateSla > 0) return templateSla;
       }
-      if (normalizedType) {
-        const typeRow = masterContractTypeFor(workType);
-        const typeSla = fixedSlaValue(typeRow?.["Fixed SLA (Working Days)"] || typeRow?.FixedSLA || typeRow?.SLA);
-        if (typeSla > 0) return typeSla;
-      }
-      return 0;
-    }""",
+	      if (normalizedType) {
+		        const typeRow = masterContractTypeFor(workType, classification);
+	        const typeSla = fixedSlaValue(typeRow?.["Fixed SLA (Working Days)"] || typeRow?.FixedSLA || typeRow?.SLA);
+	        if (typeSla > 0) return typeSla;
+        const standardSla = standardSlaFromContractTypeMasterV2(workType, classification);
+        if (standardSla > 0) return standardSla;
+        if (typeRow || contractTypeMasterV2Match(workType, classification)) return 0;
+	      }
+	      return null;
+	    }""",
     )
     html = replace_between(
         html,
@@ -2138,7 +2190,7 @@ def main():
     html = html.replace(
         """      const totalSla = totalSlaFor(workType);
       const lockedInDate = todayInputValue();""",
-        """      const totalSla = totalSlaFor(workType, String(form.get("name") || "").trim());
+	        """      const totalSla = totalSlaFor(workType, String(form.get("name") || "").trim(), classificationEnFromValue(String(form.get("classification") || "")));
       const lockedInDate = todayInputValue();""",
     )
     html = html.replace(
@@ -2159,7 +2211,7 @@ def main():
     )
     html = html.replace(
         """      const totalSla = totalSlaFor(workType, String(form.get("name") || "").trim());""",
-        """      const totalSla = totalSlaFor(workType, contractName);""",
+	        """      const totalSla = totalSlaFor(workType, contractName, classificationEnFromValue(String(form.get("classification") || "")));""",
     )
     html = html.replace(
         """        name: form.get("name"),""",
@@ -4765,7 +4817,7 @@ def main():
             <td>${masterInput("Contract Classification", row["Contract Classification"] || row.Category)}</td>
             <td>${masterInput("Type of Contract", contractPrimaryTypeDisplay(row["Type of Contract"]))}</td>
             <td>${masterInput("Sub Type of Contract", row["Sub Type of Contract"] || contractSubTypeDisplay(row["Type of Contract"]))}</td>
-            <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"])}</td>
+	            <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"] || standardSlaFromContractTypeMasterV2(row["Sub Type of Contract"] || row["Type of Contract"]) || "")}</td>
             <td>${masterActiveSelect("Active", row.Active)}</td>
             <td>${masterDeleteButton()}</td>
           </tr>`).join("");
@@ -5173,11 +5225,12 @@ def main():
             "Type of Contract EN",
             "Type of Contract TH",
             "Sub Type of Contract EN",
-            "Sub Type of Contract TH",
-            "Type Sort Order",
-            "Sub Type Sort Order",
-        ],
-    )
+	            "Sub Type of Contract TH",
+	            "Type Sort Order",
+	            "Sub Type Sort Order",
+	            "Standard SLA",
+	        ],
+	    )
     OUTPUT_ATTACHMENT_APPS_SCRIPT.write_text(
         f"""const DEFAULT_FOLDER_ID = "{ATTACHMENT_CLOUD_FOLDER_ID}";
 const EMAIL_SENDER_NAME = "T23 Contract Tracking";
