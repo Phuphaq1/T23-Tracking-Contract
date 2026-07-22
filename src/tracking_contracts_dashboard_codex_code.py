@@ -34,6 +34,29 @@ ATTACHMENT_UPLOAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhIbrLVvD
 RESET_CONTRACT_AND_LOG_DATA = True
 ACTIVE_UPDATE_ACTIONS = ["Submit to Review", "Return", "Resubmit", "Forward"]
 
+STANDARD_SLA_ADJUSTED_DAYS = {
+    ("Day-to-day Work", "Lease & Rental Agreement", "Lease Agreement"): "70",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Sub Lease Agreement"): "45",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Lease Asset Agreement"): "30",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Rental Agreement"): "40",
+    ("Day-to-day Work", "Service Agreement", ""): "75",
+    ("Day-to-day Work", "Amendment Agreement", ""): "35",
+    ("Day-to-day Work", "Sale and Purchase Agreement", ""): "35",
+    ("Day-to-day Work", "Service Provider Agreement", ""): "40",
+    ("Day-to-day Work", "Commercial Agreement", "Consultancy Agreement"): "65",
+    ("Day-to-day Work", "Commercial Agreement", "Confidentiality Agreement"): "30",
+    ("Day-to-day Work", "Others", ""): "30",
+    ("Confidential", "Preliminary Agreement", "Memorandum of Understanding"): "60",
+    ("Confidential", "Preliminary Agreement", "Term Sheet"): "30",
+    ("Confidential", "Commercial Agreement", "Consultancy Agreement"): "30",
+    ("Confidential", "Commercial Agreement", "Confidentiality Agreement"): "30",
+    ("Confidential", "Commercial Agreement", "Management Agreement"): "30",
+    ("Confidential", "Commercial Agreement", "Loan Agreement"): "60",
+    ("Confidential", "Commercial Agreement", "Mergers and Acquisitions Agreement"): "60",
+    ("Confidential", "Commercial Agreement", "Shareholders’ Agreement"): "60",
+    ("Confidential", "", "Others"): "30",
+}
+
 TODAY = date(2026, 7, 11)
 
 CONTRACT_NAME_OVERRIDES = {
@@ -160,6 +183,7 @@ def read_contract_type_master_v2_rows():
             normalized = {clean(key): clean(value) for key, value in row.items()}
             if normalized.get("Type of Contract EN") or normalized.get("Sub Type of Contract EN"):
                 rows.append(normalized)
+        rows = apply_standard_sla_adjustments(rows)
         classification_order = {
             "day-to-day work": 0,
             "confidential": 1,
@@ -171,6 +195,19 @@ def read_contract_type_master_v2_rows():
             item.get("Type of Contract EN", ""),
             item.get("Sub Type of Contract EN", ""),
         ))
+
+
+def apply_standard_sla_adjustments(rows):
+    for row in rows:
+        key = (
+            clean(row.get("Contract Classification EN")),
+            clean(row.get("Type of Contract EN")),
+            clean(row.get("Sub Type of Contract EN")),
+        )
+        adjusted_days = STANDARD_SLA_ADJUSTED_DAYS.get(key)
+        if adjusted_days is not None:
+            row["Standard SLA"] = adjusted_days
+    return rows
 
 
 def bilingual_value(en, th):
@@ -258,7 +295,7 @@ def contract_type_alias_value(type_value, classification="", context=""):
         return "Service Agreement"
     if "amendment" in text or "แก้ไขเพิ่มเติม" in text:
         return "Amendment Agreement"
-    return ""
+    return "Others"
 
 
 def contract_type_flow_from_v2(rows, type_value, classification="", context=""):
