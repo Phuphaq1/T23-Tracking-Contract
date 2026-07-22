@@ -218,11 +218,56 @@ def contract_classification_from_template(row):
     return "Confidential" if "confident" in text or "confidential" in text or "สัญญาลับ" in text else "Day-to-day Work"
 
 
-def contract_type_flow_from_v2(rows, type_value, classification=""):
+def contract_type_alias_value(type_value, classification="", context=""):
+    text = " ".join([type_value or "", classification or "", context or ""]).casefold()
+    normalized = norm_contract_key(text)
+    if not normalized:
+        return ""
+    is_confidential = "confidential" in text or "confident" in text or "สัญญาลับ" in text
+    if "non-disclosure" in text or "nondisclosure" in text or "ไม่เปิดเผย" in text:
+        return "Confidentiality Agreement" if not is_confidential else "Confidentiality Agreement"
+    if "mou" in text or "memorandum" in text:
+        return "Memorandum of Understanding"
+    if "term sheet" in text:
+        return "Term Sheet"
+    if "loan" in text or "เงินกู้" in text:
+        return "Loan Agreement"
+    if "shareholder" in text:
+        return "Shareholders’ Agreement"
+    if "merger" in text or "acquisition" in text or "m&a" in text:
+        return "Mergers and Acquisitions Agreement"
+    if "management" in text and is_confidential:
+        return "Management Agreement"
+    if "contractor" in text or "construction contract" in text or "ผู้รับเหมา" in text:
+        return "Service Provider Agreement"
+    if "consult" in text or "design" in text or "ที่ปรึกษา" in text or "ออกแบบ" in text:
+        return "Consultancy Agreement"
+    if "lease asset" in text:
+        return "Lease Asset Agreement"
+    if "sublease" in text or "sub lease" in text or "เช่าช่วง" in text:
+        return "Sub Lease Agreement"
+    if "rental" in text or "เช่าพื้นที่" in text or "เช่าทั่วไป" in text or "lease and service" in text or "booth rental" in text:
+        return "Rental Agreement"
+    if "lease" in text or "สัญญาเช่า" in text:
+        return "Lease Agreement"
+    if "sale and purchase" in text or "ซื้อขาย" in text:
+        return "Sale and Purchase Agreement"
+    if "service provider" in text or "provider" in text or "partner service" in text or "delivery platform" in text:
+        return "Service Provider Agreement"
+    if "service" in text or "บริการ" in text or "management fee" in text or "management services" in text:
+        return "Service Agreement"
+    if "amendment" in text or "แก้ไขเพิ่มเติม" in text:
+        return "Amendment Agreement"
+    return ""
+
+
+def contract_type_flow_from_v2(rows, type_value, classification="", context=""):
     normalized = norm_contract_key(type_value)
     if not normalized:
         return {}
     classification = clean(classification)
+    alias = contract_type_alias_value(type_value, classification, context)
+    aliases = [alias] if alias else []
     candidates = []
     for row in rows:
         if classification and row.get("Contract Classification EN") != classification:
@@ -236,6 +281,8 @@ def contract_type_flow_from_v2(rows, type_value, classification=""):
         for value in match_values:
             if norm_contract_key(value) == normalized:
                 score = max(score, 100)
+            if any(norm_contract_key(value) == norm_contract_key(alias_value) for alias_value in aliases):
+                score = max(score, 90)
         if score:
             candidates.append((score, row, type_display, sub_type_display))
     if not candidates:
@@ -564,7 +611,12 @@ def main():
                 template_classification,
                 "สัญญาลับ" if template_classification == "Confidential" else "งานดำเนินงานทั่วไป",
             )
-            type_flow = contract_type_flow_from_v2(contract_type_master_v2_rows, contract_type, template_classification)
+            type_flow = contract_type_flow_from_v2(
+                contract_type_master_v2_rows,
+                contract_type,
+                template_classification,
+                " ".join([name, contract_group(row), row.get("หมายเหตุ", "")]),
+            )
             selection_label = name
             if name_counts.get(name, 0) > 1:
                 selection_label = " — ".join([value for value in [name, vendor, f"SLA {type_flow.get('fixedSla', '')}" if type_flow.get("fixedSla") else ""] if value])
