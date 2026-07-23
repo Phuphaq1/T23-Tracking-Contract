@@ -33,6 +33,7 @@ ATTACHMENT_CLOUD_FOLDER_NAME = "Attachments Files"
 ATTACHMENT_UPLOAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhIbrLVvD-Cwxh3wqEWqjSaIESGgXfhdJ2cWUhepiSIsAyG8yQafG392kkjnSvjT_N/exec"
 RESET_CONTRACT_AND_LOG_DATA = True
 ACTIVE_UPDATE_ACTIONS = ["Submit to Review", "Return", "Resubmit", "Forward"]
+STANDARD_SLA_DATA_VERSION = "2026-07-23-total-sla-v1"
 
 STANDARD_SLA_ADJUSTED_DAYS = {
     ("Day-to-day Work", "Lease & Rental Agreement", "Lease Agreement"): "70",
@@ -244,6 +245,7 @@ def type_rows_from_contract_type_master_v2(rows):
             "Type of Contract": type_value,
             "Sub Type of Contract": sub_type_value,
             "Fixed SLA (Working Days)": standard_sla,
+            "Standard SLA Version": STANDARD_SLA_DATA_VERSION,
             "Description / คำอธิบาย": type_value,
         })
     return type_rows
@@ -701,6 +703,8 @@ def main():
             }
             for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
         ]
+    for row in contract_catalog:
+        row["slaVersion"] = STANDARD_SLA_DATA_VERSION
     if not contract_type_master_v2_rows:
         for row in type_rows:
             contract_type = row.get("Type of Contract", "")
@@ -844,7 +848,7 @@ def main():
         html,
         "    const contractInputCatalog = [",
         "\n    ];\n    const requestedRole",
-        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name, 'actionSlaCsv': OUTPUT_ACTION_SLA_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
+        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const standardSlaDataVersion = {js(STANDARD_SLA_DATA_VERSION)};\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name, 'actionSlaCsv': OUTPUT_ACTION_SLA_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
     )
     html = html.replace(
         "    const requestedRole",
@@ -1920,6 +1924,42 @@ def main():
         typeInfo?.["Standard SLA (Working Days)"] ||
         typeInfo?.["Total SLA / SLA รวม"]
       );
+    }
+
+    function migrateMasterDataToCurrentSlaVersion(savedVersion = "") {
+      let migrated = 0;
+      (masterData.contractTypes || []).forEach(row => {
+        const rowVersion = String(row["Standard SLA Version"] || savedVersion || "").trim();
+        if (rowVersion === standardSlaDataVersion) return;
+        const classification = String(row["Contract Classification"] || row.Category || "").trim();
+        const typeValue = String(row["Sub Type of Contract"] || row["Type of Contract"] || "").trim();
+        const typeInfo = contractTypeMasterV2Match(typeValue, classification);
+        const currentSla = standardSlaFromContractTypeMasterV2(typeValue, classification);
+        if (!typeInfo || !currentSla) return;
+        const classificationDisplay = [typeInfo["Contract Classification EN"], typeInfo["Contract Classification TH"]].filter(Boolean).join(" / ");
+        const typeDisplay = contractTypeMasterV2Display(typeInfo, "type");
+        const subTypeDisplay = subTypeForRow(typeInfo);
+        row["Contract Classification"] = classificationDisplay;
+        row.Category = classificationDisplay;
+        row["Type of Contract"] = typeDisplay;
+        row["Sub Type of Contract"] = subTypeDisplay;
+        row["Fixed SLA (Working Days)"] = String(currentSla);
+        row["Standard SLA Version"] = standardSlaDataVersion;
+        row["Description / คำอธิบาย"] = typeDisplay;
+        migrated += 1;
+      });
+      (masterData.contractTemplates || []).forEach(row => {
+        const rowVersion = String(row.slaVersion || savedVersion || "").trim();
+        if (rowVersion === standardSlaDataVersion) return;
+        const classification = String(row.classification || row.category || "").trim();
+        const typeValue = String(row.subType || row.typeGroup || row.type || row.workType || "").trim();
+        const currentSla = standardSlaFromContractTypeMasterV2(typeValue, classification);
+        if (!currentSla) return;
+        row.fixedSla = String(currentSla);
+        row.slaVersion = standardSlaDataVersion;
+        migrated += 1;
+      });
+      return migrated;
     }
 
 	    function fixedSlaFromMasterData(workType, contractName = "") {
@@ -4817,6 +4857,7 @@ def main():
       try {
         localStorage.setItem(localDatabaseKey, JSON.stringify({
           savedAt: localIsoDateTime(),
+          standardSlaDataVersion,
           contracts,
           logRecords,
           masterData
@@ -4849,6 +4890,7 @@ def main():
 	          if (Array.isArray(parsed.masterData.contractTemplates)) masterData.contractTemplates = parsed.masterData.contractTemplates;
 	          if (Array.isArray(parsed.masterData.actionSla)) masterData.actionSla = parsed.masterData.actionSla;
 	        }
+        const migratedSlaCount = migrateMasterDataToCurrentSlaVersion(parsed.standardSlaDataVersion || "");
         const migratedCount = migrateContractIdsToDepartmentFormat(parsedContracts, parsedLogs);
         parsedContracts.forEach(item => {
           const normalizedType = contractPrimaryTypeDisplay(item.type);
@@ -4859,9 +4901,9 @@ def main():
         });
         contracts.splice(0, contracts.length, ...parsedContracts);
         if (Array.isArray(parsed.logRecords)) logRecords.splice(0, logRecords.length, ...parsedLogs);
-        if (migratedCount) saveContractsDatabase();
+        if (migratedCount || migratedSlaCount) saveContractsDatabase();
         refreshDashboardDataFromContracts();
-        updateDatabaseSyncStatus(`${contracts.length} contracts loaded from local DB${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}`);
+        updateDatabaseSyncStatus(`${contracts.length} contracts loaded from local DB${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}`);
       } catch (error) {
         updateDatabaseSyncStatus("Local database could not load");
       }
@@ -4873,7 +4915,7 @@ def main():
 
     function typeMasterCsvText() {
       const rows = masterData.contractTypes || [];
-      const headers = ["Contract Classification", "Type of Contract", "Sub Type of Contract", "Fixed SLA (Working Days)", "Active", "Category", "Description / คำอธิบาย"];
+      const headers = ["Contract Classification", "Type of Contract", "Sub Type of Contract", "Fixed SLA (Working Days)", "Standard SLA Version", "Active", "Category", "Description / คำอธิบาย"];
       return objectsToCsv(headers, rows);
     }
 
@@ -4886,7 +4928,7 @@ def main():
     }
 
 	    function contractTemplateCsvText() {
-	      return objectsToCsv(["classification", "typeGroup", "subType", "name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"], masterData.contractTemplates || []);
+	      return objectsToCsv(["classification", "typeGroup", "subType", "name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "slaVersion", "remark", "active"], masterData.contractTemplates || []);
 	    }
 
 	    function actionSlaCsvText() {
@@ -4896,6 +4938,7 @@ def main():
 	    function driveDatabaseCsvPayload() {
       return {
         mode: "saveDriveDatabase",
+        standardSlaDataVersion,
         folderId: driveDatabaseConfig.folderId,
         contractsCsv: driveDatabaseConfig.contractsCsv,
         logsCsv: driveDatabaseConfig.logsCsv,
@@ -4928,6 +4971,7 @@ def main():
 	      if (peopleMasterText) masterData.people = csvToObjects(peopleMasterText);
 	      if (contractTemplateText) masterData.contractTemplates = csvToObjects(contractTemplateText);
 	      if (actionSlaText) masterData.actionSla = csvToObjects(actionSlaText);
+      const migratedSlaCount = migrateMasterDataToCurrentSlaVersion(payload.standardSlaDataVersion || "");
       if (!contractText) return false;
       const cloudContracts = csvToObjects(contractText).map(contractFromDbRow).filter(item => item.id && item.name);
       const cloudLogs = logText ? csvToObjects(logText).map(logFromDbRow).filter(row => String(row?.[0] || "").trim()) : [];
@@ -4937,15 +4981,17 @@ def main():
       logRecords.splice(0, logRecords.length, ...cloudLogs);
 	      localStorage.setItem(localDatabaseKey, JSON.stringify({
 	        savedAt: localIsoDateTime(),
+	        standardSlaDataVersion,
 	        contracts,
 	        logRecords,
 	        masterData
 	      }));
       isApplyingDriveDatabaseLoad = false;
+      if (migratedSlaCount) scheduleDriveDatabaseSave();
       refreshDashboardDataFromContracts();
       renderMasterData();
       renderAll();
-      updateDatabaseSyncStatus(`${contracts.length} contracts loaded from Shared Drive${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}`);
+      updateDatabaseSyncStatus(`${contracts.length} contracts loaded from Shared Drive${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}`);
       return true;
     }
 
@@ -5264,8 +5310,9 @@ def main():
 	        .map(row => ({
 	          ...row,
 	          Category: row["Contract Classification"] || "",
-          "Description / คำอธิบาย": row["Type of Contract"] || "",
+	          "Description / คำอธิบาย": row["Type of Contract"] || "",
 	          "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(),
+	          "Standard SLA Version": standardSlaDataVersion,
 	          Active: row.Active || "Yes"
 	        }));
 	      masterData.actionSla = readMasterRows("#masterActionSlaRows", ["Action", "Fixed SLA (Working Days)", "Active"], "Action")
@@ -5285,6 +5332,7 @@ def main():
 		            type,
 		            workType: type || "Other",
 		            fixedSla: String(fixedSla || "").trim(),
+		            slaVersion: standardSlaDataVersion,
 	            category: classification,
 	            group: row.typeGroup || "",
 	            contractId: "",
@@ -5299,9 +5347,9 @@ def main():
       if (!normalizeMasterDataFromUi()) return;
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
 	      if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
-	      if (kind === "contractTypes") masterData.contractTypes.push({ "Contract Classification": "Day-to-day Work / งานดำเนินงานทั่วไป", Category: "Day-to-day Work / งานดำเนินงานทั่วไป", "Type of Contract": "", "Sub Type of Contract": "", "Fixed SLA (Working Days)": "", "Description / คำอธิบาย": "", Active: "Yes" });
+	      if (kind === "contractTypes") masterData.contractTypes.push({ "Contract Classification": "Day-to-day Work / งานดำเนินงานทั่วไป", Category: "Day-to-day Work / งานดำเนินงานทั่วไป", "Type of Contract": "", "Sub Type of Contract": "", "Fixed SLA (Working Days)": "", "Standard SLA Version": standardSlaDataVersion, "Description / คำอธิบาย": "", Active: "Yes" });
 	      if (kind === "actionSla") masterData.actionSla.push({ Action: "Submit to Review", "Fixed SLA (Working Days)": "", Active: "Yes" });
-	      if (kind === "contractTemplates") masterData.contractTemplates.push({ classification: "Day-to-day Work / งานดำเนินงานทั่วไป", typeGroup: "", subType: "", name: "", selectionLabel: "", sourceRow: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Day-to-day Work / งานดำเนินงานทั่วไป", department: "", vendor: "", group: "", fixedSla: "", active: "Yes" });
+	      if (kind === "contractTemplates") masterData.contractTemplates.push({ classification: "Day-to-day Work / งานดำเนินงานทั่วไป", typeGroup: "", subType: "", name: "", selectionLabel: "", sourceRow: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Day-to-day Work / งานดำเนินงานทั่วไป", department: "", vendor: "", group: "", fixedSla: "", slaVersion: standardSlaDataVersion, active: "Yes" });
       renderMasterData();
     }
 
@@ -5563,6 +5611,7 @@ def main():
         "Type of Contract",
         "Sub Type of Contract",
         "Fixed SLA (Working Days)",
+        "Standard SLA Version",
         "Active",
         "Category",
         "Description / คำอธิบาย",
@@ -5575,7 +5624,7 @@ def main():
     write_csv(OUTPUT_TYPE_MASTER_CSV, type_rows, type_headers)
     write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Active"])
     write_csv(OUTPUT_PEOPLE_MASTER_CSV, people_master_rows, ["company", "department", "name", "email", "active"])
-    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["classification", "typeGroup", "subType", "name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "remark", "active"])
+    write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["classification", "typeGroup", "subType", "name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "slaVersion", "remark", "active"])
     write_csv(OUTPUT_ACTION_SLA_MASTER_CSV, action_sla_master_rows, ["Action", "Fixed SLA (Working Days)", "Active"])
     write_csv(
         OUTPUT_CONTRACT_TYPE_MASTER_V2_CSV,

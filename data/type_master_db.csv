@@ -1,21 +1,21 @@
-﻿Contract Classification,Type of Contract,Sub Type of Contract,Fixed SLA (Working Days),Active,Category,Description / คำอธิบาย
-Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Lease Agreement / สัญญาเช่า,70,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
-Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Sub Lease Agreement / สัญญาเช่าช่วง,45,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
-Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Lease Asset Agreement / สัญญาเช่าทรัพย์สิน,30,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
-Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Rental Agreement / สัญญาเช่าทั่วไป,40,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
-Day-to-day Work / งานดำเนินงานทั่วไป,Service Agreement / สัญญาให้บริการ,,75,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Service Agreement / สัญญาให้บริการ
-Day-to-day Work / งานดำเนินงานทั่วไป,Amendment Agreement / สัญญาแก้ไขเพิ่มเติม,,35,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Amendment Agreement / สัญญาแก้ไขเพิ่มเติม
-Day-to-day Work / งานดำเนินงานทั่วไป,Sale and Purchase Agreement / สัญญาซื้อขาย,,35,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Sale and Purchase Agreement / สัญญาซื้อขาย
-Day-to-day Work / งานดำเนินงานทั่วไป,Service Provider Agreement / สัญญาจ้าง,,40,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Service Provider Agreement / สัญญาจ้าง
-Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ,Consultancy Agreement / สัญญาให้คำปรึกษา,65,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ
-Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ,Confidentiality Agreement / สัญญารักษาความลับ,30,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ
-Day-to-day Work / งานดำเนินงานทั่วไป,Others / อื่น ๆ,,30,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Others / อื่น ๆ
-Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น,Memorandum of Understanding / บันทึกความเข้าใจ,60,Yes,Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น
-Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น,Term Sheet / เอกสารสรุปเงื่อนไขเบื้องต้น,30,Yes,Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Consultancy Agreement / สัญญาให้คำปรึกษา,30,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Confidentiality Agreement / สัญญารักษาความลับ,30,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Management Agreement / สัญญาบริหารจัดการ,30,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Loan Agreement / สัญญาเงินกู้,60,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Mergers and Acquisitions Agreement / สัญญาการควบรวมและซื้อกิจการ,60,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Shareholders’ Agreement / สัญญาระหว่างผู้ถือหุ้น,60,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
-Confidential / สัญญาลับ,,Others / อื่น ๆ,30,Yes,Confidential / สัญญาลับ,
+﻿Contract Classification,Type of Contract,Sub Type of Contract,Fixed SLA (Working Days),Standard SLA Version,Active,Category,Description / คำอธิบาย
+Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Lease Agreement / สัญญาเช่า,70,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
+Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Sub Lease Agreement / สัญญาเช่าช่วง,45,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
+Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Lease Asset Agreement / สัญญาเช่าทรัพย์สิน,30,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
+Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า,Rental Agreement / สัญญาเช่าทั่วไป,40,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Lease & Rental Agreement / สัญญาเช่าและให้เช่า
+Day-to-day Work / งานดำเนินงานทั่วไป,Service Agreement / สัญญาให้บริการ,,75,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Service Agreement / สัญญาให้บริการ
+Day-to-day Work / งานดำเนินงานทั่วไป,Amendment Agreement / สัญญาแก้ไขเพิ่มเติม,,35,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Amendment Agreement / สัญญาแก้ไขเพิ่มเติม
+Day-to-day Work / งานดำเนินงานทั่วไป,Sale and Purchase Agreement / สัญญาซื้อขาย,,35,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Sale and Purchase Agreement / สัญญาซื้อขาย
+Day-to-day Work / งานดำเนินงานทั่วไป,Service Provider Agreement / สัญญาจ้าง,,40,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Service Provider Agreement / สัญญาจ้าง
+Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ,Consultancy Agreement / สัญญาให้คำปรึกษา,65,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ
+Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ,Confidentiality Agreement / สัญญารักษาความลับ,30,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Commercial Agreement / สัญญาทางธุรกิจ
+Day-to-day Work / งานดำเนินงานทั่วไป,Others / อื่น ๆ,,30,2026-07-23-total-sla-v1,Yes,Day-to-day Work / งานดำเนินงานทั่วไป,Others / อื่น ๆ
+Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น,Memorandum of Understanding / บันทึกความเข้าใจ,60,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น
+Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น,Term Sheet / เอกสารสรุปเงื่อนไขเบื้องต้น,30,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,Preliminary Agreement / ข้อตกลงเบื้องต้น
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Consultancy Agreement / สัญญาให้คำปรึกษา,30,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Confidentiality Agreement / สัญญารักษาความลับ,30,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Management Agreement / สัญญาบริหารจัดการ,30,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Loan Agreement / สัญญาเงินกู้,60,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Mergers and Acquisitions Agreement / สัญญาการควบรวมและซื้อกิจการ,60,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ,Shareholders’ Agreement / สัญญาระหว่างผู้ถือหุ้น,60,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,Commercial Agreement / สัญญาทางธุรกิจ
+Confidential / สัญญาลับ,,Others / อื่น ๆ,30,2026-07-23-total-sla-v1,Yes,Confidential / สัญญาลับ,
