@@ -2497,6 +2497,13 @@ def main():
       return String(row?.["Type of Contract TH"] || row?.["Sub Type of Contract TH"] || "").trim();
     }
 
+    function contractTypeShortDescriptionTh(typeValue = "") {
+      const descriptions = {
+        "Lease & Rental Agreement": "สัญญาเช่า ให้เช่า หรือเช่าช่วง"
+      };
+      return descriptions[englishContractPart(typeValue)] || "";
+    }
+
     function subTypeForRow(row) {
       const subType = contractTypeMasterV2Display(row, "sub");
       const typeGroup = typeGroupForRow(row);
@@ -3011,6 +3018,7 @@ def main():
       const selectedTypeRow = contractTypeMasterV2Match(typeGroup, selectedClassification);
       const selectedSubTypeRow = contractTypeMasterV2Match(selectedSubType, selectedClassification);
       const selectedTypeThai = typeGroupThaiForRow(selectedTypeRow);
+      const selectedTypeDescriptionTh = contractTypeShortDescriptionTh(typeGroup);
       const selectedSubTypeThai = subTypeThaiForRow(selectedSubTypeRow);
       subTypeInput.disabled = !typeGroup || subOptions.length === 0;
       subTypeInput.required = Boolean(typeGroup && subOptions.length);
@@ -3050,7 +3058,7 @@ def main():
       setLinkedFlowStatus(
         "linkedTypeStatus",
         subOptions.length
-          ? `${selectedTypeThai || "ประเภทสัญญา"} · เลือก Sub Type`
+          ? `${selectedTypeDescriptionTh || selectedTypeThai || "ประเภทสัญญา"} · เลือก Sub Type`
           : `${selectedTypeThai || "ประเภทสัญญา"} · Fixed SLA ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`,
         "linked"
       );
