@@ -1,5 +1,5 @@
-﻿Action,Fixed SLA (Working Days),Active
-Submit to Review,1,Yes
-Return,7,Yes
-Resubmit,2,Yes
-Forward,2,Yes
+﻿Action,Description / รายละเอียด,Fixed SLA (Working Days),SLA Rule / วิธีนับ,Action Data Version,Active
+Submit to Review,ส่งสัญญาเข้าสู่กระบวนการตรวจสอบ,1,+1 วันทำการ (ไม่นับวันส่ง),2026-07-23-action-sla-v1,Yes
+Return,ส่งสัญญากลับเพื่อแก้ไขหรือเพิ่มเติมข้อมูล,7,7 วันทำการ,2026-07-23-action-sla-v1,Yes
+Resubmit,ส่งสัญญากลับเข้าสู่กระบวนการตรวจสอบอีกครั้งหลังแก้ไข,2,2 วันทำการ,2026-07-23-action-sla-v1,Yes
+Forward,ส่งต่อสัญญาไปยังหน่วยงานหรือผู้รับผิดชอบลำดับถัดไป,2,2 วันทำการ,2026-07-23-action-sla-v1,Yes
