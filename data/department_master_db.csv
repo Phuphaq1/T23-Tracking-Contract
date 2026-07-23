@@ -1,20 +1,10 @@
-﻿Department / Restaurant,Department Code,Active
-ADMIN,ADMIN,Yes
-Information Technology,IT,Yes
-IT,IT,Yes
-Legal,LEGAL,Yes
-Finance,FIN,Yes
-Accounting,ACC,Yes
-Human Resources,HR,Yes
-Administration,ADMIN,Yes
-Business Development,BD,Yes
-Marketing,MKT,Yes
-MKT,MKT,Yes
-Operation,OP,Yes
-Procurement,PC,Yes
-Project Management,PM,Yes
-Project Manager,PM,Yes
-PM,PM,Yes
-Baan Turtle,BT,Yes
-Table 1749,T1749,Yes
-FSQ,FSQ,Yes
+﻿Department / Restaurant,Department Code,Department Data Version,Active
+Administration,ADMIN,2026-07-23-nonzero-departments-v1,Yes
+Business Development,BD,2026-07-23-nonzero-departments-v1,Yes
+Finance,FIN,2026-07-23-nonzero-departments-v1,Yes
+IT,IT,2026-07-23-nonzero-departments-v1,Yes
+Legal,LEGAL,2026-07-23-nonzero-departments-v1,Yes
+Marketing,MKT,2026-07-23-nonzero-departments-v1,Yes
+Operation,OP,2026-07-23-nonzero-departments-v1,Yes
+Procurement,PC,2026-07-23-nonzero-departments-v1,Yes
+Project Manager,PM,2026-07-23-nonzero-departments-v1,Yes

@@ -34,6 +34,7 @@ ATTACHMENT_UPLOAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhIbrLVvD
 RESET_CONTRACT_AND_LOG_DATA = True
 ACTIVE_UPDATE_ACTIONS = ["Submit to Review", "Return", "Resubmit", "Forward"]
 STANDARD_SLA_DATA_VERSION = "2026-07-23-total-sla-v1"
+DEPARTMENT_DATA_VERSION = "2026-07-23-nonzero-departments-v1"
 
 STANDARD_SLA_ADJUSTED_DAYS = {
     ("Day-to-day Work", "Lease & Rental Agreement", "Lease Agreement"): "70",
@@ -111,6 +112,26 @@ DEPARTMENT_CODE_CONFIG = {
     "Table 1749": "T1749",
     "FSQ": "FSQ",
 }
+
+DEPARTMENT_NAME_ALIASES = {
+    "ADMIN": "Administration",
+    "Information Technology": "IT",
+    "MKT": "Marketing",
+    "Project Management": "Project Manager",
+    "PM": "Project Manager",
+}
+
+ACTIVE_DEPARTMENT_ORDER = [
+    "Administration",
+    "Business Development",
+    "Finance",
+    "IT",
+    "Legal",
+    "Marketing",
+    "Operation",
+    "Procurement",
+    "Project Manager",
+]
 
 
 def clean(value):
@@ -378,10 +399,25 @@ def normalized_lookup(value):
     return clean(value).casefold()
 
 
-def department_code_for(department):
-    if not clean(department):
+def canonical_department_name(value):
+    name = clean(value)
+    if not name or name == "0":
         return ""
-    direct = DEPARTMENT_CODE_CONFIG.get(clean(department))
+    direct = DEPARTMENT_NAME_ALIASES.get(name)
+    if direct:
+        return direct
+    normalized = normalized_lookup(name)
+    for alias, canonical in DEPARTMENT_NAME_ALIASES.items():
+        if normalized_lookup(alias) == normalized:
+            return canonical
+    return name
+
+
+def department_code_for(department):
+    department = canonical_department_name(department)
+    if not department:
+        return ""
+    direct = DEPARTMENT_CODE_CONFIG.get(department)
     if direct:
         return direct
     normalized = normalized_lookup(department)
@@ -559,7 +595,30 @@ def main():
         except json.JSONDecodeError:
             people_master_rows = []
     for row in people_master_rows:
+        row["department"] = canonical_department_name(row.get("department"))
         row.setdefault("active", "Yes")
+
+    departments_with_people = {
+        row.get("department", "")
+        for row in people_master_rows
+        if row.get("department") and clean(row.get("department")) != "0"
+    }
+    ordered_active_departments = [
+        name for name in ACTIVE_DEPARTMENT_ORDER if name in departments_with_people
+    ]
+    ordered_active_departments.extend(sorted(
+        name for name in departments_with_people if name not in ordered_active_departments
+    ))
+    department_master_rows = [
+        {
+            "Department / Restaurant": name,
+            "Department Code": department_code_for(name),
+            "Department Data Version": DEPARTMENT_DATA_VERSION,
+            "Active": "Yes",
+        }
+        for name in ordered_active_departments
+        if name and department_code_for(name)
+    ]
 
     for index, row in enumerate(register_rows, start=1):
         contract_id = row.get("Contract ID", "")
@@ -682,7 +741,7 @@ def main():
                 "contractId": "",
                 "accessLevel": type_flow.get("accessLevel", template_classification),
                 "category": type_flow.get("classification") or contract_group(row) or template_classification,
-                "department": row.get("Department / Restaurant", ""),
+                "department": canonical_department_name(row.get("Department / Restaurant", "")),
                 "vendor": vendor,
                 "group": type_flow.get("typeGroup") or contract_group(row),
                 "fixedSla": type_flow.get("fixedSla", ""),
@@ -848,7 +907,7 @@ def main():
         html,
         "    const contractInputCatalog = [",
         "\n    ];\n    const requestedRole",
-        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const standardSlaDataVersion = {js(STANDARD_SLA_DATA_VERSION)};\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name, 'actionSlaCsv': OUTPUT_ACTION_SLA_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
+        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const standardSlaDataVersion = {js(STANDARD_SLA_DATA_VERSION)};\n    const departmentDataVersion = {js(DEPARTMENT_DATA_VERSION)};\n    const departmentNameAliases = Object.freeze({js(DEPARTMENT_NAME_ALIASES)});\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name, 'actionSlaCsv': OUTPUT_ACTION_SLA_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
     )
     html = html.replace(
         "    const requestedRole",
@@ -1960,6 +2019,53 @@ def main():
         migrated += 1;
       });
       return migrated;
+    }
+
+    function canonicalDepartmentName(value = "") {
+      const name = String(value || "").trim();
+      if (!name || name === "0") return "";
+      if (departmentNameAliases[name]) return departmentNameAliases[name];
+      const normalized = normalizeDirectoryValue(name);
+      const alias = Object.keys(departmentNameAliases)
+        .find(item => normalizeDirectoryValue(item) === normalized);
+      return alias ? departmentNameAliases[alias] : name;
+    }
+
+    function migrateDepartmentMasterToCurrentVersion(savedVersion = "") {
+      const currentRows = masterData.departments || [];
+      const allRowsCurrent = currentRows.length > 0 && currentRows.every(row =>
+        String(row["Department Data Version"] || "").trim() === departmentDataVersion
+      );
+      if (savedVersion === departmentDataVersion || allRowsCurrent) return 0;
+
+      const previousCount = currentRows.length;
+      const codeByDepartment = new Map();
+      currentRows.forEach(row => {
+        const name = canonicalDepartmentName(row["Department / Restaurant"]);
+        const code = String(row["Department Code"] || "").trim().toUpperCase();
+        if (name && code && code !== "0" && !codeByDepartment.has(name)) codeByDepartment.set(name, code);
+      });
+
+      (masterData.people || []).forEach(row => {
+        row.department = canonicalDepartmentName(row.department);
+      });
+      const departmentsWithPeople = orderedUniqueList(
+        (masterData.people || [])
+          .filter(row => isMasterActive(row.active) && row.name)
+          .map(row => canonicalDepartmentName(row.department))
+          .filter(Boolean)
+      );
+      masterData.departments = departmentsWithPeople.map(name => ({
+        "Department / Restaurant": name,
+        "Department Code": codeByDepartment.get(name) || String(departmentCodeConfig[name] || departmentCodeSuggestion(name) || "").trim().toUpperCase(),
+        "Department Data Version": departmentDataVersion,
+        Active: "Yes"
+      })).filter(row => row["Department Code"] && row["Department Code"] !== "0");
+
+      (masterData.contractTemplates || []).forEach(row => {
+        row.department = canonicalDepartmentName(row.department);
+      });
+      return Math.max(1, Math.abs(previousCount - masterData.departments.length));
     }
 
 	    function fixedSlaFromMasterData(workType, contractName = "") {
@@ -4858,6 +4964,7 @@ def main():
         localStorage.setItem(localDatabaseKey, JSON.stringify({
           savedAt: localIsoDateTime(),
           standardSlaDataVersion,
+          departmentDataVersion,
           contracts,
           logRecords,
           masterData
@@ -4891,8 +4998,10 @@ def main():
 	          if (Array.isArray(parsed.masterData.actionSla)) masterData.actionSla = parsed.masterData.actionSla;
 	        }
         const migratedSlaCount = migrateMasterDataToCurrentSlaVersion(parsed.standardSlaDataVersion || "");
+        const migratedDepartmentCount = migrateDepartmentMasterToCurrentVersion(parsed.departmentDataVersion || "");
         const migratedCount = migrateContractIdsToDepartmentFormat(parsedContracts, parsedLogs);
         parsedContracts.forEach(item => {
+          item.department = canonicalDepartmentName(item.department);
           const normalizedType = contractPrimaryTypeDisplay(item.type);
           if (normalizedType) {
             item.type = normalizedType;
@@ -4901,9 +5010,9 @@ def main():
         });
         contracts.splice(0, contracts.length, ...parsedContracts);
         if (Array.isArray(parsed.logRecords)) logRecords.splice(0, logRecords.length, ...parsedLogs);
-        if (migratedCount || migratedSlaCount) saveContractsDatabase();
+        if (migratedCount || migratedSlaCount || migratedDepartmentCount) saveContractsDatabase();
         refreshDashboardDataFromContracts();
-        updateDatabaseSyncStatus(`${contracts.length} contracts loaded from local DB${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}`);
+        updateDatabaseSyncStatus(`${contracts.length} contracts loaded from local DB${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}${migratedDepartmentCount ? ` · Department Master cleaned` : ""}`);
       } catch (error) {
         updateDatabaseSyncStatus("Local database could not load");
       }
@@ -4920,7 +5029,7 @@ def main():
     }
 
     function departmentMasterCsvText() {
-      return objectsToCsv(["Department / Restaurant", "Department Code", "Active"], masterData.departments || []);
+      return objectsToCsv(["Department / Restaurant", "Department Code", "Department Data Version", "Active"], masterData.departments || []);
     }
 
     function peopleMasterCsvText() {
@@ -4939,6 +5048,7 @@ def main():
       return {
         mode: "saveDriveDatabase",
         standardSlaDataVersion,
+        departmentDataVersion,
         folderId: driveDatabaseConfig.folderId,
         contractsCsv: driveDatabaseConfig.contractsCsv,
         logsCsv: driveDatabaseConfig.logsCsv,
@@ -4972,8 +5082,10 @@ def main():
 	      if (contractTemplateText) masterData.contractTemplates = csvToObjects(contractTemplateText);
 	      if (actionSlaText) masterData.actionSla = csvToObjects(actionSlaText);
       const migratedSlaCount = migrateMasterDataToCurrentSlaVersion(payload.standardSlaDataVersion || "");
+      const migratedDepartmentCount = migrateDepartmentMasterToCurrentVersion(payload.departmentDataVersion || "");
       if (!contractText) return false;
       const cloudContracts = csvToObjects(contractText).map(contractFromDbRow).filter(item => item.id && item.name);
+      cloudContracts.forEach(item => { item.department = canonicalDepartmentName(item.department); });
       const cloudLogs = logText ? csvToObjects(logText).map(logFromDbRow).filter(row => String(row?.[0] || "").trim()) : [];
       const migratedCount = cloudContracts.length ? migrateContractIdsToDepartmentFormat(cloudContracts, cloudLogs) : 0;
       isApplyingDriveDatabaseLoad = true;
@@ -4982,16 +5094,17 @@ def main():
 	      localStorage.setItem(localDatabaseKey, JSON.stringify({
 	        savedAt: localIsoDateTime(),
 	        standardSlaDataVersion,
+	        departmentDataVersion,
 	        contracts,
 	        logRecords,
 	        masterData
 	      }));
       isApplyingDriveDatabaseLoad = false;
-      if (migratedSlaCount) scheduleDriveDatabaseSave();
+      if (migratedSlaCount || migratedDepartmentCount) scheduleDriveDatabaseSave();
       refreshDashboardDataFromContracts();
       renderMasterData();
       renderAll();
-      updateDatabaseSyncStatus(`${contracts.length} contracts loaded from Shared Drive${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}`);
+      updateDatabaseSyncStatus(`${contracts.length} contracts loaded from Shared Drive${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}${migratedDepartmentCount ? ` · Department Master cleaned` : ""}`);
       return true;
     }
 
@@ -5302,7 +5415,12 @@ def main():
       refreshDashboardDataFromContracts();
 
 	      masterData.departments = readMasterRows("#masterDepartmentRows", ["Department / Restaurant", "Department Code", "Active"], "Department / Restaurant")
-	        .map(row => ({ ...row, "Department Code": String(row["Department Code"] || departmentCodeSuggestion(row["Department / Restaurant"]) || "").trim().toUpperCase(), Active: row.Active || "Yes" }));
+	        .map(row => {
+	          const department = canonicalDepartmentName(row["Department / Restaurant"]);
+	          const code = String(row["Department Code"] || departmentCodeSuggestion(department) || "").trim().toUpperCase();
+	          return { ...row, "Department / Restaurant": department, "Department Code": code, "Department Data Version": departmentDataVersion, Active: row.Active || "Yes" };
+	        })
+	        .filter(row => row["Department / Restaurant"] && row["Department / Restaurant"] !== "0" && row["Department Code"] && row["Department Code"] !== "0");
       masterData.people = readMasterRows("#masterPeopleRows", ["company", "department", "name", "email", "active"], "name")
         .map(row => ({ ...row, email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" }));
 	      masterData.contractTypes = readMasterRows("#masterContractTypeRows", ["Contract Classification", "Type of Contract", "Sub Type of Contract", "Fixed SLA (Working Days)", "Active"], "Contract Classification")
@@ -5345,7 +5463,7 @@ def main():
 
     function addMasterRow(kind) {
       if (!normalizeMasterDataFromUi()) return;
-      if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", Active: "Yes" });
+      if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", "Department Data Version": departmentDataVersion, Active: "Yes" });
 	      if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
 	      if (kind === "contractTypes") masterData.contractTypes.push({ "Contract Classification": "Day-to-day Work / งานดำเนินงานทั่วไป", Category: "Day-to-day Work / งานดำเนินงานทั่วไป", "Type of Contract": "", "Sub Type of Contract": "", "Fixed SLA (Working Days)": "", "Standard SLA Version": standardSlaDataVersion, "Description / คำอธิบาย": "", Active: "Yes" });
 	      if (kind === "actionSla") masterData.actionSla.push({ Action: "Submit to Review", "Fixed SLA (Working Days)": "", Active: "Yes" });
@@ -5622,7 +5740,7 @@ def main():
     write_csv(OUTPUT_CONTRACTS_CSV, contract_csv_rows, contract_headers)
     write_csv(OUTPUT_LOGS_CSV, log_csv_rows, log_headers)
     write_csv(OUTPUT_TYPE_MASTER_CSV, type_rows, type_headers)
-    write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Active"])
+    write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Department Data Version", "Active"])
     write_csv(OUTPUT_PEOPLE_MASTER_CSV, people_master_rows, ["company", "department", "name", "email", "active"])
     write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["classification", "typeGroup", "subType", "name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "slaVersion", "remark", "active"])
     write_csv(OUTPUT_ACTION_SLA_MASTER_CSV, action_sla_master_rows, ["Action", "Fixed SLA (Working Days)", "Active"])
