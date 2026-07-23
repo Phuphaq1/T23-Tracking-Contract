@@ -35,6 +35,7 @@ RESET_CONTRACT_AND_LOG_DATA = True
 ACTIVE_UPDATE_ACTIONS = ["Submit to Review", "Return", "Resubmit", "Forward"]
 STANDARD_SLA_DATA_VERSION = "2026-07-23-total-sla-v1"
 DEPARTMENT_DATA_VERSION = "2026-07-23-nonzero-departments-v1"
+ACTION_DATA_VERSION = "2026-07-23-action-sla-v1"
 
 STANDARD_SLA_ADJUSTED_DAYS = {
     ("Day-to-day Work", "Lease & Rental Agreement", "Lease Agreement"): "70",
@@ -64,6 +65,33 @@ ACTION_SLA_ADJUSTED_DAYS = {
     "Return": 7,
     "Resubmit": 2,
     "Forward": 2,
+}
+
+ACTION_DESCRIPTION_CONFIG = {
+    "Submit to Review": {
+        "descriptionEn": "Submit the contract to the review process.",
+        "descriptionTh": "ส่งสัญญาเข้าสู่กระบวนการตรวจสอบ",
+        "slaRuleEn": "+1 working day (submission date excluded)",
+        "slaRuleTh": "+1 วันทำการ (ไม่นับวันส่ง)",
+    },
+    "Return": {
+        "descriptionEn": "Return the contract for correction or additional information.",
+        "descriptionTh": "ส่งสัญญากลับเพื่อแก้ไขหรือเพิ่มเติมข้อมูล",
+        "slaRuleEn": "7 working days",
+        "slaRuleTh": "7 วันทำการ",
+    },
+    "Resubmit": {
+        "descriptionEn": "Resubmit the corrected contract to the review process.",
+        "descriptionTh": "ส่งสัญญากลับเข้าสู่กระบวนการตรวจสอบอีกครั้งหลังแก้ไข",
+        "slaRuleEn": "2 working days",
+        "slaRuleTh": "2 วันทำการ",
+    },
+    "Forward": {
+        "descriptionEn": "Forward the contract to the next department or responsible person.",
+        "descriptionTh": "ส่งต่อสัญญาไปยังหน่วยงานหรือผู้รับผิดชอบลำดับถัดไป",
+        "slaRuleEn": "2 working days",
+        "slaRuleTh": "2 วันทำการ",
+    },
 }
 
 TODAY = date(2026, 7, 11)
@@ -785,7 +813,10 @@ def main():
     action_sla_master_rows = [
         {
             "Action": action,
+            "Description / รายละเอียด": ACTION_DESCRIPTION_CONFIG[action]["descriptionTh"],
             "Fixed SLA (Working Days)": action_sla.get(action, 0),
+            "SLA Rule / วิธีนับ": ACTION_DESCRIPTION_CONFIG[action]["slaRuleTh"],
+            "Action Data Version": ACTION_DATA_VERSION,
             "Active": "Yes",
         }
         for action in ACTIVE_UPDATE_ACTIONS
@@ -907,7 +938,7 @@ def main():
         html,
         "    const contractInputCatalog = [",
         "\n    ];\n    const requestedRole",
-        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const standardSlaDataVersion = {js(STANDARD_SLA_DATA_VERSION)};\n    const departmentDataVersion = {js(DEPARTMENT_DATA_VERSION)};\n    const departmentNameAliases = Object.freeze({js(DEPARTMENT_NAME_ALIASES)});\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name, 'actionSlaCsv': OUTPUT_ACTION_SLA_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
+        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const standardSlaDataVersion = {js(STANDARD_SLA_DATA_VERSION)};\n    const departmentDataVersion = {js(DEPARTMENT_DATA_VERSION)};\n    const actionDataVersion = {js(ACTION_DATA_VERSION)};\n    const actionDescriptionConfig = Object.freeze({js(ACTION_DESCRIPTION_CONFIG)});\n    const departmentNameAliases = Object.freeze({js(DEPARTMENT_NAME_ALIASES)});\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name, 'actionSlaCsv': OUTPUT_ACTION_SLA_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
     )
     html = html.replace(
         "    const requestedRole",
@@ -925,7 +956,17 @@ def main():
     html = html.replace(
         """    const updateActionList = updateActionDefinitions.map(item => item.nameEn);
     const updateActionByName = Object.freeze(Object.fromEntries(updateActionDefinitions.map(item => [item.nameEn, item])));""",
-        f"""    const activeUpdateActionNames = new Set({js(ACTIVE_UPDATE_ACTIONS)});
+        f"""    const actionDefinitionOverrides = Object.freeze({js(ACTION_DESCRIPTION_CONFIG)});
+    updateActionDefinitions.forEach(item => {{
+      const configured = actionDefinitionOverrides[item.nameEn];
+      if (!configured) return;
+      item.shortEn = configured.descriptionEn;
+      item.shortTh = configured.descriptionTh;
+      item.descriptionEn = configured.descriptionEn;
+      item.descriptionTh = configured.descriptionTh;
+      item.sla = Number({js(ACTION_SLA_ADJUSTED_DAYS)}[item.nameEn]) || item.sla;
+    }});
+    const activeUpdateActionNames = new Set({js(ACTIVE_UPDATE_ACTIONS)});
     const activeUpdateActionDefinitions = updateActionDefinitions.filter(item => activeUpdateActionNames.has(item.nameEn));
     const updateActionList = activeUpdateActionDefinitions.map(item => item.nameEn);
     const updateActionByName = Object.freeze(Object.fromEntries(activeUpdateActionDefinitions.map(item => [item.nameEn, item])));""",
@@ -2027,6 +2068,30 @@ def main():
       return migrated;
     }
 
+    function migrateActionMasterToCurrentVersion(savedVersion = "") {
+      const rows = masterData.actionSla || [];
+      const allRowsCurrent = rows.length === updateActionList.length && rows.every(row =>
+        String(row["Action Data Version"] || "").trim() === actionDataVersion
+      );
+      if (savedVersion === actionDataVersion || allRowsCurrent) return 0;
+
+      const previousByAction = new Map(rows.map(row => [String(row.Action || "").trim(), row]));
+      masterData.actionSla = updateActionList.map(action => {
+        const previous = previousByAction.get(action) || {};
+        const configured = actionDescriptionConfig[action] || {};
+        return {
+          ...previous,
+          Action: action,
+          "Description / รายละเอียด": configured.descriptionTh || "",
+          "Fixed SLA (Working Days)": String(actionSlaConfig[action] || ""),
+          "SLA Rule / วิธีนับ": configured.slaRuleTh || "",
+          "Action Data Version": actionDataVersion,
+          Active: previous.Active || "Yes"
+        };
+      });
+      return masterData.actionSla.length;
+    }
+
     function canonicalDepartmentName(value = "") {
       const name = String(value || "").trim();
       if (!name || name === "0") return "";
@@ -2737,13 +2802,13 @@ def main():
 	                <div class="panel-header">
 	                  <div>
 	                    <h2>Action SLA Master</h2>
-	                    <small>Fixed SLA by Update Status action</small>
+	                    <small>Submit to Review starts on the next working day · ไม่นับวันส่ง</small>
 	                  </div>
 	                  <button class="secondary-button" type="button" data-add-master-row="actionSla">Add Row</button>
 	                </div>
 	                <div class="table-wrap">
 	                  <table class="master-table">
-	                    <thead><tr><th>Action</th><th>Fixed SLA</th><th>Active</th><th></th></tr></thead>
+	                    <thead><tr><th>Action</th><th>Description<br><small>รายละเอียด</small></th><th>Fixed SLA<br><small>วันทำการ</small></th><th>Active</th><th></th></tr></thead>
 	                    <tbody id="masterActionSlaRows"></tbody>
 	                  </table>
 	                </div>
@@ -4261,32 +4326,32 @@ def main():
         "Submit to Review": {
           actionEn: "Submit to Review",
           actionTh: "ส่งตรวจสอบ",
-          descriptionEn: "Send the contract to the relevant person for review.",
-          descriptionTh: "ส่งสัญญาให้ผู้เกี่ยวข้องตรวจสอบรายละเอียด",
+          descriptionEn: "Submit the contract to the review process.",
+          descriptionTh: "ส่งสัญญาเข้าสู่กระบวนการตรวจสอบ",
           reasonEn: "Submission Remark:",
           reasonTh: "หมายเหตุการส่งตรวจ:"
         },
         Return: {
           actionEn: "Return",
           actionTh: "ส่งกลับเพื่อแก้ไข",
-          descriptionEn: "Return the contract for correction.",
-          descriptionTh: "ส่งสัญญากลับเพื่อแก้ไขข้อมูลหรือเอกสาร",
+          descriptionEn: "Return the contract for correction or additional information.",
+          descriptionTh: "ส่งสัญญากลับเพื่อแก้ไขหรือเพิ่มเติมข้อมูล",
           reasonEn: "Return Reason:",
           reasonTh: "เหตุผลที่ส่งกลับ:"
         },
         Resubmit: {
           actionEn: "Resubmit",
           actionTh: "ส่งกลับเข้าตรวจอีกครั้ง",
-          descriptionEn: "Resubmit the corrected contract for review.",
-          descriptionTh: "ส่งสัญญาที่แก้ไขแล้วกลับเข้าสู่กระบวนการตรวจสอบ",
+          descriptionEn: "Resubmit the corrected contract to the review process.",
+          descriptionTh: "ส่งสัญญากลับเข้าสู่กระบวนการตรวจสอบอีกครั้งหลังแก้ไข",
           reasonEn: "Resubmission Remark:",
           reasonTh: "หมายเหตุการส่งกลับเข้าตรวจ:"
         },
         Forward: {
           actionEn: "Forward",
           actionTh: "ส่งต่อ",
-          descriptionEn: "Forward the contract to the relevant person for further action.",
-          descriptionTh: "ส่งต่อสัญญาให้ผู้เกี่ยวข้องดำเนินการในขั้นตอนถัดไป",
+          descriptionEn: "Forward the contract to the next department or responsible person.",
+          descriptionTh: "ส่งต่อสัญญาไปยังหน่วยงานหรือผู้รับผิดชอบลำดับถัดไป",
           reasonEn: "Forward Remark:",
           reasonTh: "หมายเหตุการส่งต่อ:"
         },
@@ -4982,6 +5047,7 @@ def main():
           savedAt: localIsoDateTime(),
           standardSlaDataVersion,
           departmentDataVersion,
+          actionDataVersion,
           contracts,
           logRecords,
           masterData
@@ -5016,6 +5082,7 @@ def main():
 	        }
         const migratedSlaCount = migrateMasterDataToCurrentSlaVersion(parsed.standardSlaDataVersion || "");
         const migratedDepartmentCount = migrateDepartmentMasterToCurrentVersion(parsed.departmentDataVersion || "");
+        const migratedActionCount = migrateActionMasterToCurrentVersion(parsed.actionDataVersion || "");
         const migratedCount = migrateContractIdsToDepartmentFormat(parsedContracts, parsedLogs);
         parsedContracts.forEach(item => {
           item.department = canonicalDepartmentName(item.department);
@@ -5027,9 +5094,9 @@ def main():
         });
         contracts.splice(0, contracts.length, ...parsedContracts);
         if (Array.isArray(parsed.logRecords)) logRecords.splice(0, logRecords.length, ...parsedLogs);
-        if (migratedCount || migratedSlaCount || migratedDepartmentCount) saveContractsDatabase();
+        if (migratedCount || migratedSlaCount || migratedDepartmentCount || migratedActionCount) saveContractsDatabase();
         refreshDashboardDataFromContracts();
-        updateDatabaseSyncStatus(`${contracts.length} contracts loaded from local DB${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}${migratedDepartmentCount ? ` · Department Master cleaned` : ""}`);
+        updateDatabaseSyncStatus(`${contracts.length} contracts loaded from local DB${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}${migratedDepartmentCount ? ` · Department Master cleaned` : ""}${migratedActionCount ? ` · Action SLA updated` : ""}`);
       } catch (error) {
         updateDatabaseSyncStatus("Local database could not load");
       }
@@ -5058,7 +5125,7 @@ def main():
 	    }
 
 	    function actionSlaCsvText() {
-	      return objectsToCsv(["Action", "Fixed SLA (Working Days)", "Active"], masterData.actionSla || []);
+	      return objectsToCsv(["Action", "Description / รายละเอียด", "Fixed SLA (Working Days)", "SLA Rule / วิธีนับ", "Action Data Version", "Active"], masterData.actionSla || []);
 	    }
 
 	    function driveDatabaseCsvPayload() {
@@ -5066,6 +5133,7 @@ def main():
         mode: "saveDriveDatabase",
         standardSlaDataVersion,
         departmentDataVersion,
+        actionDataVersion,
         folderId: driveDatabaseConfig.folderId,
         contractsCsv: driveDatabaseConfig.contractsCsv,
         logsCsv: driveDatabaseConfig.logsCsv,
@@ -5100,6 +5168,7 @@ def main():
 	      if (actionSlaText) masterData.actionSla = csvToObjects(actionSlaText);
       const migratedSlaCount = migrateMasterDataToCurrentSlaVersion(payload.standardSlaDataVersion || "");
       const migratedDepartmentCount = migrateDepartmentMasterToCurrentVersion(payload.departmentDataVersion || "");
+      const migratedActionCount = migrateActionMasterToCurrentVersion(payload.actionDataVersion || "");
       if (!contractText) return false;
       const cloudContracts = csvToObjects(contractText).map(contractFromDbRow).filter(item => item.id && item.name);
       cloudContracts.forEach(item => { item.department = canonicalDepartmentName(item.department); });
@@ -5112,16 +5181,17 @@ def main():
 	        savedAt: localIsoDateTime(),
 	        standardSlaDataVersion,
 	        departmentDataVersion,
+	        actionDataVersion,
 	        contracts,
 	        logRecords,
 	        masterData
 	      }));
       isApplyingDriveDatabaseLoad = false;
-      if (migratedSlaCount || migratedDepartmentCount) scheduleDriveDatabaseSave();
+      if (migratedSlaCount || migratedDepartmentCount || migratedActionCount) scheduleDriveDatabaseSave();
       refreshDashboardDataFromContracts();
       renderMasterData();
       renderAll();
-      updateDatabaseSyncStatus(`${contracts.length} contracts loaded from Shared Drive${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}${migratedDepartmentCount ? ` · Department Master cleaned` : ""}`);
+      updateDatabaseSyncStatus(`${contracts.length} contracts loaded from Shared Drive${migratedCount ? ` · ${migratedCount} Contract ID migrated` : ""}${migratedSlaCount ? ` · ${migratedSlaCount} SLA values updated` : ""}${migratedDepartmentCount ? ` · Department Master cleaned` : ""}${migratedActionCount ? ` · Action SLA updated` : ""}`);
       return true;
     }
 
@@ -5320,6 +5390,7 @@ def main():
 	        actionBody.innerHTML = (masterData.actionSla || []).map(row => `
 	          <tr>
 	            <td>${masterInput("Action", row.Action, { select: true, choices: updateActionList })}</td>
+	            <td>${masterInput("Description / รายละเอียด", row["Description / รายละเอียด"] || actionDescriptionConfig[row.Action]?.descriptionTh || "")}</td>
 	            <td>${masterInput("Fixed SLA (Working Days)", row["Fixed SLA (Working Days)"] || row.sla)}</td>
 	            <td>${masterActiveSelect("Active", row.Active)}</td>
 	            <td>${masterDeleteButton()}</td>
@@ -5450,11 +5521,14 @@ def main():
 	          "Standard SLA Version": standardSlaDataVersion,
 	          Active: row.Active || "Yes"
 	        }));
-	      masterData.actionSla = readMasterRows("#masterActionSlaRows", ["Action", "Fixed SLA (Working Days)", "Active"], "Action")
+	      masterData.actionSla = readMasterRows("#masterActionSlaRows", ["Action", "Description / รายละเอียด", "Fixed SLA (Working Days)", "Active"], "Action")
 	        .filter(row => updateActionList.includes(row.Action))
 	        .map(row => ({
 	          ...row,
+	          "Description / รายละเอียด": String(row["Description / รายละเอียด"] || actionDescriptionConfig[row.Action]?.descriptionTh || "").trim(),
 	          "Fixed SLA (Working Days)": String(row["Fixed SLA (Working Days)"] || "").trim(),
+	          "SLA Rule / วิธีนับ": actionDescriptionConfig[row.Action]?.slaRuleTh || "",
+	          "Action Data Version": actionDataVersion,
 	          Active: row.Active || "Yes"
 	        }));
 		      masterData.contractTemplates = readMasterRows("#masterTemplateRows", ["selectionLabel", "sourceRow", "classification", "typeGroup", "subType", "name", "vendor", "department", "fixedSla", "accessLevel", "active"], "name")
@@ -5483,7 +5557,7 @@ def main():
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", "Department Data Version": departmentDataVersion, Active: "Yes" });
 	      if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
 	      if (kind === "contractTypes") masterData.contractTypes.push({ "Contract Classification": "Day-to-day Work / งานดำเนินงานทั่วไป", Category: "Day-to-day Work / งานดำเนินงานทั่วไป", "Type of Contract": "", "Sub Type of Contract": "", "Fixed SLA (Working Days)": "", "Standard SLA Version": standardSlaDataVersion, "Description / คำอธิบาย": "", Active: "Yes" });
-	      if (kind === "actionSla") masterData.actionSla.push({ Action: "Submit to Review", "Fixed SLA (Working Days)": "", Active: "Yes" });
+	      if (kind === "actionSla") masterData.actionSla.push({ Action: "Submit to Review", "Description / รายละเอียด": actionDescriptionConfig["Submit to Review"].descriptionTh, "Fixed SLA (Working Days)": "", "SLA Rule / วิธีนับ": actionDescriptionConfig["Submit to Review"].slaRuleTh, "Action Data Version": actionDataVersion, Active: "Yes" });
 	      if (kind === "contractTemplates") masterData.contractTemplates.push({ classification: "Day-to-day Work / งานดำเนินงานทั่วไป", typeGroup: "", subType: "", name: "", selectionLabel: "", sourceRow: "", type: "", workType: "", contractId: "", accessLevel: "Normal", category: "Day-to-day Work / งานดำเนินงานทั่วไป", department: "", vendor: "", group: "", fixedSla: "", slaVersion: standardSlaDataVersion, active: "Yes" });
       renderMasterData();
     }
@@ -5760,7 +5834,11 @@ def main():
     write_csv(OUTPUT_DEPARTMENT_MASTER_CSV, department_master_rows, ["Department / Restaurant", "Department Code", "Department Data Version", "Active"])
     write_csv(OUTPUT_PEOPLE_MASTER_CSV, people_master_rows, ["company", "department", "name", "email", "active"])
     write_csv(OUTPUT_CONTRACT_TEMPLATE_CSV, contract_catalog, ["classification", "typeGroup", "subType", "name", "selectionLabel", "sourceRow", "type", "workType", "contractId", "accessLevel", "category", "department", "vendor", "group", "fixedSla", "slaVersion", "remark", "active"])
-    write_csv(OUTPUT_ACTION_SLA_MASTER_CSV, action_sla_master_rows, ["Action", "Fixed SLA (Working Days)", "Active"])
+    write_csv(
+        OUTPUT_ACTION_SLA_MASTER_CSV,
+        action_sla_master_rows,
+        ["Action", "Description / รายละเอียด", "Fixed SLA (Working Days)", "SLA Rule / วิธีนับ", "Action Data Version", "Active"],
+    )
     write_csv(
         OUTPUT_CONTRACT_TYPE_MASTER_V2_CSV,
         contract_type_master_v2_rows,
