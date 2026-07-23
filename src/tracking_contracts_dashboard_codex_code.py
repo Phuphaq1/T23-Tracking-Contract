@@ -1301,6 +1301,12 @@ def main():
       padding-right: 12px;
     }
 
+    .linked-flow-field > .linked-flow-status {
+      display: block;
+      min-height: 16px;
+      line-height: 1.3;
+    }
+
     .access-level-chip {
       display: inline-flex;
       align-items: center;
@@ -2823,11 +2829,21 @@ def main():
       refreshNewCaseIdPreview();""",
     )
     html = html.replace(
+        """      if (!contractType || !workType) {""",
+        """      const requiresSubType = Boolean(selectedContractTypeGroup() && contractSubTypeDropdownOptions().length);
+      const hasSelectedSubType = Boolean(selectedContractSubType());
+      if (!contractType || !workType || (requiresSubType && !hasSelectedSubType)) {""",
+    )
+    html = html.replace(
         """        if (preview) preview.textContent = "Waiting for Type of Contract · รอข้อมูลประเภทสัญญาเพื่อคำนวณ SLA และ Due Date";
         return;""",
-        """        if (preview) preview.textContent = "Waiting for Type of Contract · รอข้อมูลประเภทสัญญาเพื่อคำนวณ SLA และ Due Date";
+        """        if (preview) preview.textContent = requiresSubType
+          ? "Select Sub Type to calculate SLA and Due Date · เลือกประเภทย่อยเพื่อคำนวณ SLA และ Due Date"
+          : "Select Type to calculate SLA and Due Date · เลือกประเภทเพื่อคำนวณ SLA และ Due Date";
         const slaHint = document.querySelector("#addSlaHint");
-        if (slaHint) slaHint.textContent = "Fixed by selected Type / Sub Type · กำหนดตามประเภทและประเภทย่อยที่เลือก";
+        if (slaHint) slaHint.textContent = requiresSubType
+          ? "Select Sub Type · เลือกประเภทย่อย"
+          : "Select Type · เลือกประเภท";
         renderAddCaseSmartSummary();
         return;""",
     )
@@ -2920,6 +2936,7 @@ def main():
       const subOptions = contractSubTypeDropdownOptions();
       const selectedSubType = selectedContractSubType();
       subTypeInput.disabled = !typeGroup || subOptions.length === 0;
+      subTypeInput.required = Boolean(typeGroup && subOptions.length);
       subTypeInput.placeholder = !typeGroup
         ? "Waiting for Type of Contract / รอประเภทสัญญา"
         : subOptions.length
@@ -2939,35 +2956,35 @@ def main():
 
       if (!typeGroup) {
         if (accessInput) accessInput.value = classificationAccessLevelFor(selectedContractClassification());
-        setLinkedFlowStatus("linkedTypeStatus", "Select Type to calculate SLA · เลือกประเภทเพื่อคำนวณ SLA", "waiting");
-        setLinkedFlowStatus("linkedSubTypeStatus", "Waiting for Type · รอประเภทสัญญา", "waiting");
-        setLinkedFlowStatus("linkedNameStatus", "Filtered by Type and Sub Type · กรองจากประเภทที่เลือก", "waiting");
+        setLinkedFlowStatus("linkedTypeStatus", "Select Type · เลือกประเภท", "waiting");
+        setLinkedFlowStatus("linkedSubTypeStatus", "Select Type first · เลือกประเภทก่อน", "waiting");
+        setLinkedFlowStatus("linkedNameStatus", "Enter Contract Name · ระบุชื่อสัญญา", "waiting");
         syncAddCaseSystemFields();
         return;
       }
 
       const accessLevel = accessLevelForAddCase(template, effectiveType || typeGroup);
-      const selectedFixedSla = standardSlaFromContractTypeMasterV2(effectiveType || typeGroup, selectedContractClassification());
+      const selectedFixedSla = (!subOptions.length || selectedSubType)
+        ? standardSlaFromContractTypeMasterV2(effectiveType || typeGroup, selectedContractClassification())
+        : 0;
       if (accessInput) accessInput.value = accessLevel;
       setAccessLevelBadge(accessLevel);
       setLinkedFlowStatus("linkedAccessStatus", `${selectedContractClassification()} · ${classificationThaiFor(selectedContractClassification())}`, accessLevel === "Confidential" ? "waiting" : "linked");
       setLinkedFlowStatus(
         "linkedTypeStatus",
-        selectedFixedSla
-          ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
-          : "Type selected · Select Sub Type to set SLA / เลือกประเภทย่อยเพื่อกำหนด SLA",
-        selectedFixedSla ? "linked" : "waiting"
+        subOptions.length
+          ? "Type selected · เลือก Sub Type"
+          : `SLA ${selectedFixedSla} Days · ${selectedFixedSla} วัน`,
+        "linked"
       );
       setLinkedFlowStatus(
         "linkedSubTypeStatus",
         subOptions.length
-          ? (selectedContractSubType() && selectedFixedSla
-              ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
-              : `${subOptions.length} Sub Type option(s) · เลือกประเภทย่อยเพื่อกำหนด SLA`)
-          : (selectedFixedSla
-              ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
-              : "No Sub Type · ใช้ Type นี้คำนวณ SLA"),
-        selectedContractSubType() || !subOptions.length ? "linked" : "waiting"
+          ? (selectedSubType && selectedFixedSla
+              ? `SLA ${selectedFixedSla} Days · ${selectedFixedSla} วัน`
+              : "Select Sub Type · เลือกประเภทย่อย")
+          : "No Sub Type · ไม่มีประเภทย่อย",
+        selectedSubType || !subOptions.length ? "linked" : "waiting"
       );
       const nameCount = contractNameDropdownOptions().length;
       setLinkedFlowStatus(
