@@ -1205,6 +1205,10 @@ def main():
                   </div>""",
     )
     html = html.replace(
+        """                    <small class="form-hint">Linked from Type of Contract · เชื่อมจากประเภทสัญญา</small>""",
+        """                    <small class="form-hint" id="addSlaHint">Fixed by selected Type / Sub Type · กำหนดตามประเภทและประเภทย่อยที่เลือก</small>""",
+    )
+    html = html.replace(
         """                <datalist id="contractNameOptions"></datalist>""",
         """                <datalist id="contractClassificationOptions"></datalist>
                 <datalist id="contractSubTypeOptions"></datalist>
@@ -1482,7 +1486,7 @@ def main():
       setAddCaseSummaryText("addSummaryTypeTh", typeDisplay ? "ประเภทสัญญา" : "เลือกประเภทสัญญา");
       setAddCaseSummaryText("addSummarySubType", subTypeDisplay || "No Sub Type");
       setAddCaseSummaryText("addSummarySubTypeTh", subTypeDisplay ? "ประเภทย่อยของสัญญา" : "ไม่มีประเภทย่อย");
-      setAddCaseSummaryText("addSummarySla", sla ? `${sla} Working Days` : "-");
+      setAddCaseSummaryText("addSummarySla", sla ? `${sla} Working Days / ${sla} วันทำการ` : "-");
       setAddCaseSummaryText("addSummaryDue", due ? `Due ${due}` : "รอการคำนวณวันครบกำหนด");
       setAddCaseSummaryText("addSummaryContractName", contractName || "-");
       setAddCaseSummaryText("addSummaryDepartment", String(form.elements.department?.value || selectedTemplate?.department || "").trim());
@@ -2315,18 +2319,22 @@ def main():
           const key = normalizeDirectoryValue(value);
           if (!value || seen.has(key)) return;
           seen.add(key);
-          const subtypeCount = contractTypeMasterV2
-            .filter(item => item["Contract Classification EN"] === row["Contract Classification EN"] && contractTypeValuesMatch(typeGroupForRow(item), value) && subTypeForRow(item))
-            .length;
+          const matchingRows = contractTypeMasterV2
+            .filter(item => item["Contract Classification EN"] === row["Contract Classification EN"] && contractTypeValuesMatch(typeGroupForRow(item), value));
+          const subtypeCount = matchingRows.filter(item => subTypeForRow(item)).length;
+          const directSla = subtypeCount ? 0 : fixedSlaValue(matchingRows[0]?.["Standard SLA"]);
           options.push({
             value,
             primary: value,
-            secondary: `${row["Contract Classification EN"] || ""} / ${row["Contract Classification TH"] || ""}${subtypeCount ? ` · ${subtypeCount} Sub Type` : ""}`,
-            description: contractTypeMasterV2
-              .filter(item => item["Contract Classification EN"] === row["Contract Classification EN"] && contractTypeValuesMatch(typeGroupForRow(item), value))
-              .map(item => subTypeForRow(item))
-              .filter(Boolean)
-              .slice(0, 5)
+            secondary: directSla
+              ? `SLA: ${directSla} Working Days / ${directSla} วันทำการ`
+              : `${row["Contract Classification EN"] || ""} / ${row["Contract Classification TH"] || ""} · ${subtypeCount} Sub Type`,
+            description: matchingRows
+              .map(item => {
+                const itemSla = fixedSlaValue(item["Standard SLA"]);
+                return [subTypeForRow(item) || value, itemSla ? `SLA: ${itemSla} Working Days / ${itemSla} วันทำการ` : ""].filter(Boolean).join(" — ");
+              })
+              .slice(0, 8)
               .join("\\n")
           });
         });
@@ -2350,10 +2358,13 @@ def main():
         const key = normalizeDirectoryValue(value);
         if (seen.has(key)) return null;
         seen.add(key);
+        const fixedSla = fixedSlaValue(row["Standard SLA"]);
         return {
           value,
           primary: value,
-          secondary: typeGroupForRow(row),
+          secondary: fixedSla
+            ? `SLA: ${fixedSla} Working Days / ${fixedSla} วันทำการ`
+            : typeGroupForRow(row),
           description: `${row["Contract Classification EN"] || ""} / ${row["Contract Classification TH"] || ""}`
         };
       }).filter(Boolean);
@@ -2655,6 +2666,8 @@ def main():
         """        if (preview) preview.textContent = "Waiting for Type of Contract · รอข้อมูลประเภทสัญญาเพื่อคำนวณ SLA และ Due Date";
         return;""",
         """        if (preview) preview.textContent = "Waiting for Type of Contract · รอข้อมูลประเภทสัญญาเพื่อคำนวณ SLA และ Due Date";
+        const slaHint = document.querySelector("#addSlaHint");
+        if (slaHint) slaHint.textContent = "Fixed by selected Type / Sub Type · กำหนดตามประเภทและประเภทย่อยที่เลือก";
         renderAddCaseSmartSummary();
         return;""",
     )
@@ -2668,8 +2681,10 @@ def main():
         """      if (preview) {
         const selectedDue = dueInput?.value || systemDue;
         const adjusted = Boolean(selectedDue && systemDue && selectedDue !== systemDue);
-        preview.innerHTML = `Type of Contract: ${escapeHtml(contractType)} · SLA ${sla} Working Days · System Due ${escapeHtml(systemDue)}${adjusted ? ` · Initial Due Date adjusted to ${escapeHtml(selectedDue)}` : " · Initial Due Date can be edited before Add Case"}`;
+        preview.innerHTML = `Type of Contract: ${escapeHtml(contractType)} · SLA ${sla} Working Days / ${sla} วันทำการ · System Due ${escapeHtml(systemDue)}${adjusted ? ` · Initial Due Date adjusted to ${escapeHtml(selectedDue)}` : " · Initial Due Date can be edited before Add Case"}`;
       }
+      const slaHint = document.querySelector("#addSlaHint");
+      if (slaHint) slaHint.textContent = `Fixed SLA: ${sla} Working Days / ${sla} วันทำการ`;
       renderAddCaseSmartSummary();
     }""",
     )
@@ -2772,15 +2787,26 @@ def main():
       }
 
       const accessLevel = accessLevelForAddCase(template, effectiveType || typeGroup);
+      const selectedFixedSla = standardSlaFromContractTypeMasterV2(effectiveType || typeGroup, selectedContractClassification());
       if (accessInput) accessInput.value = accessLevel;
       setAccessLevelBadge(accessLevel);
       setLinkedFlowStatus("linkedAccessStatus", `${selectedContractClassification()} · ${classificationThaiFor(selectedContractClassification())}`, accessLevel === "Confidential" ? "waiting" : "linked");
-      setLinkedFlowStatus("linkedTypeStatus", "Type selected · SLA from master data", "linked");
+      setLinkedFlowStatus(
+        "linkedTypeStatus",
+        selectedFixedSla
+          ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
+          : "Type selected · Select Sub Type to set SLA / เลือกประเภทย่อยเพื่อกำหนด SLA",
+        selectedFixedSla ? "linked" : "waiting"
+      );
       setLinkedFlowStatus(
         "linkedSubTypeStatus",
         subOptions.length
-          ? (selectedContractSubType() ? "Sub Type selected · กรองชื่อสัญญาแล้ว" : `${subOptions.length} Sub Type option(s) · เลือกประเภทย่อยเพื่อค้นหา`)
-          : "No Sub Type · ใช้ Type นี้คำนวณ SLA",
+          ? (selectedContractSubType() && selectedFixedSla
+              ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
+              : `${subOptions.length} Sub Type option(s) · เลือกประเภทย่อยเพื่อกำหนด SLA`)
+          : (selectedFixedSla
+              ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
+              : "No Sub Type · ใช้ Type นี้คำนวณ SLA"),
         selectedContractSubType() || !subOptions.length ? "linked" : "waiting"
       );
       const nameCount = contractNameDropdownOptions().length;

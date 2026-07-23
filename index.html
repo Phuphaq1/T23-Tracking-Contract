@@ -6407,7 +6407,7 @@
                   <label class="form-field span-4">
                     <span class="bilingual-label"><span>SLA (System / Fix)</span><span>SLA ที่ระบบกำหนด</span></span>
                     <input class="input readonly-input" type="number" min="0" name="sla" id="addSla" readonly>
-                    <small class="form-hint">Linked from Type of Contract · เชื่อมจากประเภทสัญญา</small>
+                    <small class="form-hint" id="addSlaHint">Fixed by selected Type / Sub Type · กำหนดตามประเภทและประเภทย่อยที่เลือก</small>
                   </label>
                   <label class="form-field span-4">
                     <span class="bilingual-label"><span>Due Date (System / Initial Editable)</span><span>วันครบกำหนด</span></span>
@@ -7942,102 +7942,6 @@
 
     const slaDetailConfig = [
       [
-            "Term Sheet|Submit to Review|Any",
-            "Term Sheet",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Term Sheet|Return|Any",
-            "Term Sheet",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Term Sheet|Resubmit|Any",
-            "Term Sheet",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Term Sheet|Forward|Any",
-            "Term Sheet",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Lease Agreement|Submit to Review|Any",
-            "Lease Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Lease Agreement|Return|Any",
-            "Lease Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Lease Agreement|Resubmit|Any",
-            "Lease Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Lease Agreement|Forward|Any",
-            "Lease Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
             "Rental Agreement|Submit to Review|Any",
             "Rental Agreement",
             1,
@@ -8076,6 +7980,246 @@
       [
             "Rental Agreement|Forward|Any",
             "Rental Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Lease Asset Agreement|Submit to Review|Any",
+            "Lease Asset Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Lease Asset Agreement|Return|Any",
+            "Lease Asset Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Lease Asset Agreement|Resubmit|Any",
+            "Lease Asset Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Lease Asset Agreement|Forward|Any",
+            "Lease Asset Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Management Agreement|Submit to Review|Any",
+            "Management Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Management Agreement|Return|Any",
+            "Management Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Management Agreement|Resubmit|Any",
+            "Management Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Management Agreement|Forward|Any",
+            "Management Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Sub Lease Agreement|Submit to Review|Any",
+            "Sub Lease Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Sub Lease Agreement|Return|Any",
+            "Sub Lease Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Sub Lease Agreement|Resubmit|Any",
+            "Sub Lease Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Sub Lease Agreement|Forward|Any",
+            "Sub Lease Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Sharer Holder Agreement|Submit to Review|Any",
+            "Sharer Holder Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Sharer Holder Agreement|Return|Any",
+            "Sharer Holder Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Sharer Holder Agreement|Resubmit|Any",
+            "Sharer Holder Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Sharer Holder Agreement|Forward|Any",
+            "Sharer Holder Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Service Agreement|Submit to Review|Any",
+            "Service Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Service Agreement|Return|Any",
+            "Service Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Service Agreement|Resubmit|Any",
+            "Service Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Service Agreement|Forward|Any",
+            "Service Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8182,342 +8326,6 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Sharer Holder Agreement|Submit to Review|Any",
-            "Sharer Holder Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Sharer Holder Agreement|Return|Any",
-            "Sharer Holder Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Sharer Holder Agreement|Resubmit|Any",
-            "Sharer Holder Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Sharer Holder Agreement|Forward|Any",
-            "Sharer Holder Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Amendment|Submit to Review|Any",
-            "Amendment",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Amendment|Return|Any",
-            "Amendment",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Amendment|Resubmit|Any",
-            "Amendment",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Amendment|Forward|Any",
-            "Amendment",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Sub Lease Agreement|Submit to Review|Any",
-            "Sub Lease Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Sub Lease Agreement|Return|Any",
-            "Sub Lease Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Sub Lease Agreement|Resubmit|Any",
-            "Sub Lease Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Sub Lease Agreement|Forward|Any",
-            "Sub Lease Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Service Agreement|Submit to Review|Any",
-            "Service Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Service Agreement|Return|Any",
-            "Service Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Service Agreement|Resubmit|Any",
-            "Service Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Service Agreement|Forward|Any",
-            "Service Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Service Provider Agreement|Submit to Review|Any",
-            "Service Provider Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Service Provider Agreement|Return|Any",
-            "Service Provider Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Service Provider Agreement|Resubmit|Any",
-            "Service Provider Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Service Provider Agreement|Forward|Any",
-            "Service Provider Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Management Agreement|Submit to Review|Any",
-            "Management Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Management Agreement|Return|Any",
-            "Management Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Management Agreement|Resubmit|Any",
-            "Management Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Management Agreement|Forward|Any",
-            "Management Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Loan Agreement|Submit to Review|Any",
-            "Loan Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            1,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Loan Agreement|Return|Any",
-            "Loan Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Loan Agreement|Resubmit|Any",
-            "Loan Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Loan Agreement|Forward|Any",
-            "Loan Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            2,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
             "Consultancy Agreement|Submit to Review|Any",
             "Consultancy Agreement",
             1,
@@ -8556,6 +8364,54 @@
       [
             "Consultancy Agreement|Forward|Any",
             "Consultancy Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Term Sheet|Submit to Review|Any",
+            "Term Sheet",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Term Sheet|Return|Any",
+            "Term Sheet",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Term Sheet|Resubmit|Any",
+            "Term Sheet",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Term Sheet|Forward|Any",
+            "Term Sheet",
             4,
             "Forward",
             "Current Owner",
@@ -8614,8 +8470,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Lease Asset Agreement|Submit to Review|Any",
-            "Lease Asset Agreement",
+            "Amendment|Submit to Review|Any",
+            "Amendment",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8626,8 +8482,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Lease Asset Agreement|Return|Any",
-            "Lease Asset Agreement",
+            "Amendment|Return|Any",
+            "Amendment",
             2,
             "Return",
             "Current Owner",
@@ -8638,8 +8494,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Lease Asset Agreement|Resubmit|Any",
-            "Lease Asset Agreement",
+            "Amendment|Resubmit|Any",
+            "Amendment",
             3,
             "Resubmit",
             "Current Owner",
@@ -8650,8 +8506,152 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Lease Asset Agreement|Forward|Any",
-            "Lease Asset Agreement",
+            "Amendment|Forward|Any",
+            "Amendment",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Loan Agreement|Submit to Review|Any",
+            "Loan Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Loan Agreement|Return|Any",
+            "Loan Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Loan Agreement|Resubmit|Any",
+            "Loan Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Loan Agreement|Forward|Any",
+            "Loan Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Service Provider Agreement|Submit to Review|Any",
+            "Service Provider Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Service Provider Agreement|Return|Any",
+            "Service Provider Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Service Provider Agreement|Resubmit|Any",
+            "Service Provider Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Service Provider Agreement|Forward|Any",
+            "Service Provider Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Lease Agreement|Submit to Review|Any",
+            "Lease Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            1,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Lease Agreement|Return|Any",
+            "Lease Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Lease Agreement|Resubmit|Any",
+            "Lease Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            2,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Lease Agreement|Forward|Any",
+            "Lease Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -15306,18 +15306,22 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           const key = normalizeDirectoryValue(value);
           if (!value || seen.has(key)) return;
           seen.add(key);
-          const subtypeCount = contractTypeMasterV2
-            .filter(item => item["Contract Classification EN"] === row["Contract Classification EN"] && contractTypeValuesMatch(typeGroupForRow(item), value) && subTypeForRow(item))
-            .length;
+          const matchingRows = contractTypeMasterV2
+            .filter(item => item["Contract Classification EN"] === row["Contract Classification EN"] && contractTypeValuesMatch(typeGroupForRow(item), value));
+          const subtypeCount = matchingRows.filter(item => subTypeForRow(item)).length;
+          const directSla = subtypeCount ? 0 : fixedSlaValue(matchingRows[0]?.["Standard SLA"]);
           options.push({
             value,
             primary: value,
-            secondary: `${row["Contract Classification EN"] || ""} / ${row["Contract Classification TH"] || ""}${subtypeCount ? ` · ${subtypeCount} Sub Type` : ""}`,
-            description: contractTypeMasterV2
-              .filter(item => item["Contract Classification EN"] === row["Contract Classification EN"] && contractTypeValuesMatch(typeGroupForRow(item), value))
-              .map(item => subTypeForRow(item))
-              .filter(Boolean)
-              .slice(0, 5)
+            secondary: directSla
+              ? `SLA: ${directSla} Working Days / ${directSla} วันทำการ`
+              : `${row["Contract Classification EN"] || ""} / ${row["Contract Classification TH"] || ""} · ${subtypeCount} Sub Type`,
+            description: matchingRows
+              .map(item => {
+                const itemSla = fixedSlaValue(item["Standard SLA"]);
+                return [subTypeForRow(item) || value, itemSla ? `SLA: ${itemSla} Working Days / ${itemSla} วันทำการ` : ""].filter(Boolean).join(" — ");
+              })
+              .slice(0, 8)
               .join("\n")
           });
         });
@@ -15341,10 +15345,13 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         const key = normalizeDirectoryValue(value);
         if (seen.has(key)) return null;
         seen.add(key);
+        const fixedSla = fixedSlaValue(row["Standard SLA"]);
         return {
           value,
           primary: value,
-          secondary: typeGroupForRow(row),
+          secondary: fixedSla
+            ? `SLA: ${fixedSla} Working Days / ${fixedSla} วันทำการ`
+            : typeGroupForRow(row),
           description: `${row["Contract Classification EN"] || ""} / ${row["Contract Classification TH"] || ""}`
         };
       }).filter(Boolean);
@@ -15609,7 +15616,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       setAddCaseSummaryText("addSummaryTypeTh", typeDisplay ? "ประเภทสัญญา" : "เลือกประเภทสัญญา");
       setAddCaseSummaryText("addSummarySubType", subTypeDisplay || "No Sub Type");
       setAddCaseSummaryText("addSummarySubTypeTh", subTypeDisplay ? "ประเภทย่อยของสัญญา" : "ไม่มีประเภทย่อย");
-      setAddCaseSummaryText("addSummarySla", sla ? `${sla} Working Days` : "-");
+      setAddCaseSummaryText("addSummarySla", sla ? `${sla} Working Days / ${sla} วันทำการ` : "-");
       setAddCaseSummaryText("addSummaryDue", due ? `Due ${due}` : "รอการคำนวณวันครบกำหนด");
       setAddCaseSummaryText("addSummaryContractName", contractName || "-");
       setAddCaseSummaryText("addSummaryDepartment", String(form.elements.department?.value || selectedTemplate?.department || "").trim());
@@ -15711,15 +15718,26 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       }
 
       const accessLevel = accessLevelForAddCase(template, effectiveType || typeGroup);
+      const selectedFixedSla = standardSlaFromContractTypeMasterV2(effectiveType || typeGroup, selectedContractClassification());
       if (accessInput) accessInput.value = accessLevel;
       setAccessLevelBadge(accessLevel);
       setLinkedFlowStatus("linkedAccessStatus", `${selectedContractClassification()} · ${classificationThaiFor(selectedContractClassification())}`, accessLevel === "Confidential" ? "waiting" : "linked");
-      setLinkedFlowStatus("linkedTypeStatus", "Type selected · SLA from master data", "linked");
+      setLinkedFlowStatus(
+        "linkedTypeStatus",
+        selectedFixedSla
+          ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
+          : "Type selected · Select Sub Type to set SLA / เลือกประเภทย่อยเพื่อกำหนด SLA",
+        selectedFixedSla ? "linked" : "waiting"
+      );
       setLinkedFlowStatus(
         "linkedSubTypeStatus",
         subOptions.length
-          ? (selectedContractSubType() ? "Sub Type selected · กรองชื่อสัญญาแล้ว" : `${subOptions.length} Sub Type option(s) · เลือกประเภทย่อยเพื่อค้นหา`)
-          : "No Sub Type · ใช้ Type นี้คำนวณ SLA",
+          ? (selectedContractSubType() && selectedFixedSla
+              ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
+              : `${subOptions.length} Sub Type option(s) · เลือกประเภทย่อยเพื่อกำหนด SLA`)
+          : (selectedFixedSla
+              ? `Fixed SLA: ${selectedFixedSla} Working Days / ${selectedFixedSla} วันทำการ`
+              : "No Sub Type · ใช้ Type นี้คำนวณ SLA"),
         selectedContractSubType() || !subOptions.length ? "linked" : "waiting"
       );
       const nameCount = contractNameDropdownOptions().length;
@@ -15765,6 +15783,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           dueInput.classList.add("readonly-input");
         }
         if (preview) preview.textContent = "Waiting for Type of Contract · รอข้อมูลประเภทสัญญาเพื่อคำนวณ SLA และ Due Date";
+        const slaHint = document.querySelector("#addSlaHint");
+        if (slaHint) slaHint.textContent = "Fixed by selected Type / Sub Type · กำหนดตามประเภทและประเภทย่อยที่เลือก";
         renderAddCaseSmartSummary();
         return;
       }
@@ -15787,8 +15807,10 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (preview) {
         const selectedDue = dueInput?.value || systemDue;
         const adjusted = Boolean(selectedDue && systemDue && selectedDue !== systemDue);
-        preview.innerHTML = `Type of Contract: ${escapeHtml(contractType)} · SLA ${sla} Working Days · System Due ${escapeHtml(systemDue)}${adjusted ? ` · Initial Due Date adjusted to ${escapeHtml(selectedDue)}` : " · Initial Due Date can be edited before Add Case"}`;
+        preview.innerHTML = `Type of Contract: ${escapeHtml(contractType)} · SLA ${sla} Working Days / ${sla} วันทำการ · System Due ${escapeHtml(systemDue)}${adjusted ? ` · Initial Due Date adjusted to ${escapeHtml(selectedDue)}` : " · Initial Due Date can be edited before Add Case"}`;
       }
+      const slaHint = document.querySelector("#addSlaHint");
+      if (slaHint) slaHint.textContent = `Fixed SLA: ${sla} Working Days / ${sla} วันทำการ`;
       renderAddCaseSmartSummary();
     }
 
