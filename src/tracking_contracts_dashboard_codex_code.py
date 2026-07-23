@@ -45,16 +45,23 @@ STANDARD_SLA_ADJUSTED_DAYS = {
     ("Day-to-day Work", "Service Provider Agreement", ""): "40",
     ("Day-to-day Work", "Commercial Agreement", "Consultancy Agreement"): "65",
     ("Day-to-day Work", "Commercial Agreement", "Confidentiality Agreement"): "30",
-    ("Day-to-day Work", "Others", ""): "30",
-    ("Confidential", "Preliminary Agreement", "Memorandum of Understanding"): "60",
-    ("Confidential", "Preliminary Agreement", "Term Sheet"): "30",
-    ("Confidential", "Commercial Agreement", "Consultancy Agreement"): "30",
-    ("Confidential", "Commercial Agreement", "Confidentiality Agreement"): "30",
-    ("Confidential", "Commercial Agreement", "Management Agreement"): "30",
-    ("Confidential", "Commercial Agreement", "Loan Agreement"): "60",
-    ("Confidential", "Commercial Agreement", "Mergers and Acquisitions Agreement"): "60",
-    ("Confidential", "Commercial Agreement", "Shareholders’ Agreement"): "60",
-    ("Confidential", "", "Others"): "30",
+    ("Day-to-day Work", "Others", ""): "",
+    ("Confidential", "Preliminary Agreement", "Memorandum of Understanding"): "",
+    ("Confidential", "Preliminary Agreement", "Term Sheet"): "",
+    ("Confidential", "Commercial Agreement", "Consultancy Agreement"): "",
+    ("Confidential", "Commercial Agreement", "Confidentiality Agreement"): "",
+    ("Confidential", "Commercial Agreement", "Management Agreement"): "",
+    ("Confidential", "Commercial Agreement", "Loan Agreement"): "",
+    ("Confidential", "Commercial Agreement", "Mergers and Acquisitions Agreement"): "",
+    ("Confidential", "Commercial Agreement", "Shareholders’ Agreement"): "",
+    ("Confidential", "", "Others"): "",
+}
+
+ACTION_SLA_ADJUSTED_DAYS = {
+    "Submit to Review": 1,
+    "Return": 7,
+    "Resubmit": 2,
+    "Forward": 2,
 }
 
 TODAY = date(2026, 7, 11)
@@ -692,9 +699,10 @@ def main():
             }
             for name, contract_type, access_level in CUSTOM_CONTRACT_INPUT_ROWS
         ]
-    for row in type_rows:
-        contract_type = row.get("Type of Contract", "")
-        row["Fixed SLA (Working Days)"] = row.get("Fixed SLA (Working Days)") or fixed_sla.get(contract_type, "")
+    if not contract_type_master_v2_rows:
+        for row in type_rows:
+            contract_type = row.get("Type of Contract", "")
+            row["Fixed SLA (Working Days)"] = row.get("Fixed SLA (Working Days)") or fixed_sla.get(contract_type, "")
     if RESET_CONTRACT_AND_LOG_DATA:
         contracts = []
         log_records = []
@@ -703,7 +711,7 @@ def main():
     sla_steps = []
     for row in action_rows:
         action = row.get("Action", "")
-        days = number(row.get("Fix SLA (Working Days)"), 0)
+        days = ACTION_SLA_ADJUSTED_DAYS.get(action, number(row.get("Fix SLA (Working Days)"), 0))
         desc = row.get("Description", "")
         if not action:
             continue
@@ -740,7 +748,7 @@ def main():
     for type_index, contract_type in enumerate(seen_types, start=1):
         for action_index, row in enumerate(action_rows, start=1):
             action = row.get("Action", "")
-            days = number(row.get("Fix SLA (Working Days)"), 0)
+            days = ACTION_SLA_ADJUSTED_DAYS.get(action, number(row.get("Fix SLA (Working Days)"), 0))
             desc = row.get("Description", "")
             sla_detail.append([
                 f"{contract_type}|{action}|Any",
