@@ -1230,6 +1230,14 @@ def main():
       max-width: none;
     }
 
+    .linked-flow-field .combo-toggle {
+      display: none;
+    }
+
+    .linked-flow-field .editable-combobox .input {
+      padding-right: 12px;
+    }
+
     .access-level-chip {
       display: inline-flex;
       align-items: center;
