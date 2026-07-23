@@ -211,6 +211,8 @@ def apply_standard_sla_adjustments(rows):
             clean(row.get("Type of Contract EN")),
             clean(row.get("Sub Type of Contract EN")),
         )
+        if key[1] == "Service Provider Agreement":
+            row["Type of Contract TH"] = "สัญญาจ้าง"
         adjusted_days = STANDARD_SLA_ADJUSTED_DAYS.get(key)
         if adjusted_days is not None:
             row["Standard SLA"] = adjusted_days
@@ -1071,7 +1073,7 @@ def main():
                       <small id="addSummarySubTypeTh">ประเภทย่อย</small>
                     </div>
                     <div class="summary-cell">
-                      <span>SLA / Due</span>
+                      <span>Total SLA - Day / Due Date</span>
                       <strong id="addSummarySla">-</strong>
                       <small id="addSummaryDue">-</small>
                     </div>
@@ -1203,6 +1205,10 @@ def main():
                     </label>
                     <input type="hidden" name="workType" id="addWorkType" value="">
                   </div>""",
+    )
+    html = html.replace(
+        """                    <span class="bilingual-label"><span>SLA (System / Fix)</span><span>SLA ที่ระบบกำหนด</span></span>""",
+        """                    <span class="bilingual-label"><span>Total SLA - Day</span><span>SLA รวม - วันทำการ</span></span>""",
     )
     html = html.replace(
         """                    <small class="form-hint">Linked from Type of Contract · เชื่อมจากประเภทสัญญา</small>""",
@@ -2554,14 +2560,14 @@ def main():
               <section class="panel master-data-panel">
                 <div class="panel-header">
 	                  <div>
-	                    <h2>Type of Contract Master</h2>
-	                    <small>Used by Type/Sub Type dropdown, tooltip and Fixed SLA</small>
+                    <h2>Type of Contract Master</h2>
+	                    <small>Used by Type/Sub Type dropdown, tooltip and Total SLA</small>
 	                  </div>
                   <button class="secondary-button" type="button" data-add-master-row="contractTypes">Add Row</button>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
-                    <thead><tr><th>Contract Classification</th><th>Type of Contract</th><th>Sub Type of Contract</th><th>Fixed SLA</th><th>Active</th><th></th></tr></thead>
+                    <thead><tr><th>Contract Classification</th><th>Type of Contract</th><th>Sub Type of Contract</th><th>Total SLA - Day<br><small>SLA รวม - วันทำการ</small></th><th>Active</th><th></th></tr></thead>
                     <tbody id="masterContractTypeRows"></tbody>
                   </table>
 	                </div>
@@ -2593,7 +2599,7 @@ def main():
 	                </div>
 	                <div class="table-wrap">
 	                  <table class="master-table">
-	                    <thead><tr><th>Contract Classification</th><th>Type of Contract</th><th>Sub Type of Contract</th><th>Contract Name</th><th>Vendor / Counter party</th><th>Department / Restaurant</th><th>Fixed SLA</th><th>Access</th><th>Active</th><th></th></tr></thead>
+	                    <thead><tr><th>Contract Classification</th><th>Type of Contract</th><th>Sub Type of Contract</th><th>Contract Name</th><th>Vendor / Counter party</th><th>Department / Restaurant</th><th>Total SLA - Day<br><small>SLA รวม - วันทำการ</small></th><th>Access</th><th>Active</th><th></th></tr></thead>
 	                    <tbody id="masterTemplateRows"></tbody>
 	                  </table>
                 </div>
