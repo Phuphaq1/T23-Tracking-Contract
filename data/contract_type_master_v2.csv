@@ -9,13 +9,13 @@ Day-to-day Work,งานดำเนินงานทั่วไป,Sale and 
 Day-to-day Work,งานดำเนินงานทั่วไป,Service Provider Agreement,สัญญาผู้ให้บริการ,,,5,0,40
 Day-to-day Work,งานดำเนินงานทั่วไป,Commercial Agreement,สัญญาทางธุรกิจ,Consultancy Agreement,สัญญาให้คำปรึกษา,6,1,65
 Day-to-day Work,งานดำเนินงานทั่วไป,Commercial Agreement,สัญญาทางธุรกิจ,Confidentiality Agreement,สัญญารักษาความลับ,6,2,30
-Day-to-day Work,งานดำเนินงานทั่วไป,Others,อื่น ๆ,,,99,0,
-Confidential,สัญญาลับ,Preliminary Agreement,ข้อตกลงเบื้องต้น,Memorandum of Understanding,บันทึกความเข้าใจ,1,1,
-Confidential,สัญญาลับ,Preliminary Agreement,ข้อตกลงเบื้องต้น,Term Sheet,เอกสารสรุปเงื่อนไขเบื้องต้น,1,2,
-Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Consultancy Agreement,สัญญาให้คำปรึกษา,2,1,
-Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Confidentiality Agreement,สัญญารักษาความลับ,2,2,
-Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Management Agreement,สัญญาบริหารจัดการ,2,3,
-Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Loan Agreement,สัญญาเงินกู้,2,4,
-Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Mergers and Acquisitions Agreement,สัญญาการควบรวมและซื้อกิจการ,2,5,
-Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Shareholders’ Agreement,สัญญาระหว่างผู้ถือหุ้น,2,6,
-Confidential,สัญญาลับ,,,Others,อื่น ๆ,99,0,
+Day-to-day Work,งานดำเนินงานทั่วไป,Others,อื่น ๆ,,,99,0,30
+Confidential,สัญญาลับ,Preliminary Agreement,ข้อตกลงเบื้องต้น,Memorandum of Understanding,บันทึกความเข้าใจ,1,1,60
+Confidential,สัญญาลับ,Preliminary Agreement,ข้อตกลงเบื้องต้น,Term Sheet,เอกสารสรุปเงื่อนไขเบื้องต้น,1,2,30
+Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Consultancy Agreement,สัญญาให้คำปรึกษา,2,1,30
+Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Confidentiality Agreement,สัญญารักษาความลับ,2,2,30
+Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Management Agreement,สัญญาบริหารจัดการ,2,3,30
+Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Loan Agreement,สัญญาเงินกู้,2,4,60
+Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Mergers and Acquisitions Agreement,สัญญาการควบรวมและซื้อกิจการ,2,5,60
+Confidential,สัญญาลับ,Commercial Agreement,สัญญาทางธุรกิจ,Shareholders’ Agreement,สัญญาระหว่างผู้ถือหุ้น,2,6,60
+Confidential,สัญญาลับ,,,Others,อื่น ๆ,99,0,30
