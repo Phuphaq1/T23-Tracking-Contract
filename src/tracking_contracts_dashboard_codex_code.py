@@ -6379,6 +6379,50 @@ def main():
     )
     html = html.replace("<title>Tracking Contracts — User Status & Email</title>", "<title>Tracking Contracts — Real Excel Dropdowns</title>")
 
+    # Dashboard summaries must use the same role-based contract scope as the
+    # dashboard table. Level 1/2 therefore never aggregate Confidential cases.
+    html = html.replace(
+        '''    function renderDashboardSummary() {
+      const pending = sumBy("isPending");
+      const completed = sumBy("isCompletedLast30Days");
+      const avgComplete = average(dashboardData.filter(item => item.isCompletedLast30Days === 1), "totalSpendingDays");
+      const overdue = sumBy("isOverdue");''',
+        '''    function renderDashboardSummary() {
+      const visibleContractIds = new Set(contractsVisibleToCurrentUser().map(item => item.id));
+      const visibleDashboardData = dashboardData.filter(item => visibleContractIds.has(item.id));
+      const visibleSumBy = field => visibleDashboardData.reduce((total, item) => total + (Number(item[field]) || 0), 0);
+      const pending = visibleSumBy("isPending");
+      const completed = visibleSumBy("isCompletedLast30Days");
+      const avgComplete = average(visibleDashboardData.filter(item => item.isCompletedLast30Days === 1), "totalSpendingDays");
+      const overdue = visibleSumBy("isOverdue");''',
+        1,
+    )
+    html = html.replace(
+        'const departments = orderedUniqueValues(dashboardData, "department", departmentOrder);',
+        'const departments = orderedUniqueValues(visibleDashboardData, "department", departmentOrder);',
+        1,
+    )
+    html = html.replace(
+        'const deptBuckets = orderedUniqueValues(dashboardData, "deptBucket", deptBucketOrder);',
+        'const deptBuckets = orderedUniqueValues(visibleDashboardData, "deptBucket", deptBucketOrder);',
+        1,
+    )
+    html = html.replace(
+        'const contractStatusData = dashboardData.filter(item => item.isPending === 1);',
+        'const contractStatusData = visibleDashboardData.filter(item => item.isPending === 1);',
+        1,
+    )
+    html = html.replace(
+        'value: average(dashboardData.filter(item => item.department === department), "totalSpendingDays")',
+        'value: average(visibleDashboardData.filter(item => item.department === department), "totalSpendingDays")',
+        1,
+    )
+    html = html.replace(
+        'const longestPendingOnHand = dashboardData',
+        'const longestPendingOnHand = visibleDashboardData',
+        1,
+    )
+
     # Login Gateway is injected after all existing dashboard transformations so the
     # original views and business logic remain intact behind the authentication gate.
     auth_css = r'''
