@@ -1712,11 +1712,11 @@ def main():
         .sort((a, b) => b.score - a.score)[0]?.row || null;
     }
 
-    function renderAddCasePracticalExample(typeValue = "", classification = "") {
+    function renderAddCasePracticalExample(typeValue = "", classification = "", awaitingSubType = false) {
       const enNode = document.querySelector("#addPracticalExampleEn");
       const thNode = document.querySelector("#addPracticalExampleTh");
       if (!enNode || !thNode) return;
-      const typeInfo = typeValue ? contractTypeMasterV2Match(typeValue, classification) : null;
+      const typeInfo = typeValue && !awaitingSubType ? contractTypeMasterV2Match(typeValue, classification) : null;
       const effectiveType = String(typeInfo?.["Sub Type of Contract EN"] || typeInfo?.["Type of Contract EN"] || "").trim();
       const key = effectiveType ? `${classificationEnFromValue(classification)}|${effectiveType}` : "";
       const example = key ? practicalExampleConfig[key] : null;
@@ -3217,8 +3217,9 @@ def main():
         selectedSubType || !subOptions.length ? "linked" : "waiting"
       );
       renderAddCasePracticalExample(
-        selectedSubType || (!subOptions.length ? typeGroup : ""),
-        selectedContractClassification()
+        selectedSubType || typeGroup,
+        selectedContractClassification(),
+        Boolean(subOptions.length && !selectedSubType)
       );
       const nameCount = contractNameDropdownOptions().length;
       setLinkedFlowStatus(
