@@ -33,38 +33,38 @@ ATTACHMENT_CLOUD_FOLDER_NAME = "Attachments Files"
 ATTACHMENT_UPLOAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhIbrLVvD-Cwxh3wqEWqjSaIESGgXfhdJ2cWUhepiSIsAyG8yQafG392kkjnSvjT_N/exec"
 RESET_CONTRACT_AND_LOG_DATA = True
 ACTIVE_UPDATE_ACTIONS = ["Submit to Review", "Return", "Resubmit", "Forward"]
-STANDARD_SLA_DATA_VERSION = "2026-08-05-sla-config21-v1"
+STANDARD_SLA_DATA_VERSION = "2026-08-05-sla-config-updated1-v1"
 DEPARTMENT_DATA_VERSION = "2026-07-23-nonzero-departments-v1"
-ACTION_DATA_VERSION = "2026-08-05-sla-config21-v1"
+ACTION_DATA_VERSION = "2026-08-05-sla-config-updated1-v1"
 
 STANDARD_SLA_ADJUSTED_DAYS = {
-    ("Day-to-day Work", "Lease & Rental Agreement", "Lease Agreement"): "34",
-    ("Day-to-day Work", "Lease & Rental Agreement", "Sub Lease Agreement"): "32",
-    ("Day-to-day Work", "Lease & Rental Agreement", "Lease Asset Agreement"): "30",
-    ("Day-to-day Work", "Lease & Rental Agreement", "Rental Agreement"): "30",
-    ("Day-to-day Work", "Service Agreement", ""): "32",
-    ("Day-to-day Work", "Amendment Agreement", ""): "27",
-    ("Day-to-day Work", "Sale and Purchase Agreement", ""): "30",
-    ("Day-to-day Work", "Service Provider Agreement", ""): "30",
-    ("Day-to-day Work", "Commercial Agreement", "Consultancy Agreement"): "32",
-    ("Day-to-day Work", "Commercial Agreement", "Confidentiality Agreement"): "27",
-    ("Day-to-day Work", "Others", ""): "27",
-    ("Confidential", "Preliminary Agreement", "Memorandum of Understanding"): "32",
-    ("Confidential", "Preliminary Agreement", "Term Sheet"): "27",
-    ("Confidential", "Commercial Agreement", "Consultancy Agreement"): "30",
-    ("Confidential", "Commercial Agreement", "Confidentiality Agreement"): "27",
-    ("Confidential", "Commercial Agreement", "Management Agreement"): "30",
-    ("Confidential", "Commercial Agreement", "Loan Agreement"): "34",
-    ("Confidential", "Commercial Agreement", "Mergers and Acquisitions Agreement"): "36",
-    ("Confidential", "Commercial Agreement", "Shareholders’ Agreement"): "36",
-    ("Confidential", "", "Others"): "27",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Lease Agreement"): "20",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Sub Lease Agreement"): "20",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Lease Asset Agreement"): "20",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Rental Agreement"): "22",
+    ("Day-to-day Work", "Service Agreement", ""): "22",
+    ("Day-to-day Work", "Amendment Agreement", ""): "20",
+    ("Day-to-day Work", "Sale and Purchase Agreement", ""): "24",
+    ("Day-to-day Work", "Outsourcing Agreement", ""): "24",
+    ("Day-to-day Work", "Commercial Agreement", "Consultancy Agreement"): "24",
+    ("Day-to-day Work", "Commercial Agreement", "Confidentiality Agreement"): "20",
+    ("Day-to-day Work", "Others", ""): "20",
+    ("Confidential", "Preliminary Agreement", "Memorandum of Understanding"): "24",
+    ("Confidential", "Preliminary Agreement", "Term Sheet"): "24",
+    ("Confidential", "Commercial Agreement", "Consultancy Agreement"): "24",
+    ("Confidential", "Commercial Agreement", "Confidentiality Agreement"): "20",
+    ("Confidential", "Commercial Agreement", "Management Agreement"): "24",
+    ("Confidential", "Commercial Agreement", "Loan Agreement"): "28",
+    ("Confidential", "Commercial Agreement", "Mergers and Acquisitions Agreement"): "28",
+    ("Confidential", "Commercial Agreement", "Shareholders’ Agreement"): "28",
+    ("Confidential", "", "Others"): "20",
 }
 
 ACTION_SLA_ADJUSTED_DAYS = {
     "Submit to Review": 7,
-    "Return": 5,
+    "Return": 3,
     "Resubmit": 5,
-    "Forward": 10,
+    "Forward": 5,
 }
 
 ACTION_DESCRIPTION_CONFIG = {
@@ -77,8 +77,8 @@ ACTION_DESCRIPTION_CONFIG = {
     "Return": {
         "descriptionEn": "Return the contract for correction or additional information.",
         "descriptionTh": "ส่งสัญญากลับเพื่อแก้ไขหรือเพิ่มเติมข้อมูล",
-        "slaRuleEn": "5 working days (starts when Return is received)",
-        "slaRuleTh": "5 วันทำการ (เมื่อได้รับ Return)",
+        "slaRuleEn": "3 working days (starts when Return is received)",
+        "slaRuleTh": "3 วันทำการ (เมื่อได้รับ Return)",
     },
     "Resubmit": {
         "descriptionEn": "Resubmit the corrected contract to the review process.",
@@ -89,8 +89,8 @@ ACTION_DESCRIPTION_CONFIG = {
     "Forward": {
         "descriptionEn": "Forward the contract to the next department or responsible person.",
         "descriptionTh": "ส่งต่อสัญญาไปยังหน่วยงานหรือผู้รับผิดชอบลำดับถัดไป",
-        "slaRuleEn": "10 working days (starts when Forward is received)",
-        "slaRuleTh": "10 วันทำการ (เมื่อได้รับ Forward)",
+        "slaRuleEn": "5 working days (starts when Forward is received)",
+        "slaRuleTh": "5 วันทำการ (เมื่อได้รับ Forward)",
     },
 }
 
@@ -108,7 +108,7 @@ CUSTOM_CONTRACT_INPUT_ROWS = [
     ("Amendment to Existing Agreement", "Amendment", "Normal"),
     ("Laptop Rental Agreement", "Rental Agreement", "Normal"),
     ("Equipment Sale and Purchase Agreement", "Sale and Purchase Agreement", "Normal"),
-    ("Outsourced Service Provider Agreement", "Service Provider Agreement", "Normal"),
+    ("Outsourced Service Provider Agreement", "Outsourcing Agreement", "Normal"),
     ("Confident-001 – Memorandum of Understanding", "Memorandum of Understanding", "Confidential"),
     ("Confident-002 – Consultancy Agreement", "Consultancy Agreement", "Confidential"),
     ("Confident-003 – Confidentiality Agreement", "Confidentiality Agreement", "Confidential"),
@@ -256,13 +256,14 @@ def read_contract_type_master_v2_rows():
 
 def apply_standard_sla_adjustments(rows):
     for row in rows:
+        if clean(row.get("Type of Contract EN")) == "Service Provider Agreement":
+            row["Type of Contract EN"] = "Outsourcing Agreement"
+            row["Type of Contract TH"] = "สัญญาจ้าง"
         key = (
             clean(row.get("Contract Classification EN")),
             clean(row.get("Type of Contract EN")),
             clean(row.get("Sub Type of Contract EN")),
         )
-        if key[1] == "Service Provider Agreement":
-            row["Type of Contract TH"] = "สัญญาจ้าง"
         adjusted_days = STANDARD_SLA_ADJUSTED_DAYS.get(key)
         if adjusted_days is not None:
             row["Standard SLA"] = adjusted_days
@@ -335,8 +336,8 @@ def contract_type_alias_value(type_value, classification="", context=""):
         return "Mergers and Acquisitions Agreement"
     if "management" in text and is_confidential:
         return "Management Agreement"
-    if "contractor" in text or "construction contract" in text or "ผู้รับเหมา" in text:
-        return "Service Provider Agreement"
+    if "outsourc" in text or "contractor" in text or "construction contract" in text or "ผู้รับเหมา" in text:
+        return "Outsourcing Agreement"
     if "consult" in text or "design" in text or "ที่ปรึกษา" in text or "ออกแบบ" in text:
         return "Consultancy Agreement"
     if "lease asset" in text:
@@ -350,7 +351,7 @@ def contract_type_alias_value(type_value, classification="", context=""):
     if "sale and purchase" in text or "ซื้อขาย" in text:
         return "Sale and Purchase Agreement"
     if "service provider" in text or "provider" in text or "partner service" in text or "delivery platform" in text:
-        return "Service Provider Agreement"
+        return "Outsourcing Agreement"
     if "service" in text or "บริการ" in text or "management fee" in text or "management services" in text:
         return "Service Agreement"
     if "amendment" in text or "แก้ไขเพิ่มเติม" in text:
@@ -1553,10 +1554,13 @@ def main():
     }
 
     function contractTypeMasterV2Match(typeValue = "", classification = "") {
-      const normalized = normalizeDirectoryValue(typeValue);
+      const lookupValue = /service provider agreement/i.test(String(typeValue || ""))
+        ? String(typeValue || "").replace(/service provider agreement/ig, "Outsourcing Agreement")
+        : typeValue;
+      const normalized = normalizeDirectoryValue(lookupValue);
       if (!normalized) return null;
       const classificationEn = classification ? classificationEnFromValue(classification) : "";
-      const parts = String(typeValue || "")
+      const parts = String(lookupValue || "")
         .split(/[|/·•,;()\\[\\]–—-]+/)
         .map(normalizeDirectoryValue)
         .filter(Boolean);
