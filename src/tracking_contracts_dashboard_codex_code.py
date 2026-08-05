@@ -94,6 +94,89 @@ ACTION_DESCRIPTION_CONFIG = {
     },
 }
 
+PRACTICAL_EXAMPLE_CONFIG = {
+    "Day-to-day Work|Lease Agreement": {
+        "en": "Lease office, restaurant or commercial space from a landlord.",
+        "th": "เช่าสำนักงาน ร้านอาหาร หรือพื้นที่เชิงพาณิชย์จากผู้ให้เช่า",
+    },
+    "Day-to-day Work|Sub Lease Agreement": {
+        "en": "Sublease part of leased premises to an affiliate, operator or tenant.",
+        "th": "ให้บริษัทในเครือ ผู้ดำเนินการ หรือผู้เช่ารายอื่นเช่าช่วงพื้นที่",
+    },
+    "Day-to-day Work|Lease Asset Agreement": {
+        "en": "Lease equipment, vehicles, POS, CCTV or other business assets.",
+        "th": "เช่าอุปกรณ์ รถยนต์ POS CCTV หรือทรัพย์สินสำหรับธุรกิจ",
+    },
+    "Day-to-day Work|Rental Agreement": {
+        "en": "Short-term rental of a venue, vehicle, equipment or temporary space.",
+        "th": "เช่าสถานที่ รถ อุปกรณ์ หรือพื้นที่ชั่วคราวระยะสั้น",
+    },
+    "Day-to-day Work|Service Agreement": {
+        "en": "IT maintenance, cleaning, marketing, logistics or recurring business services.",
+        "th": "บริการดูแล IT ทำความสะอาด การตลาด ขนส่ง หรือบริการประจำ",
+    },
+    "Day-to-day Work|Amendment Agreement": {
+        "en": "Extend a term or change price, scope, party details or selected clauses.",
+        "th": "ขยายระยะเวลา หรือแก้ราคา ขอบเขต ข้อมูลคู่สัญญา หรือข้อกำหนดบางข้อ",
+    },
+    "Day-to-day Work|Sale and Purchase Agreement": {
+        "en": "Purchase IT hardware, kitchen equipment, furniture, materials or other goods.",
+        "th": "ซื้ออุปกรณ์ IT เครื่องครัว เฟอร์นิเจอร์ วัสดุ หรือสินค้า",
+    },
+    "Day-to-day Work|Outsourcing Agreement": {
+        "en": "Engage a contractor, outsourced staff or project-based service provider.",
+        "th": "จ้างผู้รับเหมา บุคลากร Outsource หรือผู้ให้บริการเป็นโครงการ",
+    },
+    "Day-to-day Work|Consultancy Agreement": {
+        "en": "Business, IT, design, marketing or operational advisory for routine projects.",
+        "th": "ที่ปรึกษาธุรกิจ IT ออกแบบ การตลาด หรือปฏิบัติการสำหรับโครงการทั่วไป",
+    },
+    "Day-to-day Work|Confidentiality Agreement": {
+        "en": "Share information with a vendor or partner before a proposal, pilot or discussion.",
+        "th": "เปิดเผยข้อมูลให้ผู้ขายหรือพันธมิตรก่อนเสนอราคา ทดลองระบบ หรือหารือ",
+    },
+    "Day-to-day Work|Others": {
+        "en": "A routine agreement not matching an existing category, such as a trial or event.",
+        "th": "ข้อตกลงทั่วไปที่ยังไม่เข้าหมวด เช่น ทดลองใช้หรืองานกิจกรรม",
+    },
+    "Confidential|Memorandum of Understanding": {
+        "en": "A framework for cooperation, joint study, pilot or future business relationship.",
+        "th": "กรอบความร่วมมือ ศึกษาร่วม ทดลองโครงการ หรือความสัมพันธ์ทางธุรกิจในอนาคต",
+    },
+    "Confidential|Term Sheet": {
+        "en": "Record preliminary commercial terms for an investment, lease, financing or strategic deal.",
+        "th": "สรุปเงื่อนไขเบื้องต้นของการลงทุน เช่า เงินทุน หรือธุรกรรมเชิงกลยุทธ์",
+    },
+    "Confidential|Consultancy Agreement": {
+        "en": "Strategic, financial, transaction or sensitive-project advisory.",
+        "th": "ที่ปรึกษากลยุทธ์ การเงิน ธุรกรรม หรือโครงการที่มีข้อมูลอ่อนไหว",
+    },
+    "Confidential|Confidentiality Agreement": {
+        "en": "A deal-level NDA for an investment, acquisition, financing or restricted project.",
+        "th": "NDA ระดับธุรกรรมสำหรับลงทุน ซื้อกิจการ เงินทุน หรือโครงการจำกัดสิทธิ",
+    },
+    "Confidential|Management Agreement": {
+        "en": "Appoint a party to manage a restaurant, property, operation or business function.",
+        "th": "แต่งตั้งผู้บริหารร้านอาหาร ทรัพย์สิน งานปฏิบัติการ หรือหน่วยธุรกิจ",
+    },
+    "Confidential|Loan Agreement": {
+        "en": "Intercompany or external borrowing, shareholder loan or revolving facility.",
+        "th": "เงินกู้ระหว่างบริษัท เงินกู้ผู้ถือหุ้น หรือวงเงินหมุนเวียน",
+    },
+    "Confidential|Mergers and Acquisitions Agreement": {
+        "en": "Acquire or dispose of shares, a business or assets, including merger transactions.",
+        "th": "ซื้อหรือขายหุ้น ธุรกิจ หรือทรัพย์สิน รวมถึงการควบรวม",
+    },
+    "Confidential|Shareholders’ Agreement": {
+        "en": "Set governance and rights among founders, investors or joint-venture shareholders.",
+        "th": "กำหนดธรรมาภิบาลและสิทธิระหว่างผู้ก่อตั้ง นักลงทุน หรือผู้ถือหุ้นร่วมทุน",
+    },
+    "Confidential|Others": {
+        "en": "A sensitive investigation, restructuring, strategic project or restricted transaction.",
+        "th": "งานสอบสวน ปรับโครงสร้าง โครงการกลยุทธ์ หรือธุรกรรมจำกัดสิทธิ",
+    },
+}
+
 TODAY = date(2026, 7, 11)
 
 CONTRACT_NAME_OVERRIDES = {
@@ -939,7 +1022,7 @@ def main():
         html,
         "    const contractInputCatalog = [",
         "\n    ];\n    const requestedRole",
-        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const standardSlaDataVersion = {js(STANDARD_SLA_DATA_VERSION)};\n    const departmentDataVersion = {js(DEPARTMENT_DATA_VERSION)};\n    const actionDataVersion = {js(ACTION_DATA_VERSION)};\n    const actionDescriptionConfig = Object.freeze({js(ACTION_DESCRIPTION_CONFIG)});\n    const departmentNameAliases = Object.freeze({js(DEPARTMENT_NAME_ALIASES)});\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name, 'actionSlaCsv': OUTPUT_ACTION_SLA_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
+        f"    const contractInputCatalog = {js(contract_catalog)};\n    const contractTypeMasterV2 = Object.freeze({js(contract_type_master_v2_rows)});\n    const practicalExampleConfig = Object.freeze({js(PRACTICAL_EXAMPLE_CONFIG)});\n    const standardSlaDataVersion = {js(STANDARD_SLA_DATA_VERSION)};\n    const departmentDataVersion = {js(DEPARTMENT_DATA_VERSION)};\n    const actionDataVersion = {js(ACTION_DATA_VERSION)};\n    const actionDescriptionConfig = Object.freeze({js(ACTION_DESCRIPTION_CONFIG)});\n    const departmentNameAliases = Object.freeze({js(DEPARTMENT_NAME_ALIASES)});\n    const realWorkbookData = Object.freeze({js(workbook_data)});\n    const driveDatabaseConfig = Object.freeze({js({ 'folderId': DRIVE_FOLDER_ID, 'folderUrl': DRIVE_FOLDER_URL, 'contractsCsv': OUTPUT_CONTRACTS_CSV.name, 'logsCsv': OUTPUT_LOGS_CSV.name, 'typeMasterCsv': OUTPUT_TYPE_MASTER_CSV.name, 'departmentMasterCsv': OUTPUT_DEPARTMENT_MASTER_CSV.name, 'peopleMasterCsv': OUTPUT_PEOPLE_MASTER_CSV.name, 'contractTemplateCsv': OUTPUT_CONTRACT_TEMPLATE_CSV.name, 'actionSlaCsv': OUTPUT_ACTION_SLA_MASTER_CSV.name })});\n    const attachmentCloudConfig = Object.freeze({js({ 'folderId': ATTACHMENT_CLOUD_FOLDER_ID, 'folderUrl': ATTACHMENT_CLOUD_FOLDER_URL, 'folderName': ATTACHMENT_CLOUD_FOLDER_NAME, 'uploadEndpoint': ATTACHMENT_UPLOAD_ENDPOINT })});\n    const requestedRole",
     )
     html = html.replace(
         "    const requestedRole",
@@ -1282,6 +1365,7 @@ def main():
                         <span class="bilingual-label"><span>Type of Contract<span class="field-required-mark" aria-hidden="true">*</span></span><span>ประเภทสัญญา<span class="field-required-mark" aria-hidden="true">*</span></span></span>
                       </span>
                       <input class="input" name="type" id="addContractType" list="contractTypeOptions" required autocomplete="off" placeholder="Select Type of Contract">
+                      <small class="bilingual-field-help"><span>Select the main contract category to determine the SLA.</span><span>เลือกประเภทสัญญาหลักเพื่อกำหนด SLA</span></small>
                       <small class="linked-flow-status waiting" id="linkedTypeStatus">Select Type to calculate SLA · เลือกประเภทเพื่อคำนวณ SLA</small>
                     </label>
                     <label class="form-field full linked-flow-field" data-flow-order="3">
@@ -1290,7 +1374,13 @@ def main():
                         <span class="bilingual-label"><span>Sub Type of Contract</span><span>ประเภทย่อยของสัญญา</span></span>
                       </span>
                       <input class="input" name="subType" id="addContractSubType" list="contractSubTypeOptions" autocomplete="off" placeholder="Select Sub Type">
+                      <small class="bilingual-field-help"><span>Select the specific Sub Type when available.</span><span>เลือกประเภทย่อยที่ตรงกับสัญญาเมื่อมีตัวเลือก</span></small>
                       <small class="linked-flow-status waiting" id="linkedSubTypeStatus">Optional when Type has no Sub Type · ไม่บังคับเมื่อไม่มีประเภทย่อย</small>
+                      <div class="practical-example" id="addPracticalExample" aria-live="polite">
+                        <strong><span>Practical Example</span><span>ตัวอย่างการใช้งาน</span></strong>
+                        <span class="practical-example-line" id="addPracticalExampleEn">Select Type and Sub Type to view an example.</span>
+                        <span class="practical-example-line thai" id="addPracticalExampleTh">เลือกประเภทและประเภทย่อยเพื่อดูตัวอย่าง</span>
+                      </div>
                     </label>
                     <label class="form-field full linked-flow-field" data-flow-order="4">
                       <span class="linked-flow-head">
@@ -1347,6 +1437,40 @@ def main():
       display: block;
       min-height: 16px;
       line-height: 1.3;
+    }
+
+    .bilingual-field-help {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .bilingual-field-help span,
+    .practical-example strong span,
+    .practical-example-line {
+      display: block;
+    }
+
+    .bilingual-field-help span + span,
+    .practical-example .thai {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.92em;
+    }
+
+    .practical-example {
+      margin-top: 10px;
+      padding-left: 10px;
+      border-left: 3px solid var(--green);
+      line-height: 1.4;
+    }
+
+    .practical-example strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--ink);
+      font-size: 12px;
     }
 
     .access-level-chip {
@@ -1586,6 +1710,22 @@ def main():
         .map(row => ({ row, score: scoreRow(row) }))
         .filter(item => item.score > 0)
         .sort((a, b) => b.score - a.score)[0]?.row || null;
+    }
+
+    function renderAddCasePracticalExample(typeValue = "", classification = "") {
+      const enNode = document.querySelector("#addPracticalExampleEn");
+      const thNode = document.querySelector("#addPracticalExampleTh");
+      if (!enNode || !thNode) return;
+      const typeInfo = typeValue ? contractTypeMasterV2Match(typeValue, classification) : null;
+      const effectiveType = String(typeInfo?.["Sub Type of Contract EN"] || typeInfo?.["Type of Contract EN"] || "").trim();
+      const key = effectiveType ? `${classificationEnFromValue(classification)}|${effectiveType}` : "";
+      const example = key ? practicalExampleConfig[key] : null;
+      enNode.textContent = example?.en || (typeValue
+        ? "Select a Sub Type to view the matching practical example."
+        : "Select Type and Sub Type to view an example.");
+      thNode.textContent = example?.th || (typeValue
+        ? "เลือกประเภทย่อยเพื่อดูตัวอย่างที่ตรงกับสัญญา"
+        : "เลือกประเภทและประเภทย่อยเพื่อดูตัวอย่าง");
     }
 
     function setAddCaseSummaryText(id, value, fallback = "-") {
@@ -3047,6 +3187,7 @@ def main():
         if (accessInput) accessInput.value = classificationAccessLevelFor(selectedContractClassification());
         setLinkedFlowStatus("linkedTypeStatus", "Select Type · เลือกประเภท", "waiting");
         setLinkedFlowStatus("linkedSubTypeStatus", "Select Type first · เลือกประเภทก่อน", "waiting");
+        renderAddCasePracticalExample();
         setLinkedFlowStatus("linkedNameStatus", "Enter Contract Name · ระบุชื่อสัญญา", "waiting");
         syncAddCaseSystemFields();
         return;
@@ -3074,6 +3215,10 @@ def main():
               : "Select Sub Type · เลือกประเภทย่อย")
           : "No Sub Type · ไม่มีประเภทย่อย",
         selectedSubType || !subOptions.length ? "linked" : "waiting"
+      );
+      renderAddCasePracticalExample(
+        selectedSubType || (!subOptions.length ? typeGroup : ""),
+        selectedContractClassification()
       );
       const nameCount = contractNameDropdownOptions().length;
       setLinkedFlowStatus(
