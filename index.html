@@ -13645,16 +13645,19 @@
     }
 
     function renderDashboardSummary() {
-      const pending = sumBy("isPending");
-      const completed = sumBy("isCompletedLast30Days");
-      const avgComplete = average(dashboardData.filter(item => item.isCompletedLast30Days === 1), "totalSpendingDays");
-      const overdue = sumBy("isOverdue");
+      const visibleContractIds = new Set(contractsVisibleToCurrentUser().map(item => item.id));
+      const visibleDashboardData = dashboardData.filter(item => visibleContractIds.has(item.id));
+      const visibleSumBy = field => visibleDashboardData.reduce((total, item) => total + (Number(item[field]) || 0), 0);
+      const pending = visibleSumBy("isPending");
+      const completed = visibleSumBy("isCompletedLast30Days");
+      const avgComplete = average(visibleDashboardData.filter(item => item.isCompletedLast30Days === 1), "totalSpendingDays");
+      const overdue = visibleSumBy("isOverdue");
       const departmentOrder = ["OP", "IT", "PM", "BD", "MKT", "PC", "BS", "Admin", "Legal T23", "Legal BTSG"];
       const deptBucketOrder = ["IT", "LEGAL", "MKT", "OTHER"];
       const personOrder = ["Name AA", "ggg", "Ra", "Kira", "Som", "Mook", "Bee", "Nok", "Ton", "Finance Reviewer", "Legal BTSG", "Legal Ra", "Restaurant Manager", "Vendor"];
-      const departments = orderedUniqueValues(dashboardData, "department", departmentOrder);
-      const deptBuckets = orderedUniqueValues(dashboardData, "deptBucket", deptBucketOrder);
-      const contractStatusData = dashboardData.filter(item => item.isPending === 1);
+      const departments = orderedUniqueValues(visibleDashboardData, "department", departmentOrder);
+      const deptBuckets = orderedUniqueValues(visibleDashboardData, "deptBucket", deptBucketOrder);
+      const contractStatusData = visibleDashboardData.filter(item => item.isPending === 1);
       const people = orderedUniqueList(
         contractStatusData.map(item => item.owner || "Unassigned"),
         personOrder
@@ -13673,9 +13676,9 @@
 
       const deptSpend = departments.map(department => ({
         label: department,
-        value: average(dashboardData.filter(item => item.department === department), "totalSpendingDays")
+        value: average(visibleDashboardData.filter(item => item.department === department), "totalSpendingDays")
       }));
-      const longestPendingOnHand = dashboardData
+      const longestPendingOnHand = visibleDashboardData
         .filter(item => item.isPending === 1 && item.alertCode === "R")
         .map(item => {
           const contract = contracts.find(row => row.id === item.id) || {};
