@@ -6096,6 +6096,9 @@
         <button class="nav-button" data-view="workflow" title="Log View" hidden>
           <span>⇄</span><span class="nav-label">Log View</span><span class="nav-count">14</span>
         </button>
+        <button class="nav-button confidential-nav" data-view="confidential" title="Confidential Contracts" data-confidential-nav>
+          <span>◆</span><span class="nav-label">Confidential</span><span class="nav-count">0</span>
+        </button>
         <button class="nav-button" data-view="user" title="User Case Action">
           <span>✎</span><span class="nav-label">User Case Action</span><span class="nav-count">3</span>
         </button>
@@ -6198,18 +6201,10 @@
 
         <section class="view" id="contracts">
           <section class="panel">
-            <div class="panel-header contract-status-header">
+            <div class="panel-header">
               <div>
-                <h2>Contract Master</h2>
+                <h2>Contract Status</h2>
                 <small>ติดตาม Contract Owner, cycle, return และสถานะล่าสุด</small>
-              </div>
-              <div class="contract-access-tabs" role="tablist" aria-label="Contract access view / มุมมองสิทธิ์สัญญา">
-                <button class="contract-access-tab active" type="button" role="tab" aria-selected="true" data-contract-access-view="normal">
-                  <span>Normal Contracts</span><small>สัญญาทั่วไป</small><b id="normalContractCount">0</b>
-                </button>
-                <button class="contract-access-tab confidential" type="button" role="tab" aria-selected="false" data-contract-access-view="confidential" data-confidential-access-tab>
-                  <span>Confidential</span><small>สัญญาลับ</small><b id="confidentialContractCount">0</b>
-                </button>
               </div>
             </div>
             <div class="table-wrap">
@@ -12595,6 +12590,7 @@
       workflow: ["Log View", "เลือก Contract ID จาก Dropdown เพื่อดู Log เฉพาะสัญญานั้น หรือเลือก All Contract ID เพื่อแสดงทั้งหมด"],
       user: ["User Case Action", "เพิ่มเคส อัปเดทสถานะ และปิดเคสจาก Contract Status / Log View"],
       master: ["Master Data", "แก้ไขข้อมูล dropdown และบันทึกกลับ Shared Drive"],
+      confidential: ["Confidential Contract Status", "แสดงเฉพาะสัญญาลับสำหรับผู้มีสิทธิ์เข้าถึง"],
       notifications: ["Notification Queue", "NotificationQueueTable"],
       setup: ["Email Notification Setup", "EmailNotificationRulesTable"]
     };
@@ -16643,7 +16639,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const visibleContracts = contractsVisibleToCurrentUser();
       const visibleIds = new Set(visibleContracts.map(contract => contract.id));
       const counts = {
-        contracts: visibleContracts.length,
+        contracts: contracts.filter(contract => !isConfidentialContract(contract)).length,
+        confidential: canViewConfidentialContracts() ? contracts.filter(isConfidentialContract).length : 0,
         workflow: logRecords.filter(row => visibleIds.has(row[0])).length,
         user: "3"
       };
@@ -16658,7 +16655,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function canAccessView(viewName) {
-      if (viewName === "user" || viewName === "master") return isAdmin();
+      if (viewName === "user" || viewName === "master" || viewName === "confidential") return isAdmin();
       return true;
     }
 
@@ -16698,32 +16695,16 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       return rows.filter(row => visibleIds.has(row[0]));
     }
 
-    function renderContractAccessTabs() {
-      const normalCount = contracts.filter(contract => !isConfidentialContract(contract)).length;
-      const confidentialCount = canViewConfidentialContracts()
-        ? contracts.filter(isConfidentialContract).length
-        : 0;
-      const normalCountNode = document.querySelector("#normalContractCount");
-      const confidentialCountNode = document.querySelector("#confidentialContractCount");
-      if (normalCountNode) normalCountNode.textContent = normalCount;
-      if (confidentialCountNode) confidentialCountNode.textContent = confidentialCount;
-      document.querySelectorAll("[data-contract-access-view]").forEach(button => {
-        const active = button.dataset.contractAccessView === contractStatusAccessView;
-        button.classList.toggle("active", active);
-        button.setAttribute("aria-selected", String(active));
-      });
-    }
-
     function applyRoleAccess() {
       document.body.dataset.role = currentUser.role;
       const userNav = document.querySelector('.nav-button[data-view="user"]');
       const masterNav = document.querySelector('.nav-button[data-view="master"]');
-      const confidentialAccessTab = document.querySelector("[data-confidential-access-tab]");
+      const confidentialNav = document.querySelector("[data-confidential-nav]");
       const newContractBtn = document.querySelector("#newContractBtn");
       if (!isAdmin()) {
         if (userNav) userNav.hidden = true;
         if (masterNav) masterNav.hidden = true;
-        if (confidentialAccessTab) confidentialAccessTab.hidden = true;
+        if (confidentialNav) confidentialNav.hidden = true;
         contractStatusAccessView = "normal";
         if (newContractBtn) newContractBtn.hidden = true;
         document.querySelector("#user")?.classList.remove("active");
@@ -16734,14 +16715,23 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (viewName === "workflow") viewName = "contracts";
       if (!pageLabels[viewName]) viewName = "dashboard";
       if (!canAccessView(viewName)) {
-        showToast("You do not have permission to access User Case Action.");
+        showToast("You do not have permission to access this page.");
         viewName = "dashboard";
       }
+      if (viewName === "contracts" || viewName === "confidential") {
+        contractStatusAccessView = viewName === "confidential" ? "confidential" : "normal";
+        selectedLogContractId = "all";
+        populateContractMasterFilters();
+        renderContractsTable();
+        renderKanban();
+        renderLogView();
+      }
+      const targetView = viewName === "confidential" ? "contracts" : viewName;
       document.querySelectorAll(".nav-button").forEach(button => {
         button.classList.toggle("active", button.dataset.view === viewName);
       });
       document.querySelectorAll(".view").forEach(view => {
-        view.classList.toggle("active", view.id === viewName);
+        view.classList.toggle("active", view.id === targetView);
       });
       document.querySelector("#pageHeading").textContent = pageLabels[viewName][0];
       document.querySelector("#pageSubheading").textContent = pageLabels[viewName][1];
@@ -17599,7 +17589,6 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     function renderAll() {
       rebuildNotificationQueue();
       renderDashboardSummary();
-      renderContractAccessTabs();
       populateContractMasterFilters();
       renderContractsTable();
       renderKanban();
@@ -17615,23 +17604,6 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       button.addEventListener("click", () => {
         if (button.hidden || button.dataset.view === "workflow") return;
         setView(button.dataset.view);
-      });
-    });
-
-    document.querySelectorAll("[data-contract-access-view]").forEach(button => {
-      button.addEventListener("click", () => {
-        const nextView = button.dataset.contractAccessView;
-        if (nextView === "confidential" && !canViewConfidentialContracts()) {
-          showToast("You do not have permission to view confidential contracts.");
-          return;
-        }
-        contractStatusAccessView = nextView === "confidential" ? "confidential" : "normal";
-        selectedLogContractId = "all";
-        renderContractAccessTabs();
-        populateContractMasterFilters();
-        renderContractsTable();
-        renderKanban();
-        renderLogView();
       });
     });
 
