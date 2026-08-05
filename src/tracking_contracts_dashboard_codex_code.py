@@ -6841,7 +6841,7 @@ def main():
           </div>
         </form>
         <section class="demo-account-section" id="demoAccountSection" aria-labelledby="demoAccountsTitle">
-          <h2 id="demoAccountsTitle">Demo Accounts</h2>
+          <h2 id="demoAccountsTitle">Accounts</h2>
           <div class="demo-account-grid">
             <button class="demo-account-button" type="button" data-demo-account="viewer"><strong>Viewer</strong><span>Contract Viewer</span></button>
             <button class="demo-account-button" type="button" data-demo-account="user"><strong>User</strong><span>Contract User</span></button>
@@ -6945,16 +6945,6 @@ def main():
     let authenticatedApplicationInitialized = false;
     let sessionActivityTimer = 0;
     let sessionExpiryTimer = 0;
-
-    function demoPasswordFor(username) {
-      const parts = {
-        viewer: ["View", "@", "2026"],
-        user: ["User", "@", "2026"],
-        confidential: ["Conf", "@", "2026"],
-        admin: ["IT", "@", "2026"]
-      };
-      return (parts[username] || []).join("");
-    }
 
     async function sha256(value) {
       if (!window.crypto?.subtle) return "";
@@ -7302,11 +7292,11 @@ def main():
         button.addEventListener("click", () => {
           const username = button.dataset.demoAccount;
           document.querySelector("#loginUsername").value = username;
-          document.querySelector("#loginPassword").value = demoPasswordFor(username);
+          document.querySelector("#loginPassword").value = "";
           setLoginError("");
           setFieldValidation("Username", "");
           setFieldValidation("Password", "");
-          document.querySelector("#loginSubmit")?.focus();
+          document.querySelector("#loginPassword")?.focus();
         });
       });
 
