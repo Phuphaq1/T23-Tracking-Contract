@@ -12168,9 +12168,31 @@
 
     const requestedRole = new URLSearchParams(window.location.search).get("role");
     // Prototype-only auth state. Real deployments must enforce admin permissions on the backend.
+    const accessRoleConfig = Object.freeze({
+      viewer: { level: 1, code: "level1", nameEn: "Contract Viewer", nameTh: "ผู้ดูข้อมูลสัญญา", userName: "Viewer" },
+      user: { level: 2, code: "level2", nameEn: "Contract User", nameTh: "ผู้ดำเนินการสัญญา", userName: "Contract User" },
+      confidential: { level: 3, code: "level3", nameEn: "Confidential Contract User", nameTh: "ผู้ดำเนินการสัญญาลับ", userName: "Confidential User" },
+      admin: { level: 4, code: "level4", nameEn: "System Administrator", nameTh: "ผู้ดูแลระบบ", userName: "Kira" }
+    });
+    const requestedRoleKey = ({
+      level1: "viewer",
+      "contract-viewer": "viewer",
+      level2: "user",
+      "contract-user": "user",
+      level3: "confidential",
+      "confidential-user": "confidential",
+      level4: "admin",
+      "system-administrator": "admin"
+    })[String(requestedRole || "").trim().toLowerCase()] || String(requestedRole || "").trim().toLowerCase();
+    const activeRoleKey = accessRoleConfig[requestedRoleKey] ? requestedRoleKey : "viewer";
+    const activeRole = accessRoleConfig[activeRoleKey];
     const currentUser = {
-      name: requestedRole === "admin" ? "Kira" : "Viewer",
-      role: requestedRole === "admin" ? "admin" : "viewer"
+      name: activeRole.userName,
+      role: activeRoleKey,
+      level: activeRole.level,
+      accessLevel: activeRole.code,
+      roleNameEn: activeRole.nameEn,
+      roleNameTh: activeRole.nameTh
     };
 
     function applyDiverseMockupData() {
@@ -15921,7 +15943,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       refreshNewCaseIdPreview();
       // Contract selectors show Contract ID, Type of Contract, Contract Name, and Department for easier search.
       // Owner, Department, Stage and Status remain linked in the background only.
-      const contractOptions = contracts.map(item => ({
+      const accessibleContracts = contractsVisibleToCurrentUser();
+      const contractOptions = accessibleContracts.map(item => ({
         value: item.id,
         label: [item.id, contractPrimaryTypeDisplay(item.type), item.name, item.department].map(value => String(value || "").trim()).filter(Boolean).join(" / ")
       }));
@@ -15941,14 +15964,14 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       setInputValueIfEmpty("addOwner", employeesForDepartment(document.querySelector("#addDepartment")?.value)[0]?.name || "Kawinphop Champee (Boss)");
       syncDepartmentOwnerOptions(false);
       setInputValueIfEmpty("updateTo", "Siwaporn Iamwiboon (Grace)");
-      fillSelect("updateContract", contractOptions, lastUserContractId || contracts[0]?.id);
-      fillSelect("closeContract", contractOptions, lastUserContractId || contracts[0]?.id);
-      fillSelect("adjustDueContract", contractOptions, lastUserContractId || contracts[0]?.id);
+      fillSelect("updateContract", contractOptions, lastUserContractId || accessibleContracts[0]?.id);
+      fillSelect("closeContract", contractOptions, lastUserContractId || accessibleContracts[0]?.id);
+      fillSelect("adjustDueContract", contractOptions, lastUserContractId || accessibleContracts[0]?.id);
       ["updateContract", "closeContract", "adjustDueContract"].forEach(selectId => {
         const select = document.querySelector(`#${selectId}`);
         if (!select) return;
         [...select.options].forEach(option => {
-          const contract = contracts.find(item => item.id === option.value);
+          const contract = accessibleContracts.find(item => item.id === option.value);
           if (contract) option.textContent = [contract.id, contractPrimaryTypeDisplay(contract.type), contract.name, contract.department].map(value => String(value || "").trim()).filter(Boolean).join(" / ");
         });
       });
@@ -15963,7 +15986,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           option.selected = currentSelected.length ? currentSelected.includes(option.value) : true;
         });
       }
-      if (lastUserContractId && contracts.some(item => item.id === lastUserContractId)) {
+      if (lastUserContractId && accessibleContracts.some(item => item.id === lastUserContractId)) {
         document.querySelector("#updateContract").value = lastUserContractId;
         document.querySelector("#closeContract").value = lastUserContractId;
       }
@@ -16328,7 +16351,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     function syncDueDateAdjustmentForm(force = false) {
       const form = document.querySelector("#dueDateAdjustmentForm");
       if (!form) return;
-      const contract = contracts.find(item => item.id === form.elements.contractId?.value) || contracts[0];
+      const accessibleContracts = contractsVisibleToCurrentUser();
+      const contract = accessibleContracts.find(item => item.id === form.elements.contractId?.value) || accessibleContracts[0];
       if (!contract) return;
       document.querySelector("#adjustDueContractSummary").innerHTML = contractSummaryMarkup(contract);
       const systemDue = contract.systemDue || addBusinessDays(latestLogFor(contract.id)?.[6] || todayInputValue(), totalSlaFor(contract.workType));
@@ -16516,8 +16540,9 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const closeForm = document.querySelector("#closeCaseForm");
       const updateId = updateForm?.elements.contractId?.value || "";
       const closeId = closeForm?.elements.contractId?.value || updateId;
-      const updateContract = contracts.find(item => item.id === updateId);
-      const closeContract = contracts.find(item => item.id === closeId);
+      const accessibleContracts = contractsVisibleToCurrentUser();
+      const updateContract = accessibleContracts.find(item => item.id === updateId);
+      const closeContract = accessibleContracts.find(item => item.id === closeId);
 
       if (updateContract && updateForm) {
         document.querySelector("#updateContractSummary").innerHTML = contractSummaryMarkup(updateContract, { showStatusUpdate: true });
@@ -16586,7 +16611,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (updateForm) {
         const action = String(updateForm.elements.action?.value || "");
         const info = updateActionByName[action];
-        const contract = contracts.find(item => item.id === updateForm.elements.contractId?.value);
+        const contract = contractsVisibleToCurrentUser().find(item => item.id === updateForm.elements.contractId?.value);
         if (!info) {
           updateForm.elements.sla.value = "";
           updateForm.elements.days.value = "0";
@@ -16604,8 +16629,9 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function renderUserCasePreview() {
-      const selectedId = lastUserContractId || document.querySelector("#updateContract")?.value || contracts[0]?.id;
-      const item = contracts.find(contract => contract.id === selectedId) || contracts[0];
+      const accessibleContracts = contractsVisibleToCurrentUser();
+      const selectedId = lastUserContractId || document.querySelector("#updateContract")?.value || accessibleContracts[0]?.id;
+      const item = accessibleContracts.find(contract => contract.id === selectedId) || accessibleContracts[0];
       if (!item) return;
       const latestLog = latestLogFor(item.id);
       document.querySelector("#userCasePreview").innerHTML = `
@@ -16619,7 +16645,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           <div class="field"><label>Latest Log</label><strong>${latestLog ? `#${latestLog[1]} · ${latestLog[12]}` : "No log"}</strong></div>
         </div>`;
 
-      const rows = contracts.slice(-6).reverse().map(contract => {
+      const rows = accessibleContracts.slice(-6).reverse().map(contract => {
         const log = latestLogFor(contract.id);
         return `
           <tr>
@@ -16654,8 +16680,22 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       return currentUser?.role === "admin";
     }
 
+    function hasAccessLevel(minimumLevel) {
+      return Number(currentUser?.level || 1) >= Number(minimumLevel || 1);
+    }
+
+    function canUseUserCaseAction() {
+      return hasAccessLevel(2);
+    }
+
+    function canManageMasterData() {
+      return hasAccessLevel(4);
+    }
+
     function canAccessView(viewName) {
-      if (viewName === "user" || viewName === "master" || viewName === "confidential") return isAdmin();
+      if (viewName === "user") return canUseUserCaseAction();
+      if (viewName === "confidential") return canViewConfidentialContracts();
+      if (viewName === "master") return canManageMasterData();
       return true;
     }
 
@@ -16674,7 +16714,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function canViewConfidentialContracts() {
-      return isAdmin();
+      return hasAccessLevel(3);
     }
 
     function contractsVisibleToCurrentUser() {
@@ -16697,16 +16737,20 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
 
     function applyRoleAccess() {
       document.body.dataset.role = currentUser.role;
+      document.body.dataset.accessLevel = currentUser.accessLevel;
+      document.body.dataset.roleName = currentUser.roleNameEn;
       const userNav = document.querySelector('.nav-button[data-view="user"]');
       const masterNav = document.querySelector('.nav-button[data-view="master"]');
       const confidentialNav = document.querySelector("[data-confidential-nav]");
+      const confidentialClassificationChoice = document.querySelector('[data-classification-value="Confidential"]');
       const newContractBtn = document.querySelector("#newContractBtn");
       if (!isAdmin()) {
-        if (userNav) userNav.hidden = true;
-        if (masterNav) masterNav.hidden = true;
-        if (confidentialNav) confidentialNav.hidden = true;
-        contractStatusAccessView = "normal";
-        if (newContractBtn) newContractBtn.hidden = true;
+        if (userNav) userNav.hidden = !canUseUserCaseAction();
+        if (masterNav) masterNav.hidden = !canManageMasterData();
+        if (confidentialNav) confidentialNav.hidden = !canViewConfidentialContracts();
+        if (confidentialClassificationChoice) confidentialClassificationChoice.hidden = !canViewConfidentialContracts();
+        if (!canViewConfidentialContracts()) contractStatusAccessView = "normal";
+        if (newContractBtn) newContractBtn.hidden = !canUseUserCaseAction();
         document.querySelector("#user")?.classList.remove("active");
       }
     }
@@ -17690,8 +17734,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     document.querySelector("#refreshBtn").addEventListener("click", () => showToast("Dashboard refreshed"));
     document.querySelector("#exportBtn")?.addEventListener("click", () => showToast("Export file prepared"));
     document.querySelector("#newContractBtn")?.addEventListener("click", () => {
-      if (!isAdmin()) {
-        showToast("Only admin can create or update contracts.");
+      if (!canUseUserCaseAction()) {
+        showToast("Level 2, Level 3, or Level 4 access is required to create or update contracts.");
         return;
       }
       setView("user");
@@ -17715,6 +17759,10 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const workType = String(form.get("workType") || "Other").trim();
       const contractType = String(form.get("type") || "").trim();
       const accessLevel = String(form.get("accessLevel") || accessLevelForContractType(contractType) || "Normal").trim();
+      if (accessLevel === "Confidential" && !canViewConfidentialContracts()) {
+        showToast("Level 3 or Level 4 access is required for confidential contracts.");
+        return;
+      }
       const department = String(form.get("department") || "").trim();
       if (!validateAddCaseContractId({ accessLevel, department })) return;
       const id = nextContractId({ accessLevel, department });
@@ -17790,7 +17838,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       event.preventDefault();
       const formElement = event.currentTarget;
       const form = new FormData(formElement);
-      const contract = contracts.find(item => item.id === form.get("contractId"));
+      const contract = contractsVisibleToCurrentUser().find(item => item.id === form.get("contractId"));
       if (!contract) return;
       const systemDue = String(form.get("systemDue") || contract.systemDue || "");
       const currentDue = String(form.get("currentDue") || contract.due || systemDue);
@@ -17865,7 +17913,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       event.preventDefault();
       const formElement = event.currentTarget;
       const contractId = formElement.elements.contractId.value;
-      const contract = contracts.find(item => item.id === contractId);
+      const contract = contractsVisibleToCurrentUser().find(item => item.id === contractId);
       if (!contract) return;
 
       // In / Out are system controlled and are intentionally hidden from the user form.
@@ -17987,7 +18035,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       event.preventDefault();
       const form = new FormData(event.currentTarget);
       const id = form.get("contractId");
-      const contract = contracts.find(item => item.id === id);
+      const contract = contractsVisibleToCurrentUser().find(item => item.id === id);
       if (!contract) return;
       const owner = String(form.get("owner") || contract.owner || "").trim();
       const closeDate = String(form.get("closeDate") || todayInputValue());
@@ -18267,7 +18315,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         const action = field("action")?.value || "Submit to Review";
         const info = actionDefinition(action);
         const actionReasonValue = String(field("actionReason")?.value || "").trim();
-        const contract = contracts.find(item => item.id === field("contractId")?.value);
+        const contract = contractsVisibleToCurrentUser().find(item => item.id === field("contractId")?.value);
         const items = [
           { labelEn: "Contract", labelTh: "สัญญา", valueEn: selectedOptionText(field("contractId")), valueTh: selectedOptionText(field("contractId")), full: true },
           { labelEn: "Action", labelTh: "การดำเนินการ", valueEn: info.nameEn, valueTh: info.nameTh },
