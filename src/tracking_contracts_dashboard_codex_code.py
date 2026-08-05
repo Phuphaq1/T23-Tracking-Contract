@@ -1038,6 +1038,16 @@ def main():
         1,
     )
     html = html.replace(
+        """    const currentUser = {
+      name: requestedRole === "viewer" ? "Viewer" : "Kira",
+      role: requestedRole === "viewer" ? "viewer" : "admin"
+    };""",
+        """    const currentUser = {
+      name: requestedRole === "admin" ? "Kira" : "Viewer",
+      role: requestedRole === "admin" ? "admin" : "viewer"
+    };""",
+    )
+    html = html.replace(
         """    const updateActionList = updateActionDefinitions.map(item => item.nameEn);
     const updateActionByName = Object.freeze(Object.fromEntries(updateActionDefinitions.map(item => [item.nameEn, item])));""",
         f"""    const actionDefinitionOverrides = Object.freeze({js(ACTION_DESCRIPTION_CONFIG)});
@@ -1406,6 +1416,29 @@ def main():
         """                    <span class="bilingual-label"><span>Total SLA - Day</span><span>SLA รวม - วันทำการ</span></span>""",
     )
     html = html.replace(
+        """            <div class="panel-header">
+              <div>
+                <h2>Contract Master</h2>
+                <small>ติดตาม Contract Owner, cycle, return และสถานะล่าสุด</small>
+              </div>
+            </div>""",
+        """            <div class="panel-header contract-status-header">
+              <div>
+                <h2>Contract Master</h2>
+                <small>ติดตาม Contract Owner, cycle, return และสถานะล่าสุด</small>
+              </div>
+              <div class="contract-access-tabs" role="tablist" aria-label="Contract access view / มุมมองสิทธิ์สัญญา">
+                <button class="contract-access-tab active" type="button" role="tab" aria-selected="true" data-contract-access-view="normal">
+                  <span>Normal Contracts</span><small>สัญญาทั่วไป</small><b id="normalContractCount">0</b>
+                </button>
+                <button class="contract-access-tab confidential" type="button" role="tab" aria-selected="false" data-contract-access-view="confidential" data-confidential-access-tab>
+                  <span>Confidential</span><small>สัญญาลับ</small><b id="confidentialContractCount">0</b>
+                </button>
+              </div>
+            </div>""",
+        1,
+    )
+    html = html.replace(
         """                    <small class="form-hint">Linked from Type of Contract · เชื่อมจากประเภทสัญญา</small>""",
         """                    <small class="form-hint" id="addSlaHint">Fixed by selected Type / Sub Type · กำหนดตามประเภทและประเภทย่อยที่เลือก</small>""",
     )
@@ -1471,6 +1504,69 @@ def main():
       margin-bottom: 5px;
       color: var(--ink);
       font-size: 12px;
+    }
+
+    .contract-status-header {
+      align-items: flex-end;
+      gap: 16px;
+    }
+
+    .contract-access-tabs {
+      display: inline-grid;
+      grid-template-columns: repeat(2, minmax(138px, 1fr));
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+    }
+
+    .contract-access-tab {
+      min-height: 44px;
+      padding: 6px 10px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .contract-access-tab span,
+    .contract-access-tab small {
+      display: block;
+      line-height: 1.25;
+    }
+
+    .contract-access-tab small {
+      font-size: 10px;
+    }
+
+    .contract-access-tab b {
+      float: right;
+      margin-top: -25px;
+      font-size: 11px;
+    }
+
+    .contract-access-tab.active {
+      border-color: var(--green);
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .contract-access-tab.confidential.active {
+      border-color: var(--red);
+    }
+
+    @media (max-width: 760px) {
+      .contract-status-header {
+        align-items: stretch;
+      }
+
+      .contract-access-tabs {
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .access-level-chip {
@@ -5857,6 +5953,58 @@ def main():
         """    function canAccessView(viewName) {
       if (viewName === "user" || viewName === "master") return isAdmin();
       return true;
+    }
+
+    let contractStatusAccessView = "normal";
+
+    function isConfidentialContract(contract) {
+      const access = String(contract?.accessLevel || "").trim().toLowerCase();
+      const classification = String(contract?.classification || contract?.category || "").toLowerCase();
+      const visibility = String(contract?.visibility || "").toLowerCase();
+      const id = String(contract?.id || "").trim().toUpperCase();
+      return access === "confidential"
+        || classification.includes("confidential")
+        || classification.includes("สัญญาลับ")
+        || visibility.includes("restricted")
+        || id.startsWith("CT-C-");
+    }
+
+    function canViewConfidentialContracts() {
+      return isAdmin();
+    }
+
+    function contractsVisibleToCurrentUser() {
+      return canViewConfidentialContracts()
+        ? contracts.slice()
+        : contracts.filter(contract => !isConfidentialContract(contract));
+    }
+
+    function contractsForContractStatus() {
+      const visible = contractsVisibleToCurrentUser();
+      return visible.filter(contract => contractStatusAccessView === "confidential"
+        ? isConfidentialContract(contract)
+        : !isConfidentialContract(contract));
+    }
+
+    function logsVisibleToCurrentUser(rows = logRecords) {
+      const visibleIds = new Set(contractsVisibleToCurrentUser().map(contract => contract.id));
+      return rows.filter(row => visibleIds.has(row[0]));
+    }
+
+    function renderContractAccessTabs() {
+      const normalCount = contracts.filter(contract => !isConfidentialContract(contract)).length;
+      const confidentialCount = canViewConfidentialContracts()
+        ? contracts.filter(isConfidentialContract).length
+        : 0;
+      const normalCountNode = document.querySelector("#normalContractCount");
+      const confidentialCountNode = document.querySelector("#confidentialContractCount");
+      if (normalCountNode) normalCountNode.textContent = normalCount;
+      if (confidentialCountNode) confidentialCountNode.textContent = confidentialCount;
+      document.querySelectorAll("[data-contract-access-view]").forEach(button => {
+        const active = button.dataset.contractAccessView === contractStatusAccessView;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-selected", String(active));
+      });
     }""",
     )
     html = html.replace(
@@ -5864,6 +6012,7 @@ def main():
       const newContractBtn = document.querySelector("#newContractBtn");""",
         """      const userNav = document.querySelector('.nav-button[data-view="user"]');
       const masterNav = document.querySelector('.nav-button[data-view="master"]');
+      const confidentialAccessTab = document.querySelector("[data-confidential-access-tab]");
       const newContractBtn = document.querySelector("#newContractBtn");""",
     )
     html = html.replace(
@@ -5871,7 +6020,157 @@ def main():
         if (newContractBtn) newContractBtn.hidden = true;""",
         """        if (userNav) userNav.hidden = true;
         if (masterNav) masterNav.hidden = true;
+        if (confidentialAccessTab) confidentialAccessTab.hidden = true;
+        contractStatusAccessView = "normal";
         if (newContractBtn) newContractBtn.hidden = true;""",
+    )
+    html = html.replace(
+        """    function filteredDashboardContracts() {
+      const search = document.querySelector("#dashboardSearch").value.toLowerCase();
+      const alert = document.querySelector("#dashboardAlert").value;
+      return contracts.filter(item => {""",
+        """    function filteredDashboardContracts() {
+      const search = document.querySelector("#dashboardSearch").value.toLowerCase();
+      const alert = document.querySelector("#dashboardAlert").value;
+      return contractsVisibleToCurrentUser().filter(item => {""",
+    )
+    html = html.replace(
+        """    function ownerRelatedContracts(owner) {
+      return contracts.filter(item => {""",
+        """    function ownerRelatedContracts(owner) {
+      return contractsVisibleToCurrentUser().filter(item => {""",
+    )
+    html = html.replace(
+        """    function ownerRelatedLogs(owner) {
+      return logRecords.filter(row => row[4] === owner || row[5] === owner).slice(0, 8);
+    }""",
+        """    function ownerRelatedLogs(owner) {
+      return logsVisibleToCurrentUser().filter(row => row[4] === owner || row[5] === owner).slice(0, 8);
+    }""",
+    )
+    html = html.replace(
+        """    function renderContractDetail() {
+      const item = contracts[selectedContractIndex];
+      const logs = logItems[item.id] || [""",
+        """    function renderContractDetail() {
+      const visibleContracts = contractsVisibleToCurrentUser();
+      let item = contracts[selectedContractIndex];
+      if (!item || !visibleContracts.some(contract => contract.id === item.id)) {
+        item = visibleContracts[0];
+        selectedContractIndex = item ? contracts.findIndex(contract => contract.id === item.id) : 0;
+      }
+      if (!item) {
+        document.querySelector("#selectedStamp").textContent = "No accessible contract";
+        document.querySelector("#contractDetail").innerHTML = `<div class="empty-state">No contract available for your access level</div>`;
+        return;
+      }
+      const logs = logItems[item.id] || [""",
+    )
+    html = html.replace(
+        """        const cards = contracts.filter(item => item.stage === stage).map(item => `""",
+        """        const cards = contractsForContractStatus().filter(item => item.stage === stage).map(item => `""",
+        1,
+    )
+    html = html.replace(
+        """    function uniqueContractMasterValues(getter) {
+      return [...new Set(contracts.map(getter).map(value => String(value || "").trim()).filter(Boolean))]""",
+        """    function uniqueContractMasterValues(getter) {
+      return [...new Set(contractsForContractStatus().map(getter).map(value => String(value || "").trim()).filter(Boolean))]""",
+    )
+    html = html.replace(
+        """      const visibleContracts = contracts.filter(item => {
+        const latestLog = latestLogFor(item.id);""",
+        """      const visibleContracts = contractsForContractStatus().filter(item => {
+        const latestLog = latestLogFor(item.id);""",
+        1,
+    )
+    html = html.replace(
+        """      const currentContract = contracts.find(item => item.id === contractId) || contracts.find(item => item.station === station);
+      const logViewRows = currentContract ? logRecords.filter(row => row[0] === currentContract.id).slice().reverse() : [];""",
+        """      const visibleContracts = contractsVisibleToCurrentUser();
+      const currentContract = visibleContracts.find(item => item.id === contractId) || visibleContracts.find(item => item.station === station);
+      if (!currentContract) {
+        showToast("You do not have permission to view this confidential contract.");
+        return;
+      }
+      const logViewRows = logsVisibleToCurrentUser().filter(row => row[0] === currentContract.id).slice().reverse();""",
+    )
+    html = html.replace(
+        """    function renderLogView() {
+      const select = document.querySelector("#logViewContract");
+      const selected = selectedLogContractId || select.value || "all";
+      const options = [
+        `<option value="all" ${selected === "all" ? "selected" : ""}>All Contract ID</option>`,
+        ...contracts.map(item => item.id).map(id => `""",
+        """    function renderLogView() {
+      const select = document.querySelector("#logViewContract");
+      const statusContracts = contractsForContractStatus();
+      const statusIds = new Set(statusContracts.map(item => item.id));
+      let selected = selectedLogContractId || select.value || "all";
+      if (selected !== "all" && !statusIds.has(selected)) selected = "all";
+      const options = [
+        `<option value="all" ${selected === "all" ? "selected" : ""}>All Contract ID</option>`,
+        ...statusContracts.map(item => item.id).map(id => `""",
+    )
+    html = html.replace(
+        """      const rows = selected === "all" ? logRecords : logRecords.filter(row => row[0] === selected);""",
+        """      const statusLogs = logsVisibleToCurrentUser().filter(row => statusIds.has(row[0]));
+      const rows = selected === "all" ? statusLogs : statusLogs.filter(row => row[0] === selected);""",
+        1,
+    )
+    html = html.replace(
+        """    function syncNavCounts() {
+      const counts = {
+        contracts: contracts.length,
+        workflow: logRecords.length,""",
+        """    function syncNavCounts() {
+      const visibleContracts = contractsVisibleToCurrentUser();
+      const visibleIds = new Set(visibleContracts.map(contract => contract.id));
+      const counts = {
+        contracts: visibleContracts.length,
+        workflow: logRecords.filter(row => visibleIds.has(row[0])).length,""",
+    )
+    html = html.replace(
+        """    function renderAll() {
+      rebuildNotificationQueue();
+      renderDashboardSummary();
+      populateContractMasterFilters();""",
+        """    function renderAll() {
+      rebuildNotificationQueue();
+      renderDashboardSummary();
+      renderContractAccessTabs();
+      populateContractMasterFilters();""",
+    )
+    html = html.replace(
+        """    document.querySelectorAll(".nav-button").forEach(button => {
+      button.addEventListener("click", () => {
+        if (button.hidden || button.dataset.view === "workflow") return;
+        setView(button.dataset.view);
+      });
+    });""",
+        """    document.querySelectorAll(".nav-button").forEach(button => {
+      button.addEventListener("click", () => {
+        if (button.hidden || button.dataset.view === "workflow") return;
+        setView(button.dataset.view);
+      });
+    });
+
+    document.querySelectorAll("[data-contract-access-view]").forEach(button => {
+      button.addEventListener("click", () => {
+        const nextView = button.dataset.contractAccessView;
+        if (nextView === "confidential" && !canViewConfidentialContracts()) {
+          showToast("You do not have permission to view confidential contracts.");
+          return;
+        }
+        contractStatusAccessView = nextView === "confidential" ? "confidential" : "normal";
+        selectedLogContractId = "all";
+        renderContractAccessTabs();
+        populateContractMasterFilters();
+        renderContractsTable();
+        renderKanban();
+        renderLogView();
+      });
+    });""",
     )
     html = html.replace(
         """      renderUserCasePreview();
@@ -5886,6 +6185,29 @@ def main():
         """    setupCsvDatabaseControls();
     setupMasterDataControls();
     loadContractsDatabase();""",
+    )
+    html = html.replace(
+        """            <div class="panel-header">
+              <div>
+                <h2>Contract Master</h2>
+                <small>ติดตาม Contract Owner, cycle, return และสถานะล่าสุด</small>
+              </div>
+            </div>""",
+        """            <div class="panel-header contract-status-header">
+              <div>
+                <h2>Contract Master</h2>
+                <small>ติดตาม Contract Owner, cycle, return และสถานะล่าสุด</small>
+              </div>
+              <div class="contract-access-tabs" role="tablist" aria-label="Contract access view / มุมมองสิทธิ์สัญญา">
+                <button class="contract-access-tab active" type="button" role="tab" aria-selected="true" data-contract-access-view="normal">
+                  <span>Normal Contracts</span><small>สัญญาทั่วไป</small><b id="normalContractCount">0</b>
+                </button>
+                <button class="contract-access-tab confidential" type="button" role="tab" aria-selected="false" data-contract-access-view="confidential" data-confidential-access-tab>
+                  <span>Confidential</span><small>สัญญาลับ</small><b id="confidentialContractCount">0</b>
+                </button>
+              </div>
+            </div>""",
+        1,
     )
     html = html.replace("<title>Tracking Contracts — User Status & Email</title>", "<title>Tracking Contracts — Real Excel Dropdowns</title>")
 
