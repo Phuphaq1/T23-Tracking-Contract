@@ -3165,6 +3165,69 @@
       font-size: 12px;
     }
 
+    .contract-status-header {
+      align-items: flex-end;
+      gap: 16px;
+    }
+
+    .contract-access-tabs {
+      display: inline-grid;
+      grid-template-columns: repeat(2, minmax(138px, 1fr));
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+    }
+
+    .contract-access-tab {
+      min-height: 44px;
+      padding: 6px 10px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .contract-access-tab span,
+    .contract-access-tab small {
+      display: block;
+      line-height: 1.25;
+    }
+
+    .contract-access-tab small {
+      font-size: 10px;
+    }
+
+    .contract-access-tab b {
+      float: right;
+      margin-top: -25px;
+      font-size: 11px;
+    }
+
+    .contract-access-tab.active {
+      border-color: var(--green);
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .contract-access-tab.confidential.active {
+      border-color: var(--red);
+    }
+
+    @media (max-width: 760px) {
+      .contract-status-header {
+        align-items: stretch;
+      }
+
+      .contract-access-tabs {
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     .access-level-chip {
       display: inline-flex;
       align-items: center;
@@ -6135,10 +6198,18 @@
 
         <section class="view" id="contracts">
           <section class="panel">
-            <div class="panel-header">
+            <div class="panel-header contract-status-header">
               <div>
                 <h2>Contract Master</h2>
                 <small>ติดตาม Contract Owner, cycle, return และสถานะล่าสุด</small>
+              </div>
+              <div class="contract-access-tabs" role="tablist" aria-label="Contract access view / มุมมองสิทธิ์สัญญา">
+                <button class="contract-access-tab active" type="button" role="tab" aria-selected="true" data-contract-access-view="normal">
+                  <span>Normal Contracts</span><small>สัญญาทั่วไป</small><b id="normalContractCount">0</b>
+                </button>
+                <button class="contract-access-tab confidential" type="button" role="tab" aria-selected="false" data-contract-access-view="confidential" data-confidential-access-tab>
+                  <span>Confidential</span><small>สัญญาลับ</small><b id="confidentialContractCount">0</b>
+                </button>
               </div>
             </div>
             <div class="table-wrap">
@@ -7997,8 +8068,8 @@
 
     const slaDetailConfig = [
       [
-            "Memorandum of Understanding|Submit to Review|Any",
-            "Memorandum of Understanding",
+            "Term Sheet|Submit to Review|Any",
+            "Term Sheet",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8009,8 +8080,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Memorandum of Understanding|Return|Any",
-            "Memorandum of Understanding",
+            "Term Sheet|Return|Any",
+            "Term Sheet",
             2,
             "Return",
             "Current Owner",
@@ -8021,8 +8092,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Memorandum of Understanding|Resubmit|Any",
-            "Memorandum of Understanding",
+            "Term Sheet|Resubmit|Any",
+            "Term Sheet",
             3,
             "Resubmit",
             "Current Owner",
@@ -8033,152 +8104,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Memorandum of Understanding|Forward|Any",
-            "Memorandum of Understanding",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Service Provider Agreement|Submit to Review|Any",
-            "Service Provider Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Service Provider Agreement|Return|Any",
-            "Service Provider Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Service Provider Agreement|Resubmit|Any",
-            "Service Provider Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Service Provider Agreement|Forward|Any",
-            "Service Provider Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Submit to Review|Any",
-            "Mergers and Acquisitions Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Return|Any",
-            "Mergers and Acquisitions Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Resubmit|Any",
-            "Mergers and Acquisitions Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Mergers and Acquisitions Agreement|Forward|Any",
-            "Mergers and Acquisitions Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Service Agreement|Submit to Review|Any",
-            "Service Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Service Agreement|Return|Any",
-            "Service Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Service Agreement|Resubmit|Any",
-            "Service Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Service Agreement|Forward|Any",
-            "Service Agreement",
+            "Term Sheet|Forward|Any",
+            "Term Sheet",
             4,
             "Forward",
             "Current Owner",
@@ -8237,8 +8164,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Management Agreement|Submit to Review|Any",
-            "Management Agreement",
+            "Confidentiality Agreement|Submit to Review|Any",
+            "Confidentiality Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8249,8 +8176,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Management Agreement|Return|Any",
-            "Management Agreement",
+            "Confidentiality Agreement|Return|Any",
+            "Confidentiality Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8261,8 +8188,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Management Agreement|Resubmit|Any",
-            "Management Agreement",
+            "Confidentiality Agreement|Resubmit|Any",
+            "Confidentiality Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8273,104 +8200,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Management Agreement|Forward|Any",
-            "Management Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Sharer Holder Agreement|Submit to Review|Any",
-            "Sharer Holder Agreement",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Sharer Holder Agreement|Return|Any",
-            "Sharer Holder Agreement",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Sharer Holder Agreement|Resubmit|Any",
-            "Sharer Holder Agreement",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Sharer Holder Agreement|Forward|Any",
-            "Sharer Holder Agreement",
-            4,
-            "Forward",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
-      ],
-      [
-            "Term Sheet|Submit to Review|Any",
-            "Term Sheet",
-            1,
-            "Submit to Review",
-            "Current Owner",
-            "Any",
-            7,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
-      ],
-      [
-            "Term Sheet|Return|Any",
-            "Term Sheet",
-            2,
-            "Return",
-            "Current Owner",
-            "Any",
-            3,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
-      ],
-      [
-            "Term Sheet|Resubmit|Any",
-            "Term Sheet",
-            3,
-            "Resubmit",
-            "Current Owner",
-            "Any",
-            5,
-            "Fixed Action SLA",
-            "Yes",
-            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
-      ],
-      [
-            "Term Sheet|Forward|Any",
-            "Term Sheet",
+            "Confidentiality Agreement|Forward|Any",
+            "Confidentiality Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8429,8 +8260,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Lease Agreement|Submit to Review|Any",
-            "Lease Agreement",
+            "Rental Agreement|Submit to Review|Any",
+            "Rental Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8441,8 +8272,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Lease Agreement|Return|Any",
-            "Lease Agreement",
+            "Rental Agreement|Return|Any",
+            "Rental Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8453,8 +8284,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Lease Agreement|Resubmit|Any",
-            "Lease Agreement",
+            "Rental Agreement|Resubmit|Any",
+            "Rental Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8465,8 +8296,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Lease Agreement|Forward|Any",
-            "Lease Agreement",
+            "Rental Agreement|Forward|Any",
+            "Rental Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8477,8 +8308,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Loan Agreement|Submit to Review|Any",
-            "Loan Agreement",
+            "Service Agreement|Submit to Review|Any",
+            "Service Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8489,8 +8320,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Loan Agreement|Return|Any",
-            "Loan Agreement",
+            "Service Agreement|Return|Any",
+            "Service Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8501,8 +8332,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Loan Agreement|Resubmit|Any",
-            "Loan Agreement",
+            "Service Agreement|Resubmit|Any",
+            "Service Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8513,8 +8344,56 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Loan Agreement|Forward|Any",
-            "Loan Agreement",
+            "Service Agreement|Forward|Any",
+            "Service Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Service Provider Agreement|Submit to Review|Any",
+            "Service Provider Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Service Provider Agreement|Return|Any",
+            "Service Provider Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Service Provider Agreement|Resubmit|Any",
+            "Service Provider Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Service Provider Agreement|Forward|Any",
+            "Service Provider Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8573,8 +8452,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Rental Agreement|Submit to Review|Any",
-            "Rental Agreement",
+            "Memorandum of Understanding|Submit to Review|Any",
+            "Memorandum of Understanding",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8585,8 +8464,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Rental Agreement|Return|Any",
-            "Rental Agreement",
+            "Memorandum of Understanding|Return|Any",
+            "Memorandum of Understanding",
             2,
             "Return",
             "Current Owner",
@@ -8597,8 +8476,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Rental Agreement|Resubmit|Any",
-            "Rental Agreement",
+            "Memorandum of Understanding|Resubmit|Any",
+            "Memorandum of Understanding",
             3,
             "Resubmit",
             "Current Owner",
@@ -8609,8 +8488,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Rental Agreement|Forward|Any",
-            "Rental Agreement",
+            "Memorandum of Understanding|Forward|Any",
+            "Memorandum of Understanding",
             4,
             "Forward",
             "Current Owner",
@@ -8621,8 +8500,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Consultancy Agreement|Submit to Review|Any",
-            "Consultancy Agreement",
+            "Management Agreement|Submit to Review|Any",
+            "Management Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8633,8 +8512,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Consultancy Agreement|Return|Any",
-            "Consultancy Agreement",
+            "Management Agreement|Return|Any",
+            "Management Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8645,8 +8524,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Consultancy Agreement|Resubmit|Any",
-            "Consultancy Agreement",
+            "Management Agreement|Resubmit|Any",
+            "Management Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8657,8 +8536,200 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Consultancy Agreement|Forward|Any",
-            "Consultancy Agreement",
+            "Management Agreement|Forward|Any",
+            "Management Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Loan Agreement|Submit to Review|Any",
+            "Loan Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Loan Agreement|Return|Any",
+            "Loan Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Loan Agreement|Resubmit|Any",
+            "Loan Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Loan Agreement|Forward|Any",
+            "Loan Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Lease Agreement|Submit to Review|Any",
+            "Lease Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Lease Agreement|Return|Any",
+            "Lease Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Lease Agreement|Resubmit|Any",
+            "Lease Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Lease Agreement|Forward|Any",
+            "Lease Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Sharer Holder Agreement|Submit to Review|Any",
+            "Sharer Holder Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Sharer Holder Agreement|Return|Any",
+            "Sharer Holder Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Sharer Holder Agreement|Resubmit|Any",
+            "Sharer Holder Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Sharer Holder Agreement|Forward|Any",
+            "Sharer Holder Agreement",
+            4,
+            "Forward",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Submit to Review|Any",
+            "Mergers and Acquisitions Agreement",
+            1,
+            "Submit to Review",
+            "Current Owner",
+            "Any",
+            7,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Return|Any",
+            "Mergers and Acquisitions Agreement",
+            2,
+            "Return",
+            "Current Owner",
+            "Any",
+            3,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Resubmit|Any",
+            "Mergers and Acquisitions Agreement",
+            3,
+            "Resubmit",
+            "Current Owner",
+            "Any",
+            5,
+            "Fixed Action SLA",
+            "Yes",
+            "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
+      ],
+      [
+            "Mergers and Acquisitions Agreement|Forward|Any",
+            "Mergers and Acquisitions Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -8717,8 +8788,8 @@
             "ส่งต่อสัญญาไปยังผู้รับผิดชอบหรือขั้นตอนถัดไป"
       ],
       [
-            "Confidentiality Agreement|Submit to Review|Any",
-            "Confidentiality Agreement",
+            "Consultancy Agreement|Submit to Review|Any",
+            "Consultancy Agreement",
             1,
             "Submit to Review",
             "Current Owner",
@@ -8729,8 +8800,8 @@
             "ส่งสัญญาให้ผู้รับผิดชอบหรือฝ่าย Legal ตรวจสอบครั้งแรก"
       ],
       [
-            "Confidentiality Agreement|Return|Any",
-            "Confidentiality Agreement",
+            "Consultancy Agreement|Return|Any",
+            "Consultancy Agreement",
             2,
             "Return",
             "Current Owner",
@@ -8741,8 +8812,8 @@
             "ส่งสัญญากลับให้เจ้าของงานแก้ไข พร้อมระบุเหตุผลที่ส่งกลับ"
       ],
       [
-            "Confidentiality Agreement|Resubmit|Any",
-            "Confidentiality Agreement",
+            "Consultancy Agreement|Resubmit|Any",
+            "Consultancy Agreement",
             3,
             "Resubmit",
             "Current Owner",
@@ -8753,8 +8824,8 @@
             "ส่งสัญญาที่แก้ไขแล้วกลับมาให้ผู้รับผิดชอบตรวจสอบอีกครั้ง"
       ],
       [
-            "Confidentiality Agreement|Forward|Any",
-            "Confidentiality Agreement",
+            "Consultancy Agreement|Forward|Any",
+            "Consultancy Agreement",
             4,
             "Forward",
             "Current Owner",
@@ -12103,8 +12174,8 @@
     const requestedRole = new URLSearchParams(window.location.search).get("role");
     // Prototype-only auth state. Real deployments must enforce admin permissions on the backend.
     const currentUser = {
-      name: requestedRole === "viewer" ? "Viewer" : "Kira",
-      role: requestedRole === "viewer" ? "viewer" : "admin"
+      name: requestedRole === "admin" ? "Kira" : "Viewer",
+      role: requestedRole === "admin" ? "admin" : "viewer"
     };
 
     function applyDiverseMockupData() {
@@ -12619,19 +12690,24 @@
     }
 
     function ownerRelatedContracts(owner) {
-      return contracts.filter(item => {
+      return contractsVisibleToCurrentUser().filter(item => {
         const parts = stationParts(item.station);
         return item.owner === owner || parts.from === owner || parts.to === owner || dashboardData.some(data => data.id === item.id && data.currentTo === owner);
       });
     }
 
     function ownerRelatedLogs(owner) {
-      return logRecords.filter(row => row[4] === owner || row[5] === owner).slice(0, 8);
+      return logsVisibleToCurrentUser().filter(row => row[4] === owner || row[5] === owner).slice(0, 8);
     }
 
     function openStationOwnerDetail(station, contractId = "", logNo = "") {
-      const currentContract = contracts.find(item => item.id === contractId) || contracts.find(item => item.station === station);
-      const logViewRows = currentContract ? logRecords.filter(row => row[0] === currentContract.id).slice().reverse() : [];
+      const visibleContracts = contractsVisibleToCurrentUser();
+      const currentContract = visibleContracts.find(item => item.id === contractId) || visibleContracts.find(item => item.station === station);
+      if (!currentContract) {
+        showToast("You do not have permission to view this confidential contract.");
+        return;
+      }
+      const logViewRows = logsVisibleToCurrentUser().filter(row => row[0] === currentContract.id).slice().reverse();
       document.querySelector("#stationOwnerTitle").textContent = "Log View Detail";
       document.querySelector("#stationOwnerSubtitle").textContent = currentContract ? `${currentContract.id} - ${currentContract.name}` : "Contract log detail";
       document.querySelector("#stationOwnerBody").innerHTML = `
@@ -13004,7 +13080,7 @@
     function filteredDashboardContracts() {
       const search = document.querySelector("#dashboardSearch").value.toLowerCase();
       const alert = document.querySelector("#dashboardAlert").value;
-      return contracts.filter(item => {
+      return contractsVisibleToCurrentUser().filter(item => {
         const matchesSearch = [item.id, item.name, item.department, item.vendor].join(" ").toLowerCase().includes(search);
         const matchesAlert = alert === "all" || item.alert === alert;
         return matchesSearch && matchesAlert;
@@ -13037,7 +13113,17 @@
     }
 
     function renderContractDetail() {
-      const item = contracts[selectedContractIndex];
+      const visibleContracts = contractsVisibleToCurrentUser();
+      let item = contracts[selectedContractIndex];
+      if (!item || !visibleContracts.some(contract => contract.id === item.id)) {
+        item = visibleContracts[0];
+        selectedContractIndex = item ? contracts.findIndex(contract => contract.id === item.id) : 0;
+      }
+      if (!item) {
+        document.querySelector("#selectedStamp").textContent = "No accessible contract";
+        document.querySelector("#contractDetail").innerHTML = `<div class="empty-state">No contract available for your access level</div>`;
+        return;
+      }
       const logs = logItems[item.id] || [
         ["1", item.owner, item.station, item.status, `${Math.max(item.used - 1, 1)} days`]
       ];
@@ -13069,7 +13155,7 @@
     }
 
     function uniqueContractMasterValues(getter) {
-      return [...new Set(contracts.map(getter).map(value => String(value || "").trim()).filter(Boolean))]
+      return [...new Set(contractsForContractStatus().map(getter).map(value => String(value || "").trim()).filter(Boolean))]
         .sort((a, b) => a.localeCompare(b));
     }
 
@@ -13118,7 +13204,7 @@
         dueDateFrom: document.querySelector("#dueDateFromFilter")?.value || "",
         dueDateTo: document.querySelector("#dueDateToFilter")?.value || ""
       };
-      const visibleContracts = contracts.filter(item => {
+      const visibleContracts = contractsForContractStatus().filter(item => {
         const latestLog = latestLogFor(item.id);
         const latestStationOwner = latestLog ? latestLog[5] : stationParts(item.station).to;
         return matchesContractMasterFilter(item.id, filters.contractId)
@@ -13184,7 +13270,7 @@
       if (!kanban) return;
       const stages = actionList;
       kanban.innerHTML = stages.map(stage => {
-        const cards = contracts.filter(item => item.stage === stage).map(item => `
+        const cards = contractsForContractStatus().filter(item => item.stage === stage).map(item => `
           <article class="task-card">
             <strong>${item.name}</strong>
             <span class="muted">${item.id} · ${item.department}</span>
@@ -13238,15 +13324,19 @@
 
     function renderLogView() {
       const select = document.querySelector("#logViewContract");
-      const selected = selectedLogContractId || select.value || "all";
+      const statusContracts = contractsForContractStatus();
+      const statusIds = new Set(statusContracts.map(item => item.id));
+      let selected = selectedLogContractId || select.value || "all";
+      if (selected !== "all" && !statusIds.has(selected)) selected = "all";
       const options = [
         `<option value="all" ${selected === "all" ? "selected" : ""}>All Contract ID</option>`,
-        ...contracts.map(item => item.id).map(id => `
+        ...statusContracts.map(item => item.id).map(id => `
         <option value="${id}" ${id === selected ? "selected" : ""}>${id}</option>`)
       ].join("");
       select.innerHTML = options;
 
-      const rows = selected === "all" ? logRecords : logRecords.filter(row => row[0] === selected);
+      const statusLogs = logsVisibleToCurrentUser().filter(row => statusIds.has(row[0]));
+      const rows = selected === "all" ? statusLogs : statusLogs.filter(row => row[0] === selected);
       document.querySelector("#logViewRows").innerHTML = rows.length ? rows.map(row => `
           <tr class="interactive log-view-row" data-contract-id="${escapeHtml(row[0])}" data-log-no="${escapeHtml(row[1])}" data-cycle="${escapeHtml(row[2])}">
             <td><span class="contract-id">${row[0]}</span></td>
@@ -16550,9 +16640,11 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function syncNavCounts() {
+      const visibleContracts = contractsVisibleToCurrentUser();
+      const visibleIds = new Set(visibleContracts.map(contract => contract.id));
       const counts = {
-        contracts: contracts.length,
-        workflow: logRecords.length,
+        contracts: visibleContracts.length,
+        workflow: logRecords.filter(row => visibleIds.has(row[0])).length,
         user: "3"
       };
       Object.entries(counts).forEach(([view, value]) => {
@@ -16570,14 +16662,69 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       return true;
     }
 
+    let contractStatusAccessView = "normal";
+
+    function isConfidentialContract(contract) {
+      const access = String(contract?.accessLevel || "").trim().toLowerCase();
+      const classification = String(contract?.classification || contract?.category || "").toLowerCase();
+      const visibility = String(contract?.visibility || "").toLowerCase();
+      const id = String(contract?.id || "").trim().toUpperCase();
+      return access === "confidential"
+        || classification.includes("confidential")
+        || classification.includes("สัญญาลับ")
+        || visibility.includes("restricted")
+        || id.startsWith("CT-C-");
+    }
+
+    function canViewConfidentialContracts() {
+      return isAdmin();
+    }
+
+    function contractsVisibleToCurrentUser() {
+      return canViewConfidentialContracts()
+        ? contracts.slice()
+        : contracts.filter(contract => !isConfidentialContract(contract));
+    }
+
+    function contractsForContractStatus() {
+      const visible = contractsVisibleToCurrentUser();
+      return visible.filter(contract => contractStatusAccessView === "confidential"
+        ? isConfidentialContract(contract)
+        : !isConfidentialContract(contract));
+    }
+
+    function logsVisibleToCurrentUser(rows = logRecords) {
+      const visibleIds = new Set(contractsVisibleToCurrentUser().map(contract => contract.id));
+      return rows.filter(row => visibleIds.has(row[0]));
+    }
+
+    function renderContractAccessTabs() {
+      const normalCount = contracts.filter(contract => !isConfidentialContract(contract)).length;
+      const confidentialCount = canViewConfidentialContracts()
+        ? contracts.filter(isConfidentialContract).length
+        : 0;
+      const normalCountNode = document.querySelector("#normalContractCount");
+      const confidentialCountNode = document.querySelector("#confidentialContractCount");
+      if (normalCountNode) normalCountNode.textContent = normalCount;
+      if (confidentialCountNode) confidentialCountNode.textContent = confidentialCount;
+      document.querySelectorAll("[data-contract-access-view]").forEach(button => {
+        const active = button.dataset.contractAccessView === contractStatusAccessView;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-selected", String(active));
+      });
+    }
+
     function applyRoleAccess() {
       document.body.dataset.role = currentUser.role;
       const userNav = document.querySelector('.nav-button[data-view="user"]');
       const masterNav = document.querySelector('.nav-button[data-view="master"]');
+      const confidentialAccessTab = document.querySelector("[data-confidential-access-tab]");
       const newContractBtn = document.querySelector("#newContractBtn");
       if (!isAdmin()) {
         if (userNav) userNav.hidden = true;
         if (masterNav) masterNav.hidden = true;
+        if (confidentialAccessTab) confidentialAccessTab.hidden = true;
+        contractStatusAccessView = "normal";
         if (newContractBtn) newContractBtn.hidden = true;
         document.querySelector("#user")?.classList.remove("active");
       }
@@ -17452,6 +17599,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     function renderAll() {
       rebuildNotificationQueue();
       renderDashboardSummary();
+      renderContractAccessTabs();
       populateContractMasterFilters();
       renderContractsTable();
       renderKanban();
@@ -17467,6 +17615,23 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       button.addEventListener("click", () => {
         if (button.hidden || button.dataset.view === "workflow") return;
         setView(button.dataset.view);
+      });
+    });
+
+    document.querySelectorAll("[data-contract-access-view]").forEach(button => {
+      button.addEventListener("click", () => {
+        const nextView = button.dataset.contractAccessView;
+        if (nextView === "confidential" && !canViewConfidentialContracts()) {
+          showToast("You do not have permission to view confidential contracts.");
+          return;
+        }
+        contractStatusAccessView = nextView === "confidential" ? "confidential" : "normal";
+        selectedLogContractId = "all";
+        renderContractAccessTabs();
+        populateContractMasterFilters();
+        renderContractsTable();
+        renderKanban();
+        renderLogView();
       });
     });
 
