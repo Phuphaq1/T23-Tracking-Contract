@@ -924,8 +924,30 @@ def main():
             "Imported from Contract Register",
         ])
 
+    # Preserve the deployed SLA-detail order so generator runs stay reproducible.
+    deployed_type_order = [
+        "Term Sheet",
+        "Sale and Purchase Agreement",
+        "Confidentiality Agreement",
+        "Sub Lease Agreement",
+        "Rental Agreement",
+        "Service Agreement",
+        "Service Provider Agreement",
+        "Amendment",
+        "Memorandum of Understanding",
+        "Management Agreement",
+        "Loan Agreement",
+        "Lease Agreement",
+        "Sharer Holder Agreement",
+        "Mergers and Acquisitions Agreement",
+        "Lease Asset Agreement",
+        "Consultancy Agreement",
+    ]
+    ordered_sla_types = [item for item in deployed_type_order if item in seen_types]
+    ordered_sla_types.extend(row[0] for row in sla_summary if row[0] not in ordered_sla_types)
+
     sla_detail = []
-    for type_index, contract_type in enumerate(seen_types, start=1):
+    for type_index, contract_type in enumerate(ordered_sla_types, start=1):
         for action_index, row in enumerate(action_rows, start=1):
             action = row.get("Action", "")
             days = ACTION_SLA_ADJUSTED_DAYS.get(action, number(row.get("Fix SLA (Working Days)"), 0))
@@ -2968,7 +2990,10 @@ def main():
         """        <button class="nav-button" data-view="user" title="User Case Action">
           <span>✎</span><span class="nav-label">User Case Action</span><span class="nav-count">3</span>
         </button>""",
-        """        <button class="nav-button" data-view="user" title="User Case Action">
+        """        <button class="nav-button confidential-nav" data-view="confidential" title="Confidential Contracts" data-confidential-nav>
+          <span>◆</span><span class="nav-label">Confidential</span><span class="nav-count">0</span>
+        </button>
+        <button class="nav-button" data-view="user" title="User Case Action">
           <span>✎</span><span class="nav-label">User Case Action</span><span class="nav-count">3</span>
         </button>
         <button class="nav-button" data-view="master" title="Master Data">
@@ -5943,6 +5968,7 @@ def main():
       notifications: ["Notification Queue", "NotificationQueueTable"],""",
         """      user: ["User Case Action", "เพิ่มเคส อัปเดทสถานะ และปิดเคสจาก Contract Status / Log View"],
       master: ["Master Data", "แก้ไขข้อมูล dropdown และบันทึกกลับ Shared Drive"],
+      confidential: ["Confidential Contract Status", "แสดงเฉพาะสัญญาลับสำหรับผู้มีสิทธิ์เข้าถึง"],
       notifications: ["Notification Queue", "NotificationQueueTable"],""",
     )
     html = html.replace(
@@ -5951,7 +5977,7 @@ def main():
       return true;
     }""",
         """    function canAccessView(viewName) {
-      if (viewName === "user" || viewName === "master") return isAdmin();
+      if (viewName === "user" || viewName === "master" || viewName === "confidential") return isAdmin();
       return true;
     }
 
@@ -5989,22 +6015,6 @@ def main():
     function logsVisibleToCurrentUser(rows = logRecords) {
       const visibleIds = new Set(contractsVisibleToCurrentUser().map(contract => contract.id));
       return rows.filter(row => visibleIds.has(row[0]));
-    }
-
-    function renderContractAccessTabs() {
-      const normalCount = contracts.filter(contract => !isConfidentialContract(contract)).length;
-      const confidentialCount = canViewConfidentialContracts()
-        ? contracts.filter(isConfidentialContract).length
-        : 0;
-      const normalCountNode = document.querySelector("#normalContractCount");
-      const confidentialCountNode = document.querySelector("#confidentialContractCount");
-      if (normalCountNode) normalCountNode.textContent = normalCount;
-      if (confidentialCountNode) confidentialCountNode.textContent = confidentialCount;
-      document.querySelectorAll("[data-contract-access-view]").forEach(button => {
-        const active = button.dataset.contractAccessView === contractStatusAccessView;
-        button.classList.toggle("active", active);
-        button.setAttribute("aria-selected", String(active));
-      });
     }""",
     )
     html = html.replace(
@@ -6012,7 +6022,7 @@ def main():
       const newContractBtn = document.querySelector("#newContractBtn");""",
         """      const userNav = document.querySelector('.nav-button[data-view="user"]');
       const masterNav = document.querySelector('.nav-button[data-view="master"]');
-      const confidentialAccessTab = document.querySelector("[data-confidential-access-tab]");
+      const confidentialNav = document.querySelector("[data-confidential-nav]");
       const newContractBtn = document.querySelector("#newContractBtn");""",
     )
     html = html.replace(
@@ -6020,9 +6030,52 @@ def main():
         if (newContractBtn) newContractBtn.hidden = true;""",
         """        if (userNav) userNav.hidden = true;
         if (masterNav) masterNav.hidden = true;
-        if (confidentialAccessTab) confidentialAccessTab.hidden = true;
+        if (confidentialNav) confidentialNav.hidden = true;
         contractStatusAccessView = "normal";
         if (newContractBtn) newContractBtn.hidden = true;""",
+    )
+    html = html.replace(
+        """    function setView(viewName) {
+      if (viewName === "workflow") viewName = "contracts";
+      if (!pageLabels[viewName]) viewName = "dashboard";
+      if (!canAccessView(viewName)) {
+        showToast("You do not have permission to access User Case Action.");
+        viewName = "dashboard";
+      }
+      document.querySelectorAll(".nav-button").forEach(button => {
+        button.classList.toggle("active", button.dataset.view === viewName);
+      });
+      document.querySelectorAll(".view").forEach(view => {
+        view.classList.toggle("active", view.id === viewName);
+      });
+      document.querySelector("#pageHeading").textContent = pageLabels[viewName][0];
+      document.querySelector("#pageSubheading").textContent = pageLabels[viewName][1];
+    }""",
+        """    function setView(viewName) {
+      if (viewName === "workflow") viewName = "contracts";
+      if (!pageLabels[viewName]) viewName = "dashboard";
+      if (!canAccessView(viewName)) {
+        showToast("You do not have permission to access this page.");
+        viewName = "dashboard";
+      }
+      if (viewName === "contracts" || viewName === "confidential") {
+        contractStatusAccessView = viewName === "confidential" ? "confidential" : "normal";
+        selectedLogContractId = "all";
+        populateContractMasterFilters();
+        renderContractsTable();
+        renderKanban();
+        renderLogView();
+      }
+      const targetView = viewName === "confidential" ? "contracts" : viewName;
+      document.querySelectorAll(".nav-button").forEach(button => {
+        button.classList.toggle("active", button.dataset.view === viewName);
+      });
+      document.querySelectorAll(".view").forEach(view => {
+        view.classList.toggle("active", view.id === targetView);
+      });
+      document.querySelector("#pageHeading").textContent = pageLabels[viewName][0];
+      document.querySelector("#pageSubheading").textContent = pageLabels[viewName][1];
+    }""",
     )
     html = html.replace(
         """    function filteredDashboardContracts() {
@@ -6127,7 +6180,8 @@ def main():
       const visibleContracts = contractsVisibleToCurrentUser();
       const visibleIds = new Set(visibleContracts.map(contract => contract.id));
       const counts = {
-        contracts: visibleContracts.length,
+        contracts: contracts.filter(contract => !isConfidentialContract(contract)).length,
+        confidential: canViewConfidentialContracts() ? contracts.filter(isConfidentialContract).length : 0,
         workflow: logRecords.filter(row => visibleIds.has(row[0])).length,""",
     )
     html = html.replace(
@@ -6138,7 +6192,6 @@ def main():
         """    function renderAll() {
       rebuildNotificationQueue();
       renderDashboardSummary();
-      renderContractAccessTabs();
       populateContractMasterFilters();""",
     )
     html = html.replace(
@@ -6152,23 +6205,6 @@ def main():
       button.addEventListener("click", () => {
         if (button.hidden || button.dataset.view === "workflow") return;
         setView(button.dataset.view);
-      });
-    });
-
-    document.querySelectorAll("[data-contract-access-view]").forEach(button => {
-      button.addEventListener("click", () => {
-        const nextView = button.dataset.contractAccessView;
-        if (nextView === "confidential" && !canViewConfidentialContracts()) {
-          showToast("You do not have permission to view confidential contracts.");
-          return;
-        }
-        contractStatusAccessView = nextView === "confidential" ? "confidential" : "normal";
-        selectedLogContractId = "all";
-        renderContractAccessTabs();
-        populateContractMasterFilters();
-        renderContractsTable();
-        renderKanban();
-        renderLogView();
       });
     });""",
     )
@@ -6193,18 +6229,10 @@ def main():
                 <small>ติดตาม Contract Owner, cycle, return และสถานะล่าสุด</small>
               </div>
             </div>""",
-        """            <div class="panel-header contract-status-header">
+        """            <div class="panel-header">
               <div>
-                <h2>Contract Master</h2>
+                <h2>Contract Status</h2>
                 <small>ติดตาม Contract Owner, cycle, return และสถานะล่าสุด</small>
-              </div>
-              <div class="contract-access-tabs" role="tablist" aria-label="Contract access view / มุมมองสิทธิ์สัญญา">
-                <button class="contract-access-tab active" type="button" role="tab" aria-selected="true" data-contract-access-view="normal">
-                  <span>Normal Contracts</span><small>สัญญาทั่วไป</small><b id="normalContractCount">0</b>
-                </button>
-                <button class="contract-access-tab confidential" type="button" role="tab" aria-selected="false" data-contract-access-view="confidential" data-confidential-access-tab>
-                  <span>Confidential</span><small>สัญญาลับ</small><b id="confidentialContractCount">0</b>
-                </button>
               </div>
             </div>""",
         1,
