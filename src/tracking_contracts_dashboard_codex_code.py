@@ -33,64 +33,64 @@ ATTACHMENT_CLOUD_FOLDER_NAME = "Attachments Files"
 ATTACHMENT_UPLOAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhIbrLVvD-Cwxh3wqEWqjSaIESGgXfhdJ2cWUhepiSIsAyG8yQafG392kkjnSvjT_N/exec"
 RESET_CONTRACT_AND_LOG_DATA = True
 ACTIVE_UPDATE_ACTIONS = ["Submit to Review", "Return", "Resubmit", "Forward"]
-STANDARD_SLA_DATA_VERSION = "2026-07-23-total-sla-v1"
+STANDARD_SLA_DATA_VERSION = "2026-08-05-sla-config21-v1"
 DEPARTMENT_DATA_VERSION = "2026-07-23-nonzero-departments-v1"
-ACTION_DATA_VERSION = "2026-07-23-action-sla-v1"
+ACTION_DATA_VERSION = "2026-08-05-sla-config21-v1"
 
 STANDARD_SLA_ADJUSTED_DAYS = {
-    ("Day-to-day Work", "Lease & Rental Agreement", "Lease Agreement"): "70",
-    ("Day-to-day Work", "Lease & Rental Agreement", "Sub Lease Agreement"): "45",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Lease Agreement"): "34",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Sub Lease Agreement"): "32",
     ("Day-to-day Work", "Lease & Rental Agreement", "Lease Asset Agreement"): "30",
-    ("Day-to-day Work", "Lease & Rental Agreement", "Rental Agreement"): "40",
-    ("Day-to-day Work", "Service Agreement", ""): "75",
-    ("Day-to-day Work", "Amendment Agreement", ""): "35",
-    ("Day-to-day Work", "Sale and Purchase Agreement", ""): "35",
-    ("Day-to-day Work", "Service Provider Agreement", ""): "40",
-    ("Day-to-day Work", "Commercial Agreement", "Consultancy Agreement"): "65",
-    ("Day-to-day Work", "Commercial Agreement", "Confidentiality Agreement"): "30",
-    ("Day-to-day Work", "Others", ""): "30",
-    ("Confidential", "Preliminary Agreement", "Memorandum of Understanding"): "60",
-    ("Confidential", "Preliminary Agreement", "Term Sheet"): "30",
+    ("Day-to-day Work", "Lease & Rental Agreement", "Rental Agreement"): "30",
+    ("Day-to-day Work", "Service Agreement", ""): "32",
+    ("Day-to-day Work", "Amendment Agreement", ""): "27",
+    ("Day-to-day Work", "Sale and Purchase Agreement", ""): "30",
+    ("Day-to-day Work", "Service Provider Agreement", ""): "30",
+    ("Day-to-day Work", "Commercial Agreement", "Consultancy Agreement"): "32",
+    ("Day-to-day Work", "Commercial Agreement", "Confidentiality Agreement"): "27",
+    ("Day-to-day Work", "Others", ""): "27",
+    ("Confidential", "Preliminary Agreement", "Memorandum of Understanding"): "32",
+    ("Confidential", "Preliminary Agreement", "Term Sheet"): "27",
     ("Confidential", "Commercial Agreement", "Consultancy Agreement"): "30",
-    ("Confidential", "Commercial Agreement", "Confidentiality Agreement"): "30",
+    ("Confidential", "Commercial Agreement", "Confidentiality Agreement"): "27",
     ("Confidential", "Commercial Agreement", "Management Agreement"): "30",
-    ("Confidential", "Commercial Agreement", "Loan Agreement"): "60",
-    ("Confidential", "Commercial Agreement", "Mergers and Acquisitions Agreement"): "60",
-    ("Confidential", "Commercial Agreement", "Shareholders’ Agreement"): "60",
-    ("Confidential", "", "Others"): "30",
+    ("Confidential", "Commercial Agreement", "Loan Agreement"): "34",
+    ("Confidential", "Commercial Agreement", "Mergers and Acquisitions Agreement"): "36",
+    ("Confidential", "Commercial Agreement", "Shareholders’ Agreement"): "36",
+    ("Confidential", "", "Others"): "27",
 }
 
 ACTION_SLA_ADJUSTED_DAYS = {
-    "Submit to Review": 1,
-    "Return": 7,
-    "Resubmit": 2,
-    "Forward": 2,
+    "Submit to Review": 7,
+    "Return": 5,
+    "Resubmit": 5,
+    "Forward": 10,
 }
 
 ACTION_DESCRIPTION_CONFIG = {
     "Submit to Review": {
         "descriptionEn": "Submit the contract to the review process.",
         "descriptionTh": "ส่งสัญญาเข้าสู่กระบวนการตรวจสอบ",
-        "slaRuleEn": "+1 working day (submission date excluded)",
-        "slaRuleTh": "+1 วันทำการ (ไม่นับวันส่ง)",
+        "slaRuleEn": "7 working days (starts at Add Case)",
+        "slaRuleTh": "7 วันทำการ (เริ่มเมื่อ Add Case)",
     },
     "Return": {
         "descriptionEn": "Return the contract for correction or additional information.",
         "descriptionTh": "ส่งสัญญากลับเพื่อแก้ไขหรือเพิ่มเติมข้อมูล",
-        "slaRuleEn": "7 working days",
-        "slaRuleTh": "7 วันทำการ",
+        "slaRuleEn": "5 working days (starts when Return is received)",
+        "slaRuleTh": "5 วันทำการ (เมื่อได้รับ Return)",
     },
     "Resubmit": {
         "descriptionEn": "Resubmit the corrected contract to the review process.",
         "descriptionTh": "ส่งสัญญากลับเข้าสู่กระบวนการตรวจสอบอีกครั้งหลังแก้ไข",
-        "slaRuleEn": "2 working days",
-        "slaRuleTh": "2 วันทำการ",
+        "slaRuleEn": "5 working days (starts when Resubmit is received)",
+        "slaRuleTh": "5 วันทำการ (เมื่อได้รับ Resubmit)",
     },
     "Forward": {
         "descriptionEn": "Forward the contract to the next department or responsible person.",
         "descriptionTh": "ส่งต่อสัญญาไปยังหน่วยงานหรือผู้รับผิดชอบลำดับถัดไป",
-        "slaRuleEn": "2 working days",
-        "slaRuleTh": "2 วันทำการ",
+        "slaRuleEn": "10 working days (starts when Forward is received)",
+        "slaRuleTh": "10 วันทำการ (เมื่อได้รับ Forward)",
     },
 }
 
@@ -2043,8 +2043,8 @@ def main():
         const currentSla = standardSlaFromContractTypeMasterV2(typeValue, classification);
         if (!typeInfo || !currentSla) return;
         const classificationDisplay = [typeInfo["Contract Classification EN"], typeInfo["Contract Classification TH"]].filter(Boolean).join(" / ");
-        const typeDisplay = contractTypeMasterV2Display(typeInfo, "type");
-        const subTypeDisplay = subTypeForRow(typeInfo);
+        const typeDisplay = [typeInfo["Type of Contract EN"], typeInfo["Type of Contract TH"]].filter(Boolean).join(" / ");
+        const subTypeDisplay = [typeInfo["Sub Type of Contract EN"], typeInfo["Sub Type of Contract TH"]].filter(Boolean).join(" / ");
         row["Contract Classification"] = classificationDisplay;
         row.Category = classificationDisplay;
         row["Type of Contract"] = typeDisplay;
@@ -2816,7 +2816,7 @@ def main():
 	                <div class="panel-header">
 	                  <div>
 	                    <h2>Action SLA Master</h2>
-	                    <small>Submit to Review starts on the next working day · ไม่นับวันส่ง</small>
+	                    <small>Included in Total SLA · Action SLA รวมอยู่ใน Total SLA แล้ว ไม่บวกซ้ำ</small>
 	                  </div>
 	                  <button class="secondary-button" type="button" data-add-master-row="actionSla">Add Row</button>
 	                </div>
