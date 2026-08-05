@@ -1064,9 +1064,31 @@ def main():
       name: requestedRole === "viewer" ? "Viewer" : "Kira",
       role: requestedRole === "viewer" ? "viewer" : "admin"
     };""",
-        """    const currentUser = {
-      name: requestedRole === "admin" ? "Kira" : "Viewer",
-      role: requestedRole === "admin" ? "admin" : "viewer"
+        """    const accessRoleConfig = Object.freeze({
+      viewer: { level: 1, code: "level1", nameEn: "Contract Viewer", nameTh: "ผู้ดูข้อมูลสัญญา", userName: "Viewer" },
+      user: { level: 2, code: "level2", nameEn: "Contract User", nameTh: "ผู้ดำเนินการสัญญา", userName: "Contract User" },
+      confidential: { level: 3, code: "level3", nameEn: "Confidential Contract User", nameTh: "ผู้ดำเนินการสัญญาลับ", userName: "Confidential User" },
+      admin: { level: 4, code: "level4", nameEn: "System Administrator", nameTh: "ผู้ดูแลระบบ", userName: "Kira" }
+    });
+    const requestedRoleKey = ({
+      level1: "viewer",
+      "contract-viewer": "viewer",
+      level2: "user",
+      "contract-user": "user",
+      level3: "confidential",
+      "confidential-user": "confidential",
+      level4: "admin",
+      "system-administrator": "admin"
+    })[String(requestedRole || "").trim().toLowerCase()] || String(requestedRole || "").trim().toLowerCase();
+    const activeRoleKey = accessRoleConfig[requestedRoleKey] ? requestedRoleKey : "viewer";
+    const activeRole = accessRoleConfig[activeRoleKey];
+    const currentUser = {
+      name: activeRole.userName,
+      role: activeRoleKey,
+      level: activeRole.level,
+      accessLevel: activeRole.code,
+      roleNameEn: activeRole.nameEn,
+      roleNameTh: activeRole.nameTh
     };""",
     )
     html = html.replace(
@@ -5976,8 +5998,22 @@ def main():
       if (viewName === "user") return isAdmin();
       return true;
     }""",
-        """    function canAccessView(viewName) {
-      if (viewName === "user" || viewName === "master" || viewName === "confidential") return isAdmin();
+        """    function hasAccessLevel(minimumLevel) {
+      return Number(currentUser?.level || 1) >= Number(minimumLevel || 1);
+    }
+
+    function canUseUserCaseAction() {
+      return hasAccessLevel(2);
+    }
+
+    function canManageMasterData() {
+      return hasAccessLevel(4);
+    }
+
+    function canAccessView(viewName) {
+      if (viewName === "user") return canUseUserCaseAction();
+      if (viewName === "confidential") return canViewConfidentialContracts();
+      if (viewName === "master") return canManageMasterData();
       return true;
     }
 
@@ -5996,7 +6032,7 @@ def main():
     }
 
     function canViewConfidentialContracts() {
-      return isAdmin();
+      return hasAccessLevel(3);
     }
 
     function contractsVisibleToCurrentUser() {
@@ -6023,16 +6059,120 @@ def main():
         """      const userNav = document.querySelector('.nav-button[data-view="user"]');
       const masterNav = document.querySelector('.nav-button[data-view="master"]');
       const confidentialNav = document.querySelector("[data-confidential-nav]");
+      const confidentialClassificationChoice = document.querySelector('[data-classification-value="Confidential"]');
       const newContractBtn = document.querySelector("#newContractBtn");""",
     )
     html = html.replace(
         """        if (userNav) userNav.hidden = true;
         if (newContractBtn) newContractBtn.hidden = true;""",
-        """        if (userNav) userNav.hidden = true;
-        if (masterNav) masterNav.hidden = true;
-        if (confidentialNav) confidentialNav.hidden = true;
-        contractStatusAccessView = "normal";
-        if (newContractBtn) newContractBtn.hidden = true;""",
+        """        if (userNav) userNav.hidden = !canUseUserCaseAction();
+        if (masterNav) masterNav.hidden = !canManageMasterData();
+        if (confidentialNav) confidentialNav.hidden = !canViewConfidentialContracts();
+        if (confidentialClassificationChoice) confidentialClassificationChoice.hidden = !canViewConfidentialContracts();
+        if (!canViewConfidentialContracts()) contractStatusAccessView = "normal";
+        if (newContractBtn) newContractBtn.hidden = !canUseUserCaseAction();""",
+    )
+    html = html.replace(
+        """      document.body.dataset.role = currentUser.role;""",
+        """      document.body.dataset.role = currentUser.role;
+      document.body.dataset.accessLevel = currentUser.accessLevel;
+      document.body.dataset.roleName = currentUser.roleNameEn;""",
+    )
+    html = html.replace(
+        """      const contractOptions = contracts.map(item => ({""",
+        """      const accessibleContracts = contractsVisibleToCurrentUser();
+      const contractOptions = accessibleContracts.map(item => ({""",
+        1,
+    )
+    html = html.replace(
+        """      fillSelect("updateContract", contractOptions, lastUserContractId || contracts[0]?.id);
+      fillSelect("closeContract", contractOptions, lastUserContractId || contracts[0]?.id);
+      fillSelect("adjustDueContract", contractOptions, lastUserContractId || contracts[0]?.id);""",
+        """      fillSelect("updateContract", contractOptions, lastUserContractId || accessibleContracts[0]?.id);
+      fillSelect("closeContract", contractOptions, lastUserContractId || accessibleContracts[0]?.id);
+      fillSelect("adjustDueContract", contractOptions, lastUserContractId || accessibleContracts[0]?.id);""",
+    )
+    html = html.replace(
+        """          const contract = contracts.find(item => item.id === option.value);""",
+        """          const contract = accessibleContracts.find(item => item.id === option.value);""",
+        1,
+    )
+    html = html.replace(
+        """      if (lastUserContractId && contracts.some(item => item.id === lastUserContractId)) {""",
+        """      if (lastUserContractId && accessibleContracts.some(item => item.id === lastUserContractId)) {""",
+        1,
+    )
+    html = html.replace(
+        """      const updateContract = contracts.find(item => item.id === updateId);
+      const closeContract = contracts.find(item => item.id === closeId);""",
+        """      const accessibleContracts = contractsVisibleToCurrentUser();
+      const updateContract = accessibleContracts.find(item => item.id === updateId);
+      const closeContract = accessibleContracts.find(item => item.id === closeId);""",
+    )
+    html = html.replace(
+        """      const selectedId = lastUserContractId || document.querySelector("#updateContract")?.value || contracts[0]?.id;
+      const item = contracts.find(contract => contract.id === selectedId) || contracts[0];""",
+        """      const accessibleContracts = contractsVisibleToCurrentUser();
+      const selectedId = lastUserContractId || document.querySelector("#updateContract")?.value || accessibleContracts[0]?.id;
+      const item = accessibleContracts.find(contract => contract.id === selectedId) || accessibleContracts[0];""",
+    )
+    html = html.replace(
+        """      const rows = contracts.slice(-6).reverse().map(contract => {""",
+        """      const rows = accessibleContracts.slice(-6).reverse().map(contract => {""",
+        1,
+    )
+    html = html.replace(
+        """      const contract = contracts.find(item => item.id === form.elements.contractId?.value) || contracts[0];""",
+        """      const accessibleContracts = contractsVisibleToCurrentUser();
+      const contract = accessibleContracts.find(item => item.id === form.elements.contractId?.value) || accessibleContracts[0];""",
+        1,
+    )
+    html = html.replace(
+        """        const contract = contracts.find(item => item.id === updateForm.elements.contractId?.value);""",
+        """        const contract = contractsVisibleToCurrentUser().find(item => item.id === updateForm.elements.contractId?.value);""",
+        1,
+    )
+    html = html.replace(
+        """      const accessLevel = String(form.get("accessLevel") || accessLevelForContractType(contractType) || "Normal").trim();
+      const department = String(form.get("department") || "").trim();""",
+        """      const accessLevel = String(form.get("accessLevel") || accessLevelForContractType(contractType) || "Normal").trim();
+      if (accessLevel === "Confidential" && !canViewConfidentialContracts()) {
+        showToast("Level 3 or Level 4 access is required for confidential contracts.");
+        return;
+      }
+      const department = String(form.get("department") || "").trim();""",
+        1,
+    )
+    html = html.replace(
+        """      const contract = contracts.find(item => item.id === form.get("contractId"));""",
+        """      const contract = contractsVisibleToCurrentUser().find(item => item.id === form.get("contractId"));""",
+        1,
+    )
+    html = html.replace(
+        """      const contract = contracts.find(item => item.id === contractId);""",
+        """      const contract = contractsVisibleToCurrentUser().find(item => item.id === contractId);""",
+        1,
+    )
+    html = html.replace(
+        """      const contract = contracts.find(item => item.id === id);""",
+        """      const contract = contractsVisibleToCurrentUser().find(item => item.id === id);""",
+        1,
+    )
+    html = html.replace(
+        """        const contract = contracts.find(item => item.id === field("contractId")?.value);""",
+        """        const contract = contractsVisibleToCurrentUser().find(item => item.id === field("contractId")?.value);""",
+        1,
+    )
+    html = html.replace(
+        """      if (!isAdmin()) {
+        showToast("Only admin can create or update contracts.");
+        return;
+      }""",
+        """      if (!canUseUserCaseAction()) {
+        showToast("Level 2, Level 3, or Level 4 access is required to create or update contracts.");
+        return;
+      }""",
+        1,
     )
     html = html.replace(
         """    function setView(viewName) {
