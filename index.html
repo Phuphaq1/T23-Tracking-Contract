@@ -6074,9 +6074,481 @@
       flex: 1 1 auto;
     }
 
+
+    body.auth-locked {
+      overflow: hidden;
+      background: #f3f6f2;
+    }
+
+    body.auth-locked .app-shell,
+    body.auth-locked .access-denied-screen {
+      display: none !important;
+    }
+
+    body.auth-ready .login-gateway {
+      display: none;
+    }
+
+    .login-gateway {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: grid;
+      place-items: center;
+      overflow: auto;
+      padding: 28px 18px;
+      background:
+        linear-gradient(135deg, rgba(184, 214, 61, .12), transparent 44%),
+        #f3f6f2;
+    }
+
+    .login-gateway-inner {
+      width: min(100%, 460px);
+      margin: auto;
+    }
+
+    .login-card {
+      padding: 30px;
+      border: 1px solid #dce5d2;
+      border-top: 4px solid var(--t23-green);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 18px 48px rgba(18, 31, 19, .12);
+    }
+
+    .login-brand-mark {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      background: var(--t23-green);
+      color: #111;
+      font-size: 23px;
+      font-weight: 900;
+    }
+
+    .login-card h1 {
+      margin: 0;
+      color: #172119;
+      font-size: 27px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .login-system-name {
+      margin: 7px 0 0;
+      color: #49614b;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .login-intro {
+      margin: 18px 0 22px;
+      color: #657067;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .login-form {
+      display: grid;
+      gap: 15px;
+    }
+
+    .login-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .login-field label {
+      color: #29372b;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .login-input-shell {
+      min-height: 44px;
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) auto;
+      align-items: center;
+      overflow: hidden;
+      border: 1px solid #cbd7c3;
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .login-input-shell:focus-within {
+      border-color: #769313;
+      box-shadow: 0 0 0 3px rgba(184, 214, 61, .2);
+    }
+
+    .login-input-shell.is-invalid {
+      border-color: #c93d35;
+      box-shadow: 0 0 0 3px rgba(201, 61, 53, .1);
+    }
+
+    .login-input-icon {
+      color: #647164;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .login-input-shell input {
+      min-width: 0;
+      height: 42px;
+      padding: 0 8px 0 0;
+      border: 0;
+      outline: 0;
+      color: #182019;
+      background: transparent;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .password-toggle {
+      min-width: 54px;
+      height: 34px;
+      padding: 0 10px;
+      border-left: 1px solid #dde4d8;
+      color: #526253;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .login-validation {
+      min-height: 0;
+      color: #b3261e;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .login-validation:empty {
+      display: none;
+    }
+
+    .login-error {
+      display: none;
+      gap: 9px;
+      padding: 11px 12px;
+      border: 1px solid #efc7c3;
+      border-radius: 7px;
+      color: #9d251e;
+      background: #fff4f3;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .login-error.show {
+      display: grid;
+      grid-template-columns: auto 1fr;
+    }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #4e5d4f;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .remember-row input {
+      width: 16px;
+      height: 16px;
+      accent-color: #688300;
+    }
+
+    .login-actions {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 9px;
+    }
+
+    .login-submit,
+    .login-clear {
+      min-height: 43px;
+      border-radius: 7px;
+      font-weight: 850;
+    }
+
+    .login-submit {
+      color: #111;
+      background: var(--t23-green);
+    }
+
+    .login-submit:hover {
+      background: #a8c72e;
+    }
+
+    .login-clear {
+      padding: 0 18px;
+      border: 1px solid #ccd6c7;
+      color: #3e4d40;
+      background: #fff;
+    }
+
+    .login-form[aria-busy="true"] input,
+    .login-form[aria-busy="true"] button,
+    .login-form[aria-busy="true"] .remember-row {
+      pointer-events: none;
+      opacity: .72;
+    }
+
+    .login-spinner {
+      width: 14px;
+      height: 14px;
+      display: none;
+      border: 2px solid rgba(0, 0, 0, .22);
+      border-top-color: #111;
+      border-radius: 50%;
+      animation: login-spin .7s linear infinite;
+    }
+
+    .login-form[aria-busy="true"] .login-spinner {
+      display: inline-block;
+    }
+
+    @keyframes login-spin { to { transform: rotate(360deg); } }
+
+    .demo-account-section {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #e4e9e1;
+    }
+
+    .demo-account-section h2 {
+      margin: 0 0 10px;
+      color: #526153;
+      font-size: 12px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .demo-account-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .demo-account-button {
+      min-width: 0;
+      min-height: 48px;
+      padding: 8px 10px;
+      border: 1px solid #d5decf;
+      border-radius: 7px;
+      color: #324333;
+      background: #f8faf6;
+      text-align: left;
+    }
+
+    .demo-account-button:hover {
+      border-color: #9ab32d;
+      background: #f2f7db;
+    }
+
+    .demo-account-button strong,
+    .demo-account-button span {
+      display: block;
+    }
+
+    .demo-account-button strong { font-size: 12px; }
+    .demo-account-button span { margin-top: 2px; color: #6c766d; font-size: 10px; }
+
+    .login-footer {
+      margin-top: 16px;
+      color: #6c756d;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .profile-menu {
+      position: relative;
+    }
+
+    .profile-trigger {
+      min-height: 44px;
+      display: grid;
+      grid-template-columns: 32px minmax(0, auto) 16px;
+      gap: 8px;
+      align-items: center;
+      padding: 5px 9px 5px 6px;
+      border: 1px solid #d5ddd1;
+      border-radius: 7px;
+      color: #243126;
+      background: #fff;
+      text-align: left;
+    }
+
+    .profile-avatar {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #111;
+      background: var(--t23-green);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .profile-copy strong,
+    .profile-copy small {
+      display: block;
+      max-width: 190px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-copy strong { font-size: 12px; }
+    .profile-copy small { margin-top: 1px; color: #68736a; font-size: 9px; }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 7px);
+      right: 0;
+      z-index: 30;
+      width: 205px;
+      display: none;
+      padding: 6px;
+      border: 1px solid #d8dfd4;
+      border-radius: 7px;
+      background: #fff;
+      box-shadow: 0 14px 32px rgba(18, 31, 19, .14);
+    }
+
+    .profile-menu.open .profile-dropdown { display: grid; }
+
+    .profile-dropdown button {
+      min-height: 36px;
+      padding: 8px 10px;
+      border-radius: 5px;
+      color: #354337;
+      background: transparent;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .profile-dropdown button:hover:not(:disabled) { background: #f0f5e5; }
+    .profile-dropdown button:disabled { color: #9aa19b; cursor: not-allowed; }
+    .profile-dropdown .logout-button { color: #a32c24; border-top: 1px solid #e5e9e2; border-radius: 0 0 5px 5px; }
+
+    .access-denied-screen {
+      position: fixed;
+      inset: 0 0 0 256px;
+      z-index: 20;
+      display: none;
+      place-items: center;
+      padding: 28px;
+      background: #f4f7f3;
+    }
+
+    .access-denied-screen.show { display: grid; }
+
+    .access-denied-card {
+      width: min(100%, 440px);
+      padding: 30px;
+      border: 1px solid #d9e1d5;
+      border-top: 4px solid #d97828;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 16px 40px rgba(18, 31, 19, .1);
+      text-align: center;
+    }
+
+    .access-denied-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      color: #9b3f12;
+      background: #fff0e6;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .access-denied-card h2 { margin: 0; font-size: 24px; letter-spacing: 0; }
+    .access-denied-card p { margin: 10px 0 0; color: #667067; font-size: 13px; line-height: 1.55; }
+    .access-denied-card button { margin-top: 20px; min-height: 41px; padding: 0 18px; border-radius: 7px; color: #111; background: var(--t23-green); font-weight: 850; }
+
+    @media (max-width: 1120px) {
+      .access-denied-screen { left: 78px; }
+      .profile-copy { display: none; }
+      .profile-trigger { grid-template-columns: 32px 16px; }
+    }
+
+    @media (max-width: 720px) {
+      .login-gateway { padding: 16px 12px; place-items: start center; }
+      .login-card { padding: 22px 18px; }
+      .login-card h1 { font-size: 24px; }
+      .login-actions { grid-template-columns: 1fr; }
+      .login-clear { width: 100%; }
+      .demo-account-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .access-denied-screen { left: 0; bottom: 67px; padding: 16px; }
+      .access-denied-card { padding: 24px 18px; }
+      .profile-menu { margin-left: auto; }
+    }
+
+    @media (max-width: 390px) {
+      .demo-account-grid { grid-template-columns: 1fr; }
+    }
+
   </style>
 </head>
-<body>
+<body class="auth-locked">
+
+  <section class="login-gateway" id="loginGateway" aria-labelledby="loginTitle">
+    <div class="login-gateway-inner">
+      <div class="login-card">
+        <div class="login-brand-mark" aria-hidden="true">▣</div>
+        <h1 id="loginTitle">Welcome Back</h1>
+        <p class="login-system-name">Contract Tracking System</p>
+        <p class="login-intro">Sign in to access the Contract Tracking System<br>Track, Manage and Monitor Contract Progress</p>
+        <form class="login-form" id="loginForm" novalidate aria-busy="false">
+          <div class="login-error" id="loginError" role="alert" aria-live="polite"><strong aria-hidden="true">!</strong><span id="loginErrorText"></span></div>
+          <div class="login-field">
+            <label for="loginUsername">Username</label>
+            <div class="login-input-shell" id="loginUsernameShell">
+              <span class="login-input-icon" aria-hidden="true">●</span>
+              <input id="loginUsername" name="username" type="text" placeholder="Enter your username" autocomplete="username" autocapitalize="none" spellcheck="false">
+              <span></span>
+            </div>
+            <div class="login-validation" id="loginUsernameError"></div>
+          </div>
+          <div class="login-field">
+            <label for="loginPassword">Password</label>
+            <div class="login-input-shell" id="loginPasswordShell">
+              <span class="login-input-icon" aria-hidden="true">■</span>
+              <input id="loginPassword" name="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+              <button class="password-toggle" id="passwordToggle" type="button" aria-label="Show password">Show</button>
+            </div>
+            <div class="login-validation" id="loginPasswordError"></div>
+          </div>
+          <label class="remember-row"><input id="rememberMe" type="checkbox"> <span>Remember Me</span></label>
+          <div class="login-actions">
+            <button class="login-submit" id="loginSubmit" type="submit"><span class="login-spinner" aria-hidden="true"></span><span id="loginSubmitText">Sign In</span></button>
+            <button class="login-clear" id="loginClear" type="button">Clear</button>
+          </div>
+        </form>
+        <section class="demo-account-section" id="demoAccountSection" aria-labelledby="demoAccountsTitle">
+          <h2 id="demoAccountsTitle">Demo Accounts</h2>
+          <div class="demo-account-grid">
+            <button class="demo-account-button" type="button" data-demo-account="viewer"><strong>Viewer</strong><span>Contract Viewer</span></button>
+            <button class="demo-account-button" type="button" data-demo-account="user"><strong>User</strong><span>Contract User</span></button>
+            <button class="demo-account-button" type="button" data-demo-account="confidential"><strong>Confidential</strong><span>Confidential User</span></button>
+            <button class="demo-account-button" type="button" data-demo-account="admin"><strong>Admin</strong><span>System Administrator</span></button>
+          </div>
+        </section>
+      </div>
+      <footer class="login-footer">Contract Tracking System · Version 1.0.0<br>© 2026 All rights reserved.</footer>
+    </div>
+  </section>
+
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand" aria-label="Turtle23 Tracking Contracts">
@@ -6127,6 +6599,20 @@
         </div>
         <div class="top-actions">
           <button class="icon-button" id="refreshBtn" title="Refresh">↻</button>
+
+          <div class="profile-menu" id="profileMenu">
+            <button class="profile-trigger" id="profileTrigger" type="button" aria-haspopup="menu" aria-expanded="false">
+              <span class="profile-avatar" id="profileAvatar">U</span>
+              <span class="profile-copy"><strong id="profileUsername">user</strong><small id="profileRole">Contract User</small></span>
+              <span aria-hidden="true">▾</span>
+            </button>
+            <div class="profile-dropdown" role="menu" aria-label="User profile">
+              <button type="button" role="menuitem" disabled>My Profile</button>
+              <button type="button" role="menuitem" disabled>Change Password</button>
+              <button class="logout-button" id="logoutBtn" type="button" role="menuitem">Logout</button>
+            </div>
+          </div>
+
         </div>
       </header>
 
@@ -7249,6 +7735,16 @@
       </section>
     </main>
   </div>
+
+
+  <section class="access-denied-screen" id="accessDeniedScreen" aria-labelledby="accessDeniedTitle">
+    <div class="access-denied-card">
+      <div class="access-denied-icon" aria-hidden="true">!</div>
+      <h2 id="accessDeniedTitle">Access Denied</h2>
+      <p>You do not have permission to access this page.<br>คุณไม่มีสิทธิ์เข้าใช้งานหน้านี้</p>
+      <button id="backToDashboardBtn" type="button">Back to Dashboard</button>
+    </div>
+  </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="modal-backdrop" id="stationOwnerModal" aria-hidden="true">
@@ -12166,34 +12662,246 @@
 ]
 	    };
 
-    const requestedRole = new URLSearchParams(window.location.search).get("role");
-    // Prototype-only auth state. Real deployments must enforce admin permissions on the backend.
-    const accessRoleConfig = Object.freeze({
-      viewer: { level: 1, code: "level1", nameEn: "Contract Viewer", nameTh: "ผู้ดูข้อมูลสัญญา", userName: "Viewer" },
-      user: { level: 2, code: "level2", nameEn: "Contract User", nameTh: "ผู้ดำเนินการสัญญา", userName: "Contract User" },
-      confidential: { level: 3, code: "level3", nameEn: "Confidential Contract User", nameTh: "ผู้ดำเนินการสัญญาลับ", userName: "Confidential User" },
-      admin: { level: 4, code: "level4", nameEn: "System Administrator", nameTh: "ผู้ดูแลระบบ", userName: "Kira" }
+    // Demo authentication gateway. Production should replace this client-side adapter
+    // with Microsoft Entra ID or another server-validated identity provider.
+    const authConfig = Object.freeze({
+      showDemoAccounts: true,
+      sessionTimeoutMs: 30 * 60 * 1000,
+      storageKey: "t23-contract-auth-session-v1"
     });
-    const requestedRoleKey = ({
-      level1: "viewer",
-      "contract-viewer": "viewer",
-      level2: "user",
-      "contract-user": "user",
-      level3: "confidential",
-      "confidential-user": "confidential",
-      level4: "admin",
-      "system-administrator": "admin"
-    })[String(requestedRole || "").trim().toLowerCase()] || String(requestedRole || "").trim().toLowerCase();
-    const activeRoleKey = accessRoleConfig[requestedRoleKey] ? requestedRoleKey : "viewer";
-    const activeRole = accessRoleConfig[activeRoleKey];
-    const currentUser = {
-      name: activeRole.userName,
-      role: activeRoleKey,
-      level: activeRole.level,
-      accessLevel: activeRole.code,
-      roleNameEn: activeRole.nameEn,
-      roleNameTh: activeRole.nameTh
-    };
+    const accessRoleConfig = Object.freeze({
+      viewer: { level: 1, code: "level1", nameEn: "Contract Viewer", nameTh: "ผู้ดูข้อมูลสัญญา" },
+      user: { level: 2, code: "level2", nameEn: "Contract User", nameTh: "ผู้ดำเนินการสัญญา" },
+      confidential: { level: 3, code: "level3", nameEn: "Confidential Contract User", nameTh: "ผู้ดำเนินการสัญญาลับ" },
+      admin: { level: 4, code: "level4", nameEn: "System Administrator", nameTh: "ผู้ดูแลระบบ" }
+    });
+    const demoAccountConfig = Object.freeze({
+      viewer: { role: "viewer", passwordHash: "9f9f20ec6958d3c176c17ea3eb9731b053b6fc753367e3c25e3fb2578ec0f4e6" },
+      user: { role: "user", passwordHash: "cc66576333f36fb04050e842039951ddbdb54b5dcca031a5eb5861fa1e1a1f09" },
+      confidential: { role: "confidential", passwordHash: "eb44db23e31fa6df080d8cb73efb730478abafd2724781d1199d2fb090f3b293" },
+      admin: { role: "admin", passwordHash: "fb07d63fb5ae1ee60f5f96592cb25a99ed421f4e32969d347af615bf62c5e5b3" }
+    });
+    let currentUser = null;
+    let authenticatedApplicationInitialized = false;
+    let sessionActivityTimer = 0;
+    let sessionExpiryTimer = 0;
+
+    function demoPasswordFor(username) {
+      const parts = {
+        viewer: ["View", "@", "2026"],
+        user: ["User", "@", "2026"],
+        confidential: ["Conf", "@", "2026"],
+        admin: ["IT", "@", "2026"]
+      };
+      return (parts[username] || []).join("");
+    }
+
+    async function sha256(value) {
+      if (!window.crypto?.subtle) return "";
+      const bytes = new TextEncoder().encode(String(value || ""));
+      const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+      return Array.from(new Uint8Array(digest)).map(byte => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    function buildCurrentUser(username, roleKey) {
+      const role = accessRoleConfig[roleKey];
+      if (!role) return null;
+      return {
+        name: username,
+        username,
+        role: roleKey,
+        level: role.level,
+        accessLevel: role.code,
+        roleNameEn: role.nameEn,
+        roleNameTh: role.nameTh
+      };
+    }
+
+    function readStoredSession() {
+      const candidates = [localStorage, sessionStorage];
+      for (const storage of candidates) {
+        try {
+          const raw = storage.getItem(authConfig.storageKey);
+          if (!raw) continue;
+          const session = JSON.parse(raw);
+          const account = demoAccountConfig[session.username];
+          const valid = account
+            && account.role === session.role
+            && Number(session.expiresAt || 0) > Date.now()
+            && Number(session.lastActivity || 0) <= Date.now();
+          if (valid) return { ...session, storage };
+          storage.removeItem(authConfig.storageKey);
+        } catch (error) {
+          storage.removeItem(authConfig.storageKey);
+        }
+      }
+      return null;
+    }
+
+    function persistSession(session, remember) {
+      localStorage.removeItem(authConfig.storageKey);
+      sessionStorage.removeItem(authConfig.storageKey);
+      const storage = remember ? localStorage : sessionStorage;
+      storage.setItem(authConfig.storageKey, JSON.stringify(session));
+      return storage;
+    }
+
+    function clearStoredSession() {
+      localStorage.removeItem(authConfig.storageKey);
+      sessionStorage.removeItem(authConfig.storageKey);
+    }
+
+    function setLoginError(message) {
+      const box = document.querySelector("#loginError");
+      const text = document.querySelector("#loginErrorText");
+      if (text) text.innerHTML = message || "";
+      box?.classList.toggle("show", Boolean(message));
+    }
+
+    function setFieldValidation(fieldName, message) {
+      document.querySelector(`#login${fieldName}Error`).innerHTML = message || "";
+      document.querySelector(`#login${fieldName}Shell`)?.classList.toggle("is-invalid", Boolean(message));
+    }
+
+    function setLoginLoading(loading) {
+      const form = document.querySelector("#loginForm");
+      form?.setAttribute("aria-busy", String(loading));
+      ["#loginUsername", "#loginPassword", "#rememberMe", "#loginSubmit", "#loginClear"].forEach(selector => {
+        const control = document.querySelector(selector);
+        if (control) control.disabled = loading;
+      });
+      const label = document.querySelector("#loginSubmitText");
+      if (label) label.textContent = loading ? "Signing in..." : "Sign In";
+    }
+
+    function showLoginGateway(message = "") {
+      currentUser = null;
+      document.body.classList.add("auth-locked");
+      document.body.classList.remove("auth-ready");
+      document.querySelector("#accessDeniedScreen")?.classList.remove("show");
+      document.querySelector("#profileMenu")?.classList.remove("open");
+      setLoginError(message);
+      window.setTimeout(() => document.querySelector("#loginUsername")?.focus(), 0);
+    }
+
+    function updateProfileDisplay() {
+      if (!currentUser) return;
+      document.querySelector("#profileAvatar").textContent = currentUser.username.charAt(0).toUpperCase();
+      document.querySelector("#profileUsername").textContent = currentUser.username;
+      document.querySelector("#profileRole").textContent = currentUser.roleNameEn;
+    }
+
+    function currentRouteView() {
+      const hashRoute = window.location.hash.replace(/^#\/?/, "").split(/[?&]/)[0];
+      const pathRoute = window.location.pathname.split("/").filter(Boolean).pop() || "";
+      const routes = {
+        dashboard: "dashboard",
+        "contract-status": "contracts",
+        "user-case-action": "user",
+        "confidential-contract-status": "confidential",
+        "master-data": "master"
+      };
+      return routes[hashRoute] || routes[pathRoute] || "dashboard";
+    }
+
+    function routeForView(viewName) {
+      return ({
+        dashboard: "dashboard",
+        contracts: "contract-status",
+        user: "user-case-action",
+        confidential: "confidential-contract-status",
+        master: "master-data"
+      })[viewName] || "dashboard";
+    }
+
+    function updateSessionActivity(force = false) {
+      if (!currentUser) return;
+      const now = Date.now();
+      if (!force && now - sessionActivityTimer < 30000) return;
+      sessionActivityTimer = now;
+      const stored = readStoredSession();
+      if (!stored || stored.username !== currentUser.username || stored.role !== currentUser.role) {
+        expireSession();
+        return;
+      }
+      const refreshed = { ...stored, lastActivity: now, expiresAt: now + authConfig.sessionTimeoutMs };
+      delete refreshed.storage;
+      stored.storage.setItem(authConfig.storageKey, JSON.stringify(refreshed));
+    }
+
+    function scheduleSessionExpiry() {
+      window.clearInterval(sessionExpiryTimer);
+      sessionExpiryTimer = window.setInterval(() => {
+        if (currentUser && !readStoredSession()) expireSession();
+      }, 30000);
+    }
+
+    function expireSession() {
+      clearStoredSession();
+      showLoginGateway("Your session has expired. Please sign in again.<br>เซสชันของคุณหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง");
+    }
+
+    function showAccessDenied() {
+      document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+      document.querySelectorAll(".nav-button").forEach(button => button.classList.remove("active"));
+      document.querySelector("#accessDeniedScreen")?.classList.add("show");
+      document.querySelector("#pageHeading").textContent = "Access Denied";
+      document.querySelector("#pageSubheading").textContent = "Permission required / ต้องมีสิทธิ์เข้าถึง";
+    }
+
+    function logoutUser() {
+      clearStoredSession();
+      window.clearInterval(sessionExpiryTimer);
+      if (window.history?.replaceState) {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      } else {
+        window.location.hash = "";
+      }
+      document.querySelector("#loginPassword").value = "";
+      showLoginGateway("");
+    }
+
+    function initializeAuthenticatedApplication() {
+      if (authenticatedApplicationInitialized) return;
+      authenticatedApplicationInitialized = true;
+      initializeEditableDropdowns();
+      setupUpdateAttachmentAndCc();
+      setCaseActionStep("add");
+      setupCsvDatabaseControls();
+      setupMasterDataControls();
+      loadContractsDatabase();
+      renderAll();
+      loadDriveDatabaseFromCloud();
+      syncAddCaseLinkedFields("init");
+    }
+
+    function enterAuthenticatedApplication(session, restoreRoute = false) {
+      currentUser = buildCurrentUser(session.username, session.role);
+      if (!currentUser) {
+        clearStoredSession();
+        showLoginGateway("");
+        return;
+      }
+      document.body.classList.remove("auth-locked");
+      document.body.classList.add("auth-ready");
+      updateProfileDisplay();
+      applyRoleAccess();
+      initializeAuthenticatedApplication();
+      applyRoleAccess();
+      renderAll();
+      scheduleSessionExpiry();
+      updateSessionActivity(true);
+      setView(restoreRoute ? currentRouteView() : "dashboard", { replaceRoute: true });
+    }
+
+    async function authenticateDemoAccount(username, password) {
+      const account = demoAccountConfig[username];
+      if (!account) return null;
+      const passwordHash = await sha256(password);
+      if (!passwordHash || passwordHash !== account.passwordHash) return null;
+      return account;
+    }
+
 
     function applyDiverseMockupData() {
       const departmentProfiles = {
@@ -16693,6 +17401,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function canAccessView(viewName) {
+      if (!currentUser) return false;
       if (viewName === "user") return canUseUserCaseAction();
       if (viewName === "confidential") return canViewConfidentialContracts();
       if (viewName === "master") return canManageMasterData();
@@ -16744,24 +17453,31 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const confidentialNav = document.querySelector("[data-confidential-nav]");
       const confidentialClassificationChoice = document.querySelector('[data-classification-value="Confidential"]');
       const newContractBtn = document.querySelector("#newContractBtn");
-      if (!isAdmin()) {
-        if (userNav) userNav.hidden = !canUseUserCaseAction();
-        if (masterNav) masterNav.hidden = !canManageMasterData();
-        if (confidentialNav) confidentialNav.hidden = !canViewConfidentialContracts();
-        if (confidentialClassificationChoice) confidentialClassificationChoice.hidden = !canViewConfidentialContracts();
-        if (!canViewConfidentialContracts()) contractStatusAccessView = "normal";
-        if (newContractBtn) newContractBtn.hidden = !canUseUserCaseAction();
-        document.querySelector("#user")?.classList.remove("active");
-      }
+      if (userNav) userNav.hidden = !canUseUserCaseAction();
+      if (masterNav) masterNav.hidden = !canManageMasterData();
+      if (confidentialNav) confidentialNav.hidden = !canViewConfidentialContracts();
+      if (confidentialClassificationChoice) confidentialClassificationChoice.hidden = !canViewConfidentialContracts();
+      if (!canViewConfidentialContracts()) contractStatusAccessView = "normal";
+      if (newContractBtn) newContractBtn.hidden = !canUseUserCaseAction();
+      if (!canUseUserCaseAction()) document.querySelector("#user")?.classList.remove("active");
     }
 
-    function setView(viewName) {
+    function setView(viewName, options = {}) {
+      if (!currentUser || !readStoredSession()) {
+        showLoginGateway("");
+        return;
+      }
       if (viewName === "workflow") viewName = "contracts";
       if (!pageLabels[viewName]) viewName = "dashboard";
       if (!canAccessView(viewName)) {
-        showToast("You do not have permission to access this page.");
-        viewName = "dashboard";
+        showAccessDenied();
+        if (!options.skipRoute) {
+          const route = routeForView(viewName);
+          window.history.replaceState(null, "", `#/${route}`);
+        }
+        return;
       }
+      document.querySelector("#accessDeniedScreen")?.classList.remove("show");
       if (viewName === "contracts" || viewName === "confidential") {
         contractStatusAccessView = viewName === "confidential" ? "confidential" : "normal";
         selectedLogContractId = "all";
@@ -16779,6 +17495,12 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       });
       document.querySelector("#pageHeading").textContent = pageLabels[viewName][0];
       document.querySelector("#pageSubheading").textContent = pageLabels[viewName][1];
+      if (!options.skipRoute) {
+        const route = `#/${routeForView(viewName)}`;
+        if (options.replaceRoute) window.history.replaceState(null, "", route);
+        else if (window.location.hash !== route) window.location.hash = route;
+      }
+      updateSessionActivity();
     }
 
     function showToast(message) {
@@ -18476,20 +19198,108 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       get realWorkbookData() { return realWorkbookData; }
     };
 
-    // Initialize visible editable dropdowns with the embedded Turtle 23 directory.
-    // Each field supports selecting from the list and typing a new value.
-    initializeEditableDropdowns();
-    setupUpdateAttachmentAndCc();
-    setCaseActionStep("add");
-    applyRoleAccess();
-    setupCsvDatabaseControls();
-    setupMasterDataControls();
-    loadContractsDatabase();
-    renderAll();
-    loadDriveDatabaseFromCloud();
-    syncAddCaseLinkedFields("init");
-    const initialView = window.location.hash.replace("#", "");
-    if (initialView) setView(initialView);
+    function initializeLoginGateway() {
+      const demoSection = document.querySelector("#demoAccountSection");
+      if (demoSection) demoSection.hidden = !authConfig.showDemoAccounts;
+
+      document.querySelector("#passwordToggle")?.addEventListener("click", event => {
+        const input = document.querySelector("#loginPassword");
+        const show = input.type === "password";
+        input.type = show ? "text" : "password";
+        event.currentTarget.textContent = show ? "Hide" : "Show";
+        event.currentTarget.setAttribute("aria-label", show ? "Hide password" : "Show password");
+      });
+
+      document.querySelector("#loginClear")?.addEventListener("click", () => {
+        document.querySelector("#loginForm")?.reset();
+        setLoginError("");
+        setFieldValidation("Username", "");
+        setFieldValidation("Password", "");
+        document.querySelector("#loginUsername")?.focus();
+      });
+
+      document.querySelectorAll("[data-demo-account]").forEach(button => {
+        button.addEventListener("click", () => {
+          const username = button.dataset.demoAccount;
+          document.querySelector("#loginUsername").value = username;
+          document.querySelector("#loginPassword").value = demoPasswordFor(username);
+          setLoginError("");
+          setFieldValidation("Username", "");
+          setFieldValidation("Password", "");
+          document.querySelector("#loginSubmit")?.focus();
+        });
+      });
+
+      document.querySelector("#loginForm")?.addEventListener("submit", async event => {
+        event.preventDefault();
+        const usernameInput = document.querySelector("#loginUsername");
+        const passwordInput = document.querySelector("#loginPassword");
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        const usernameMessage = username ? "" : "Username is required.<br>กรุณากรอกชื่อผู้ใช้งาน";
+        const passwordMessage = password ? "" : "Password is required.<br>กรุณากรอกรหัสผ่าน";
+        setFieldValidation("Username", usernameMessage);
+        setFieldValidation("Password", passwordMessage);
+        setLoginError("");
+        if (usernameMessage || passwordMessage) {
+          (usernameMessage ? usernameInput : passwordInput).focus();
+          return;
+        }
+        setLoginLoading(true);
+        try {
+          const account = await authenticateDemoAccount(username, password);
+          await new Promise(resolve => window.setTimeout(resolve, 280));
+          if (!account) {
+            passwordInput.value = "";
+            setLoginError("Incorrect username or password. Please try again.<br>ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+            passwordInput.focus();
+            return;
+          }
+          const now = Date.now();
+          const remember = document.querySelector("#rememberMe").checked;
+          const session = {
+            username,
+            role: account.role,
+            loginTime: now,
+            lastActivity: now,
+            expiresAt: now + authConfig.sessionTimeoutMs,
+            remember
+          };
+          persistSession(session, remember);
+          passwordInput.value = "";
+          enterAuthenticatedApplication(session, false);
+        } finally {
+          setLoginLoading(false);
+        }
+      });
+
+      document.querySelector("#profileTrigger")?.addEventListener("click", event => {
+        const menu = document.querySelector("#profileMenu");
+        const open = !menu.classList.contains("open");
+        menu.classList.toggle("open", open);
+        event.currentTarget.setAttribute("aria-expanded", String(open));
+      });
+      document.querySelector("#logoutBtn")?.addEventListener("click", logoutUser);
+      document.querySelector("#backToDashboardBtn")?.addEventListener("click", () => setView("dashboard"));
+      document.addEventListener("click", event => {
+        if (!event.target.closest("#profileMenu")) {
+          document.querySelector("#profileMenu")?.classList.remove("open");
+          document.querySelector("#profileTrigger")?.setAttribute("aria-expanded", "false");
+        }
+      });
+      ["pointerdown", "keydown", "scroll", "touchstart"].forEach(eventName => {
+        document.addEventListener(eventName, () => updateSessionActivity(), { passive: true });
+      });
+      window.addEventListener("hashchange", () => {
+        if (currentUser) setView(currentRouteView(), { skipRoute: true });
+      });
+
+      const storedSession = readStoredSession();
+      if (storedSession) enterAuthenticatedApplication(storedSession, true);
+      else showLoginGateway("");
+    }
+
+    initializeLoginGateway();
 
     document.addEventListener("keydown", event => {
       if (event.key !== "Escape") return;
