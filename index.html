@@ -6498,6 +6498,28 @@
       .demo-account-grid { grid-template-columns: 1fr; }
     }
 
+
+    .admin-only-panel[hidden] { display: none !important; }
+    .admin-only-badge { margin-left: 6px; }
+    .admin-workflow-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
+    .admin-workflow-grid > .form-field { grid-column: span 4; }
+    .admin-workflow-grid > .span-6 { grid-column: span 6; }
+    .admin-workflow-grid > .full { grid-column: 1 / -1; }
+    .admin-summary-band { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .admin-summary-section { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 6px; background: #fafbf8; }
+    .admin-summary-section h3 { margin: 0 0 8px; font-size: 13px; }
+    .admin-summary-section dl { display: grid; gap: 6px; margin: 0; }
+    .admin-summary-section dl div { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; }
+    .admin-summary-section dt { color: var(--muted); }
+    .admin-summary-section dd { margin: 0; text-align: right; font-weight: 750; overflow-wrap: anywhere; }
+    .due-approver-select-field, .due-approver-detail-field { display: none !important; }
+    .admin-rights-table td:first-child, .admin-rights-table th:first-child { white-space: nowrap; }
+    .password-validation-message { min-height: 18px; color: #b42318; font-size: 11px; }
+    @media (max-width: 820px) {
+      .admin-workflow-grid > .form-field, .admin-workflow-grid > .span-6 { grid-column: 1 / -1; }
+      .admin-summary-band { grid-template-columns: 1fr; }
+    }
+
   </style>
 </head>
 <body class="auth-locked">
@@ -6608,7 +6630,7 @@
             </button>
             <div class="profile-dropdown" role="menu" aria-label="User profile">
               <button type="button" role="menuitem" disabled>My Profile</button>
-              <button type="button" role="menuitem" disabled>Change Password</button>
+              <button type="button" role="menuitem" id="adminPasswordMenu" hidden>Change Password</button>
               <button class="logout-button" id="logoutBtn" type="button" role="menuitem">Logout</button>
             </div>
           </div>
@@ -7306,13 +7328,13 @@
               <section class="panel case-action-panel compact-reference-panel" data-case-panel="due">
                 <div class="panel-header compact-reference-header">
                   <div>
-                    <h2 class="reference-page-title"><span>Adjust Due Date</span><small>ปรับวันครบกำหนด</small></h2>
+                    <h2 class="reference-page-title"><span>Request Due Date Adjustment</span><small>ขอปรับวันครบกำหนด</small></h2>
                     <div class="reference-page-subtitle">
                       <span>Request approval to change the current due date.</span>
                       <small>ส่งคำขออนุมัติเพื่อเปลี่ยนวันครบกำหนดปัจจุบัน</small>
                     </div>
                   </div>
-                  <span class="badge amber" id="dueRequestStatus">Pending Approval</span>
+                  <span class="badge amber" id="dueRequestStatus">Pending Admin Review</span>
                 </div>
                 <form class="form-grid case-form reference-compact-form" id="dueDateAdjustmentForm">
                   <div class="case-form-section-title"><span class="section-index">1</span>Select contract <small>เลือกสัญญาที่ต้องการขอปรับวัน</small></div>
@@ -7345,16 +7367,29 @@
                   </label>
                   <label class="form-field compact-dropdown-field due-approver-select-field">
                     <span class="bilingual-label"><span>Approver To (Display Name)<span class="field-required-mark" aria-hidden="true">*</span></span><span>ผู้อนุมัติ<span class="field-required-mark" aria-hidden="true">*</span></span></span>
-                    <select class="select approver-multi-select" name="approver" id="dueApprovalTo" multiple size="2" required aria-describedby="dueApproverHint"></select>
+                    <select class="select approver-multi-select" name="approver" id="dueApprovalTo" multiple size="2" aria-describedby="dueApproverHint"></select>
                     <small class="form-hint" id="dueApproverHint">เลือกได้ 1 หรือ 2 อีเมล โดยระบบเลือกทั้งสองรายการไว้เป็นค่าเริ่มต้น · Use Ctrl/Cmd to change multiple selection.</small>
                   </label>
                   <label class="form-field due-approver-detail-field">
                     <span class="bilingual-label"><span>Approver Email(s)</span><span>อีเมลผู้อนุมัติ</span></span>
-                    <input class="input readonly-input" type="text" name="approverEmail" id="dueApprovalEmail" required readonly>
+                    <input class="input readonly-input" type="text" name="approverEmail" id="dueApprovalEmail" readonly>
                     <small class="email-link-state found" id="dueApprovalEmailState">ระบบจะใช้เฉพาะอีเมลผู้อนุมัติที่เลือกด้านบน</small>
                   </label>
 
-                  <div class="case-form-section-title"><span class="section-index">4</span>Reason and submission <small>ต้องระบุเหตุผลทุกครั้ง</small></div>
+                  <div class="case-form-section-title"><span class="section-index">4</span>Request details <small>รายละเอียดคำขอและไฟล์ประกอบ</small></div>
+                  <label class="form-field span-4">
+                    <span class="bilingual-label"><span>Request Type<span class="field-required-mark" aria-hidden="true">*</span></span><span>ประเภทคำขอ<span class="field-required-mark" aria-hidden="true">*</span></span></span>
+                    <select class="select" name="requestType" id="dueRequestType" required>
+                      <option value="Extension">Extension / ขอขยายเวลา</option>
+                      <option value="Correction">Correction / แก้ไขวันที่</option>
+                      <option value="Other">Other / อื่น ๆ</option>
+                    </select>
+                  </label>
+                  <label class="form-field span-6">
+                    <span class="bilingual-label"><span>Attachment</span><span>ไฟล์แนบ</span></span>
+                    <input class="input" type="file" name="attachments" id="dueRequestAttachments" multiple>
+                    <small class="form-hint">Optional supporting files / แนบไฟล์ประกอบได้ตามความจำเป็น</small>
+                  </label>
                   <label class="reason-status-panel alert-yellow" id="dueAdjustmentReasonField">
                     <span class="bilingual-label"><span>Reason for Due Date Adjustment<span class="field-required-mark" aria-hidden="true">*</span></span><span>เหตุผลในการขอปรับ Due Date<span class="field-required-mark" aria-hidden="true">*</span></span></span>
                     <div class="reason-status-message" style="display:block">คำขอจะอยู่ในสถานะ Pending Approval และยังไม่เปลี่ยน Due Date จริง</div>
@@ -7503,6 +7538,104 @@
 	                    <thead><tr><th>Contract Classification</th><th>Type of Contract</th><th>Sub Type of Contract</th><th>Contract Name</th><th>Vendor / Counter party</th><th>Department / Restaurant</th><th>Total SLA - Day<br><small>SLA รวม - วันทำการ</small></th><th>Access</th><th>Active</th><th></th></tr></thead>
 	                    <tbody id="masterTemplateRows"></tbody>
 	                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel master-data-panel-full admin-only-panel" id="dueDateApprovalPanel" data-admin-only hidden>
+                <div class="panel-header">
+                  <div>
+                    <h2>Due Date Approval <span class="badge black admin-only-badge">Admin Only</span></h2>
+                    <small>อนุมัติการปรับวันครบกำหนด</small>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Request ID</th><th>Contract</th><th>Requested Due Date</th><th>Requested By</th><th>Status</th><th></th></tr></thead>
+                    <tbody id="dueApprovalQueueRows"></tbody>
+                  </table>
+                </div>
+                <form class="admin-workflow-grid" id="dueApprovalDecisionForm" hidden>
+                  <input type="hidden" name="requestId" id="adminDueRequestId">
+                  <div class="admin-summary-band" id="adminDueRequestSummary"></div>
+                  <label class="form-field">
+                    <span class="bilingual-label"><span>Decision</span><span>ผลการพิจารณา</span></span>
+                    <select class="select" name="decision" id="adminDueDecision" required>
+                      <option value="Approve and Apply">Approve and Apply</option>
+                      <option value="Reject Request">Reject Request</option>
+                      <option value="Request More Information">Request More Information</option>
+                    </select>
+                  </label>
+                  <label class="form-field">
+                    <span class="bilingual-label"><span>Final Due Date</span><span>วันครบกำหนดสุดท้าย</span></span>
+                    <input class="input" type="date" name="finalDue" id="adminFinalDue">
+                  </label>
+                  <label class="form-field">
+                    <span class="bilingual-label"><span>Admin Password Confirmation</span><span>ยืนยันรหัสผ่านผู้ดูแล</span></span>
+                    <input class="input" type="password" name="adminPassword" required autocomplete="current-password">
+                  </label>
+                  <label class="form-field span-6">
+                    <span class="bilingual-label"><span>Admin Decision Reason</span><span>เหตุผลการพิจารณา</span></span>
+                    <textarea name="decisionReason" required></textarea>
+                  </label>
+                  <label class="form-field span-6">
+                    <span class="bilingual-label"><span>Reason for Different Final Date</span><span>เหตุผลเมื่อกำหนดวันที่ต่างจากคำขอ</span></span>
+                    <textarea name="differentDateReason" id="adminDifferentDateReason"></textarea>
+                  </label>
+                  <label class="form-field full">
+                    <span class="bilingual-label"><span>Admin Note</span><span>หมายเหตุผู้ดูแล</span></span>
+                    <textarea name="adminNote"></textarea>
+                  </label>
+                  <div class="user-form-actions full">
+                    <button class="primary-button" type="submit">Confirm and Apply / ยืนยันผล</button>
+                    <button class="secondary-button" type="button" id="cancelDueAdminDecision">Cancel</button>
+                  </div>
+                </form>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Request ID</th><th>Decision</th><th>Final Due Date</th><th>Admin</th><th>Date</th></tr></thead>
+                    <tbody id="dueAdjustmentHistoryRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel master-data-panel-full admin-only-panel" id="passwordManagementPanel" data-admin-only hidden>
+                <div class="panel-header">
+                  <div>
+                    <h2>Password Management <span class="badge black admin-only-badge">Admin Only</span></h2>
+                    <small>จัดการรหัสผ่าน</small>
+                  </div>
+                </div>
+                <form class="admin-workflow-grid" id="passwordManagementForm">
+                  <label class="form-field">
+                    <span class="bilingual-label"><span>Username</span><span>ชื่อผู้ใช้งาน</span></span>
+                    <select class="select" name="username" id="passwordAccountSelect" required>
+                      <option value="viewer">viewer</option><option value="user">user</option><option value="confidential">confidential</option><option value="admin">admin</option>
+                    </select>
+                  </label>
+                  <label class="form-field"><span>Level</span><input class="input readonly-input" id="passwordAccountLevel" readonly></label>
+                  <label class="form-field"><span>Role Name</span><input class="input readonly-input" id="passwordAccountRole" readonly></label>
+                  <label class="form-field"><span>New Password</span><input class="input" type="password" name="newPassword" autocomplete="new-password"></label>
+                  <label class="form-field"><span>Confirm New Password</span><input class="input" type="password" name="confirmPassword" autocomplete="new-password"></label>
+                  <label class="form-field"><span>Admin Current Password</span><input class="input" type="password" name="adminCurrentPassword" required autocomplete="current-password"></label>
+                  <label class="form-field full"><span>Remark</span><textarea name="remark"></textarea></label>
+                  <div class="password-validation-message full" id="passwordManagementMessage" aria-live="polite"></div>
+                  <div class="user-form-actions full">
+                    <button class="primary-button" type="submit">Change Password</button>
+                    <button class="secondary-button" type="button" id="resetPasswordBtn">Reset to Default Password</button>
+                    <button class="secondary-button" type="button" id="unlockAccountBtn">Unlock Account</button>
+                  </div>
+                </form>
+                <div class="table-wrap">
+                  <table class="master-table admin-rights-table">
+                    <thead><tr><th>Username</th><th>Level</th><th>Role</th><th>Access Rights</th><th>Account Status</th></tr></thead>
+                    <tbody id="passwordAccessRightsRows"></tbody>
+                  </table>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Date</th><th>Admin</th><th>Username</th><th>Action</th><th>Remark</th></tr></thead>
+                    <tbody id="passwordHistoryRows"></tbody>
+                  </table>
                 </div>
               </section>
             </div>
@@ -12859,6 +12992,7 @@
       setCaseActionStep("add");
       setupCsvDatabaseControls();
       setupMasterDataControls();
+      setupAdministrativeControls();
       loadContractsDatabase();
       renderAll();
       loadDriveDatabaseFromCloud();
@@ -12886,9 +13020,17 @@
 
     async function authenticateDemoAccount(username, password) {
       const account = demoAccountConfig[username];
-      if (!account) return null;
+      const credential = credentialRecord(username);
+      if (!account || !credential || credential.locked) return null;
       const passwordHash = await sha256(password);
-      if (!passwordHash || passwordHash !== account.passwordHash) return null;
+      if (!passwordHash || passwordHash !== credential.passwordHash) {
+        credential.failedAttempts = Number(credential.failedAttempts || 0) + 1;
+        if (credential.failedAttempts >= 5) credential.locked = true;
+        persistAdministrativeSecurityState();
+        return null;
+      }
+      credential.failedAttempts = 0;
+      persistAdministrativeSecurityState();
       return account;
     }
 
@@ -17066,10 +17208,10 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (requestedInput && (force || !requestedInput.value)) requestedInput.value = currentDue || "";
       validateRequestedDueDate();
       const statusBadge = document.querySelector("#dueRequestStatus");
-      const pending = dueDateAdjustmentRequests.slice().reverse().find(item => item.contractId === contract.id && item.status === "Pending Approval");
+      const latestDueRequest = dueDateAdjustmentRequests.slice().reverse().find(item => item.contractId === contract.id);
       if (statusBadge) {
-        statusBadge.textContent = pending ? `Pending Approval · ${pending.requestedDue}` : "Ready to Request";
-        statusBadge.className = `badge ${pending ? "amber" : "blue"}`;
+        statusBadge.textContent = latestDueRequest ? `${latestDueRequest.status} · ${latestDueRequest.requestedDue}` : "Ready to Request";
+        statusBadge.className = `badge ${latestDueRequest?.status === "Approved and Applied" ? "green" : latestDueRequest ? "amber" : "blue"}`;
       }
     }
 
@@ -17162,7 +17304,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         `Current Approved Due Date: ${request.currentDue || "-"}`,
         `Requested New Due Date: ${request.requestedDue}`,
         `Reason for Adjustment: ${request.reason}`,
-        `Request Status: Pending Approval`,
+        `Request Status: Pending Admin Review`,
         "",
         "The current Due Date will remain unchanged until approval is recorded.",
         "Due Date เดิมจะยังคงใช้งานจนกว่าจะบันทึกผลอนุมัติ",
@@ -17378,7 +17520,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function isAdmin() {
-      return currentUser?.role === "admin";
+      return currentUser?.username === "admin" && currentUser?.role === "admin" && Number(currentUser?.level) === 4;
     }
 
     function hasAccessLevel(minimumLevel) {
@@ -17390,7 +17532,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function canManageMasterData() {
-      return hasAccessLevel(4);
+      return currentUser?.username === "admin" && currentUser?.role === "admin" && Number(currentUser?.level) === 4;
     }
 
     function canAccessView(viewName) {
@@ -17453,6 +17595,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (!canViewConfidentialContracts()) contractStatusAccessView = "normal";
       if (newContractBtn) newContractBtn.hidden = !canUseUserCaseAction();
       if (!canUseUserCaseAction()) document.querySelector("#user")?.classList.remove("active");
+      renderAdministrativeControls();
     }
 
     function setView(viewName, options = {}) {
@@ -17795,6 +17938,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           actionDataVersion,
           contracts,
           logRecords,
+          dueDateAdjustmentRequests,
           masterData
         }));
         updateDatabaseSyncStatus(`${contracts.length} contracts saved locally`);
@@ -17818,6 +17962,12 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         }
         const parsedContracts = parsed.contracts;
         const parsedLogs = Array.isArray(parsed.logRecords) ? parsed.logRecords : [];
+        if (Array.isArray(parsed.dueDateAdjustmentRequests)) {
+          dueDateAdjustmentRequests.splice(0, dueDateAdjustmentRequests.length, ...parsed.dueDateAdjustmentRequests);
+        }
+        if (Array.isArray(parsed.dueDateAdjustmentRequests)) {
+          dueDateAdjustmentRequests.splice(0, dueDateAdjustmentRequests.length, ...parsed.dueDateAdjustmentRequests);
+        }
         if (parsed.masterData && typeof parsed.masterData === "object") {
           if (Array.isArray(parsed.masterData.departments)) masterData.departments = parsed.masterData.departments;
 	          if (Array.isArray(parsed.masterData.people)) masterData.people = parsed.masterData.people;
@@ -18013,6 +18163,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function importContractsCsv(file) {
+      if (!requireSystemAdministrator()) return;
       if (!file) return;
       const reader = new FileReader();
       reader.addEventListener("load", () => {
@@ -18181,6 +18332,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function normalizeMasterDataFromUi() {
+      if (!requireSystemAdministrator()) return false;
       const originalContracts = new Map(contracts.map(contract => [String(contract.id || "").trim(), contract]));
       const contractRows = readMasterRows("#masterContractRows", ["_originalId", "id", "name", "department", "owner", "type", "stage", "status", "stationOwner", "due"], "_originalId");
       const nextContracts = [];
@@ -18298,6 +18450,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
 	    }
 
     function addMasterRow(kind) {
+      if (!requireSystemAdministrator()) return;
       if (!normalizeMasterDataFromUi()) return;
       if (kind === "departments") masterData.departments.push({ "Department / Restaurant": "", "Department Code": "", "Department Data Version": departmentDataVersion, Active: "Yes" });
 	      if (kind === "people") masterData.people.push({ company: "Turtle 23", department: "", name: "", email: "", active: "Yes" });
@@ -18308,6 +18461,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     async function saveMasterDataFromUi() {
+      if (!requireSystemAdministrator()) return;
       if (!normalizeMasterDataFromUi()) return;
       renderMasterData();
       saveContractsDatabase();
@@ -18356,6 +18510,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       populateUserControls();
       renderUserCasePreview();
       renderMasterData();
+      renderAdministrativeControls();
       syncNavCounts();
     }
 
@@ -18549,8 +18704,12 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       showToast(`${id} added · SLA ${totalSla} Working Days · Due ${finalDue}`);
     });
 
-    document.querySelector("#dueDateAdjustmentForm")?.addEventListener("submit", event => {
+    document.querySelector("#dueDateAdjustmentForm")?.addEventListener("submit", async event => {
       event.preventDefault();
+      if (!canSubmitDueDateRequest()) {
+        showToast("Access Denied: Due date requests require Contract User access.");
+        return;
+      }
       const formElement = event.currentTarget;
       const form = new FormData(formElement);
       const contract = contractsVisibleToCurrentUser().find(item => item.id === form.get("contractId"));
@@ -18559,10 +18718,18 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const currentDue = String(form.get("currentDue") || contract.due || systemDue);
       const requestedDue = String(form.get("requestedDue") || "");
       const reason = String(form.get("reason") || "").trim();
-      const requestedBy = String(form.get("requestedBy") || contract.owner || "User").trim();
+      const requestedBy = currentUser?.username || String(form.get("requestedBy") || contract.owner || "User").trim();
+      const requestType = String(form.get("requestType") || "Extension").trim();
+      const attachmentFiles = [...(document.querySelector("#dueRequestAttachments")?.files || [])];
+      const attachments = await Promise.all(attachmentFiles.map(async file => ({
+        fileName: file.name,
+        originalFileName: file.name,
+        mimeType: file.type || "application/octet-stream",
+        fileSize: file.size || 0,
+        base64: await fileToBase64(file)
+      })));
       const selectedApproverEmails = selectedDueApproverEmails();
-      const approver = selectedApproverEmails.join(", ");
-      const approverEmail = normalizeEmailList(selectedApproverEmails.join(", "));
+      const approverEmail = normalizeEmailList(selectedApproverEmails.join(", ")) || "admin@turtle23.com";
 
       if (!validateRequestedDueDate()) {
         const requestedInput = document.querySelector("#adjustRequestedDue");
@@ -18576,38 +18743,53 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         showToast("Please enter a reason for the Due Date adjustment request.");
         return;
       }
-      if (!approver || !approverEmail) {
-        document.querySelector(approver ? "#dueApprovalEmail" : "#dueApprovalTo")?.focus();
-        showToast("Please select at least one approver email.");
-        return;
-      }
-      if (!isValidEmailList(approverEmail)) {
-        document.querySelector("#dueApprovalEmail")?.focus();
-        showToast("Please check the approver email list. Separate multiple emails with comma or semicolon.");
-        return;
-      }
-
       const request = {
-        requestId: `DDR-${String(dueDateAdjustmentRequests.length + 1).padStart(3, "0")}`,
+        requestId: `DDR-${String(Math.max(0, ...dueDateAdjustmentRequests.map(item => Number(String(item.requestId || "").replace(/\D/g, "")) || 0)) + 1).padStart(3, "0")}`,
         contractId: contract.id,
         systemDue,
         currentDue,
         requestedDue,
+        requestType,
         reason,
+        attachments,
         requestedBy,
-        approver,
+        approver: "System Administrator",
         approverEmail,
-        requestedAt: todayInputValue(),
-        status: "Pending Approval"
+        requestedAt: localIsoDateTime(),
+        currentBalance: Number(contract.balance || 0),
+        currentAlert: contract.alert || contract.status || "",
+        status: "Pending Admin Review"
       };
       dueDateAdjustmentRequests.push(request);
       contract.pendingDueDateRequest = { ...request };
+      notificationQueue.unshift({
+        contractId: contract.id,
+        name: contract.name,
+        department: contract.department || "-",
+        owner: request.requestedBy,
+        currentStage: contract.stage,
+        slaAlert: contract.alert || contract.status,
+        dueDate: contract.due,
+        slaBalance: contract.balance,
+        station: `From ${request.requestedBy} >> To admin`,
+        suggestedRuleId: request.requestId,
+        triggerType: "Due Date Request",
+        toGroup: "System Administrator",
+        toEmails: approverEmail,
+        ccGroup: "",
+        ccEmails: "",
+        templateId: "TMP-DUE-ADMIN-REVIEW",
+        sendNow: "Yes",
+        frequency: "Once",
+        subject: `[Contract Tracking] Admin Review Required: ${request.requestId} - ${contract.id}`,
+        body: `Requested Due Date ${requestedDue}: ${reason}`
+      });
       addLogRecord({
         contractId: contract.id,
         cycle: contract.cycle || 1,
-        station: `From ${request.requestedBy} >> To ${approver}`,
+        station: `From ${request.requestedBy} >> To admin`,
         from: request.requestedBy,
-        to: approver,
+        to: "admin",
         inDate: request.requestedAt,
         outDate: "",
         sla: 1,
@@ -18620,7 +18802,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       renderAll();
       setView("user");
       syncDueDateAdjustmentForm(true);
-      showToast(`${request.requestId} created · Due Date remains unchanged pending approval`);
+      showToast(`${request.requestId} created · Pending Admin Review · Due Date unchanged`);
       openDueApprovalEmailPopup(draft);
     });
 
@@ -19177,13 +19359,326 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       });
     });
 
+
+    const administrativeSecurityStorageKey = "t23-contract-administrative-security-v1";
+    const defaultPasswordHashes = Object.freeze(Object.fromEntries(
+      Object.entries(demoAccountConfig).map(([username, account]) => [username, account.passwordHash])
+    ));
+
+    function defaultAdministrativeSecurityState() {
+      return {
+        accounts: Object.fromEntries(Object.keys(demoAccountConfig).map(username => [username, {
+          passwordHash: defaultPasswordHashes[username], passwordHashHistory: [defaultPasswordHashes[username]], failedAttempts: 0, locked: false
+        }])),
+        passwordHistory: [],
+        dueDateHistory: []
+      };
+    }
+
+    function loadAdministrativeSecurityState() {
+      const fallback = defaultAdministrativeSecurityState();
+      try {
+        const parsed = JSON.parse(localStorage.getItem(administrativeSecurityStorageKey) || "null");
+        if (!parsed || typeof parsed !== "object") return fallback;
+        Object.keys(fallback.accounts).forEach(username => {
+          const saved = parsed.accounts?.[username] || {};
+          fallback.accounts[username] = {
+            passwordHash: String(saved.passwordHash || defaultPasswordHashes[username]),
+            passwordHashHistory: Array.isArray(saved.passwordHashHistory)
+              ? saved.passwordHashHistory.map(String).filter(Boolean).slice(0, 5)
+              : [String(saved.passwordHash || defaultPasswordHashes[username])],
+            failedAttempts: Number(saved.failedAttempts || 0),
+            locked: Boolean(saved.locked)
+          };
+        });
+        fallback.passwordHistory = Array.isArray(parsed.passwordHistory) ? parsed.passwordHistory : [];
+        fallback.dueDateHistory = Array.isArray(parsed.dueDateHistory) ? parsed.dueDateHistory : [];
+      } catch (error) {
+        return fallback;
+      }
+      return fallback;
+    }
+
+    const administrativeSecurityState = loadAdministrativeSecurityState();
+
+    function persistAdministrativeSecurityState() {
+      localStorage.setItem(administrativeSecurityStorageKey, JSON.stringify(administrativeSecurityState));
+    }
+
+    function credentialRecord(username) {
+      return administrativeSecurityState.accounts[String(username || "").trim()] || null;
+    }
+
+    function isSystemAdministrator() {
+      return currentUser?.username === "admin" && currentUser?.role === "admin" && Number(currentUser?.level) === 4;
+    }
+
+    function requireSystemAdministrator(message = "Access Denied: Password management is available only to the System Administrator.") {
+      if (isSystemAdministrator()) return true;
+      showToast(message);
+      return false;
+    }
+
+    function canSubmitDueDateRequest() {
+      return Boolean(currentUser && ["user", "confidential", "admin"].includes(currentUser.role) && Number(currentUser.level) >= 2);
+    }
+
+    async function verifyAdminCurrentPassword(password) {
+      const hash = await sha256(password);
+      return Boolean(hash && hash === credentialRecord("admin")?.passwordHash);
+    }
+
+    function passwordRoleSummary(username) {
+      const role = accessRoleConfig[demoAccountConfig[username]?.role];
+      return role ? { level: `Level ${role.level}`, role: role.nameEn } : { level: "-", role: "-" };
+    }
+
+    function passwordAccessRights(username) {
+      return ({
+        viewer: "Dashboard, Contract Status",
+        user: "Dashboard, Contract Status, User Case Action, Due Date Request",
+        confidential: "Dashboard, Contract Status, Confidential Status, User Case Action, Due Date Request",
+        admin: "All menus, Master Data, Due Date Approval, Password Management"
+      })[username] || "-";
+    }
+
+    function appendPasswordAudit(username, action, remark = "") {
+      administrativeSecurityState.passwordHistory.unshift({
+        date: localIsoDateTime(), admin: "admin", username, action, remark: String(remark || "").trim()
+      });
+      administrativeSecurityState.passwordHistory = administrativeSecurityState.passwordHistory.slice(0, 100);
+      persistAdministrativeSecurityState();
+    }
+
+    function setPasswordManagementMessage(message = "", success = false) {
+      const node = document.querySelector("#passwordManagementMessage");
+      if (!node) return;
+      node.textContent = message;
+      node.style.color = success ? "#4f6f00" : "#b42318";
+    }
+
+    function renderPasswordManagement() {
+      if (!isSystemAdministrator()) {
+        requireSystemAdministrator();
+        return;
+      }
+      const username = document.querySelector("#passwordAccountSelect")?.value || "viewer";
+      const role = passwordRoleSummary(username);
+      if (document.querySelector("#passwordAccountLevel")) document.querySelector("#passwordAccountLevel").value = role.level;
+      if (document.querySelector("#passwordAccountRole")) document.querySelector("#passwordAccountRole").value = role.role;
+      const rights = document.querySelector("#passwordAccessRightsRows");
+      if (rights) rights.innerHTML = Object.keys(demoAccountConfig).map(accountName => {
+        const accountRole = passwordRoleSummary(accountName);
+        const account = credentialRecord(accountName);
+        return `<tr><td>${escapeHtml(accountName)}</td><td>${escapeHtml(accountRole.level)}</td><td>${escapeHtml(accountRole.role)}</td><td>${escapeHtml(passwordAccessRights(accountName))}</td><td>${account?.locked ? '<span class="badge red">Locked</span>' : '<span class="badge green">Active</span>'}</td></tr>`;
+      }).join("");
+      const history = document.querySelector("#passwordHistoryRows");
+      if (history) history.innerHTML = administrativeSecurityState.passwordHistory.length
+        ? administrativeSecurityState.passwordHistory.map(item => `<tr><td>${escapeHtml(formatDateTime(item.date))}</td><td>${escapeHtml(item.admin)}</td><td>${escapeHtml(item.username)}</td><td>${escapeHtml(item.action)}</td><td>${escapeHtml(item.remark || "-")}</td></tr>`).join("")
+        : '<tr><td colspan="5">No password change history</td></tr>';
+    }
+
+    async function changeManagedPassword(formElement) {
+      if (!requireSystemAdministrator()) return false;
+      const form = new FormData(formElement);
+      const username = String(form.get("username") || "");
+      const newPassword = String(form.get("newPassword") || "");
+      const confirmPassword = String(form.get("confirmPassword") || "");
+      const adminPassword = String(form.get("adminCurrentPassword") || "");
+      const remark = String(form.get("remark") || "");
+      let error = "";
+      if (newPassword.length < 8) error = "New Password must contain at least 8 characters.";
+      else if (!/[A-Za-z]/.test(newPassword)) error = "New Password must contain an English letter.";
+      else if (!/[0-9]/.test(newPassword)) error = "New Password must contain a number.";
+      else if (!/[^A-Za-z0-9]/.test(newPassword)) error = "New Password must contain a special character.";
+      else if (newPassword !== confirmPassword) error = "New Password and Confirm New Password must match.";
+      else if (!await verifyAdminCurrentPassword(adminPassword)) error = "Admin Current Password is incorrect.";
+      const newHash = error ? "" : await sha256(newPassword);
+      if (!error && (credentialRecord(username)?.passwordHashHistory || []).includes(newHash)) error = "The new password must not match a recently used password.";
+      if (error) {
+        setPasswordManagementMessage(error);
+        return false;
+      }
+      administrativeSecurityState.accounts[username].passwordHash = newHash;
+      administrativeSecurityState.accounts[username].passwordHashHistory = [newHash, ...(administrativeSecurityState.accounts[username].passwordHashHistory || [])].slice(0, 5);
+      administrativeSecurityState.accounts[username].failedAttempts = 0;
+      administrativeSecurityState.accounts[username].locked = false;
+      appendPasswordAudit(username, "Change Password", remark);
+      formElement.reset();
+      document.querySelector("#passwordAccountSelect").value = username;
+      setPasswordManagementMessage("Password changed successfully. / เปลี่ยนรหัสผ่านเรียบร้อย", true);
+      renderPasswordManagement();
+      if (username === "admin") logoutUser();
+      return true;
+    }
+
+    async function resetManagedPassword() {
+      if (!requireSystemAdministrator()) return false;
+      const formElement = document.querySelector("#passwordManagementForm");
+      const form = new FormData(formElement);
+      const username = String(form.get("username") || "");
+      if (!await verifyAdminCurrentPassword(String(form.get("adminCurrentPassword") || ""))) {
+        setPasswordManagementMessage("Admin Current Password is incorrect.");
+        return false;
+      }
+      const previousHashes = credentialRecord(username)?.passwordHashHistory || [];
+      administrativeSecurityState.accounts[username] = { passwordHash: defaultPasswordHashes[username], passwordHashHistory: [defaultPasswordHashes[username], ...previousHashes].filter((value, index, rows) => rows.indexOf(value) === index).slice(0, 5), failedAttempts: 0, locked: false };
+      appendPasswordAudit(username, "Reset to Default Password", form.get("remark"));
+      setPasswordManagementMessage("Default password restored. / คืนค่ารหัสผ่านเริ่มต้นแล้ว", true);
+      renderPasswordManagement();
+      if (username === "admin") logoutUser();
+      return true;
+    }
+
+    async function unlockManagedAccount() {
+      if (!requireSystemAdministrator()) return false;
+      const formElement = document.querySelector("#passwordManagementForm");
+      const form = new FormData(formElement);
+      const username = String(form.get("username") || "");
+      if (!await verifyAdminCurrentPassword(String(form.get("adminCurrentPassword") || ""))) {
+        setPasswordManagementMessage("Admin Current Password is incorrect.");
+        return false;
+      }
+      const account = credentialRecord(username);
+      account.locked = false;
+      account.failedAttempts = 0;
+      appendPasswordAudit(username, "Unlock Account", form.get("remark"));
+      setPasswordManagementMessage("Account unlocked. / ปลดล็อกบัญชีแล้ว", true);
+      renderPasswordManagement();
+      return true;
+    }
+
+    function requestAttachmentNames(request) {
+      return (request.attachments || []).map(item => item.originalFileName || item.fileName).filter(Boolean).join(", ") || "-";
+    }
+
+    function renderDueDateApprovalQueue() {
+      if (!isSystemAdministrator()) {
+        requireSystemAdministrator("Access Denied: Only the System Administrator can approve and apply due date adjustments.");
+        return;
+      }
+      const queue = document.querySelector("#dueApprovalQueueRows");
+      if (queue) queue.innerHTML = dueDateAdjustmentRequests.length ? dueDateAdjustmentRequests.slice().reverse().map(request => `
+        <tr><td>${escapeHtml(request.requestId)}</td><td>${escapeHtml(request.contractId)}</td><td>${escapeHtml(request.requestedDue)}</td><td>${escapeHtml(request.requestedBy)}</td><td>${escapeHtml(request.status)}</td><td><button class="secondary-button" type="button" data-review-due-request="${escapeHtml(request.requestId)}">Review</button></td></tr>`).join("") : '<tr><td colspan="6">No Due Date requests</td></tr>';
+      const history = document.querySelector("#dueAdjustmentHistoryRows");
+      if (history) history.innerHTML = administrativeSecurityState.dueDateHistory.length
+        ? administrativeSecurityState.dueDateHistory.map(item => `<tr><td>${escapeHtml(item.requestId)}</td><td>${escapeHtml(item.decision)}</td><td>${escapeHtml(item.finalDue || "-")}</td><td>${escapeHtml(item.admin)}</td><td>${escapeHtml(formatDateTime(item.decidedAt))}</td></tr>`).join("")
+        : '<tr><td colspan="5">No Due Date adjustment history</td></tr>';
+    }
+
+    function openDueDateApprovalRequest(requestId) {
+      if (!requireSystemAdministrator("Access Denied: Only the System Administrator can approve and apply due date adjustments.")) return false;
+      const request = dueDateAdjustmentRequests.find(item => item.requestId === requestId);
+      const contract = contracts.find(item => item.id === request?.contractId);
+      if (!request || !contract) return false;
+      document.querySelector("#adminDueRequestId").value = request.requestId;
+      document.querySelector("#adminFinalDue").value = request.requestedDue || "";
+      document.querySelector("#adminDueRequestSummary").innerHTML = `
+        <section class="admin-summary-section"><h3>Current Due Date</h3><dl><div><dt>Original Due Date</dt><dd>${escapeHtml(contract.originalDue || request.currentDue || "-")}</dd></div><div><dt>Current Due Date</dt><dd>${escapeHtml(contract.due || request.currentDue || "-")}</dd></div><div><dt>Current SLA Balance</dt><dd>${escapeHtml(String(contract.balance ?? request.currentBalance ?? 0))}</dd></div><div><dt>Current Alert</dt><dd>${escapeHtml(formatContractStatusLabel(contract.status || contract.alert || ""))}</dd></div></dl></section>
+        <section class="admin-summary-section"><h3>User Request</h3><dl><div><dt>Requested Due Date</dt><dd>${escapeHtml(request.requestedDue)}</dd></div><div><dt>Request Type</dt><dd>${escapeHtml(request.requestType || "Extension")}</dd></div><div><dt>Request Reason</dt><dd>${escapeHtml(request.reason)}</dd></div><div><dt>Requested By</dt><dd>${escapeHtml(request.requestedBy)}</dd></div><div><dt>Requested Date</dt><dd>${escapeHtml(formatDateTime(request.requestedAt))}</dd></div><div><dt>Attachment</dt><dd>${escapeHtml(requestAttachmentNames(request))}</dd></div></dl></section>
+        <section class="admin-summary-section"><h3>Admin Decision</h3><dl><div><dt>Status</dt><dd>${escapeHtml(request.status)}</dd></div><div><dt>Decision</dt><dd>Awaiting admin</dd></div></dl></section>`;
+      document.querySelector("#dueApprovalDecisionForm").hidden = false;
+      return true;
+    }
+
+    function dueDateStatusFor(finalDue) {
+      const today = todayInputValue();
+      if (finalDue < today) return "Red >>R=Overdue";
+      if (finalDue === today) return "Yellow >>Y=Delayed";
+      return "Green >>G=On Track";
+    }
+
+    async function applyDueDateDecision(formElement) {
+      if (!requireSystemAdministrator("Access Denied: Only the System Administrator can approve and apply due date adjustments.")) return false;
+      const form = new FormData(formElement);
+      const request = dueDateAdjustmentRequests.find(item => item.requestId === form.get("requestId"));
+      const contract = contracts.find(item => item.id === request?.contractId);
+      if (!request || !contract || request.status === "Approved and Applied") return false;
+      const decision = String(form.get("decision") || "");
+      const finalDue = String(form.get("finalDue") || "");
+      const decisionReason = String(form.get("decisionReason") || "").trim();
+      const differentDateReason = String(form.get("differentDateReason") || "").trim();
+      if (!await verifyAdminCurrentPassword(String(form.get("adminPassword") || ""))) {
+        showToast("Admin password confirmation is incorrect.");
+        return false;
+      }
+      if (!decisionReason) { showToast("Admin Decision Reason is required."); return false; }
+      if (decision === "Approve and Apply" && !finalDue) { showToast("Final Due Date is required."); return false; }
+      if (decision === "Approve and Apply" && finalDue !== request.requestedDue && !differentDateReason) {
+        showToast("Reason for Different Final Date is required.");
+        return false;
+      }
+      if (decision === "Approve and Apply") {
+        contract.originalDue = contract.originalDue || request.currentDue || contract.due;
+        contract.due = finalDue;
+        contract.balance = finalDue >= todayInputValue() ? calculateDaysOnHand(todayInputValue(), finalDue) : 0;
+        contract.alert = dueDateStatusFor(finalDue);
+        contract.status = contract.alert;
+        contract.lastModifiedBy = "admin";
+        contract.lastModifiedAt = localIsoDateTime();
+        request.status = "Approved and Applied";
+        addLogRecord({ contractId: contract.id, cycle: contract.cycle || 1, station: "From admin >> To " + (request.requestedBy || contract.owner), from: "admin", to: request.requestedBy || contract.owner, inDate: todayInputValue(), outDate: todayInputValue(), sla: 0, delayReason: decisionReason, action: "Due Date Approved and Applied", approvalType: decision, approvalConditions: differentDateReason, correctiveAction: `Final Due Date ${finalDue}` });
+      } else if (decision === "Reject Request") {
+        request.status = "Rejected";
+      } else {
+        request.status = "More Information Requested";
+      }
+      request.decision = decision;
+      request.finalDue = decision === "Approve and Apply" ? finalDue : "";
+      request.decisionReason = decisionReason;
+      request.differentDateReason = differentDateReason;
+      request.adminNote = String(form.get("adminNote") || "").trim();
+      request.decidedBy = "admin";
+      request.decidedAt = localIsoDateTime();
+      request.requesterNotification = `${request.requestId}: ${request.status}`;
+      administrativeSecurityState.dueDateHistory.unshift({ requestId: request.requestId, contractId: request.contractId, decision, finalDue: request.finalDue, decisionReason, differentDateReason, admin: "admin", decidedAt: request.decidedAt });
+      persistAdministrativeSecurityState();
+      delete contract.pendingDueDateRequest;
+      refreshDashboardDataFromContracts();
+      saveContractsDatabase();
+      renderAll();
+      formElement.reset();
+      formElement.hidden = true;
+      showToast(`${request.requestId} · ${request.status}`);
+      return true;
+    }
+
+    function renderAdministrativeControls() {
+      const admin = isSystemAdministrator();
+      document.querySelectorAll("[data-admin-only]").forEach(node => { node.hidden = !admin; });
+      const passwordMenu = document.querySelector("#adminPasswordMenu");
+      if (passwordMenu) passwordMenu.hidden = !admin;
+      if (!admin) return;
+      renderPasswordManagement();
+      renderDueDateApprovalQueue();
+    }
+
+    function setupAdministrativeControls() {
+      document.querySelector("#passwordAccountSelect")?.addEventListener("change", renderPasswordManagement);
+      document.querySelector("#passwordManagementForm")?.addEventListener("submit", event => { event.preventDefault(); changeManagedPassword(event.currentTarget); });
+      document.querySelector("#resetPasswordBtn")?.addEventListener("click", resetManagedPassword);
+      document.querySelector("#unlockAccountBtn")?.addEventListener("click", unlockManagedAccount);
+      document.querySelector("#dueApprovalQueueRows")?.addEventListener("click", event => {
+        const button = event.target.closest("[data-review-due-request]");
+        if (button) openDueDateApprovalRequest(button.dataset.reviewDueRequest);
+      });
+      document.querySelector("#dueApprovalDecisionForm")?.addEventListener("submit", event => { event.preventDefault(); applyDueDateDecision(event.currentTarget); });
+      document.querySelector("#cancelDueAdminDecision")?.addEventListener("click", () => { document.querySelector("#dueApprovalDecisionForm").hidden = true; });
+      document.querySelector("#adminPasswordMenu")?.addEventListener("click", () => {
+        if (!requireSystemAdministrator()) return;
+        setView("master");
+        document.querySelector("#passwordManagementPanel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      renderAdministrativeControls();
+    }
+
     window.appState = {
       get currentUser() { return currentUser; },
-      get contracts() { return contracts; },
-      get logRecords() { return logRecords; },
+      get contracts() { return contracts.map(item => ({ ...item })); },
+      get logRecords() { return logRecords.map(row => Array.isArray(row) ? [...row] : row); },
       get dashboardData() { return dashboardData; },
       get notificationQueue() { return notificationQueue; },
-      get dueDateAdjustmentRequests() { return dueDateAdjustmentRequests; },
+      get dueDateAdjustmentRequests() { return dueDateAdjustmentRequests.map(item => ({ ...item, attachments: (item.attachments || []).map(file => ({ ...file, base64: undefined })) })); },
       get employeeDirectory() { return employeeDirectory.map(item => ({ ...item })); },
       get updateAttachments() { return updateAttachmentQueue.map(item => ({ ...item, file: undefined })); },
       get updateCcRecipients() { return updateCcRecipients.map(item => ({ ...item })); },
