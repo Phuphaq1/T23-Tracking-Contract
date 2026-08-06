@@ -7490,6 +7490,19 @@ def main():
     )
 
     html = html.replace(
+        '''        <button class="nav-button" data-view="master" title="Master Data">
+          <span>▤</span><span class="nav-label">Master Data</span><span class="nav-count">5</span>
+        </button>''',
+        '''        <button class="nav-button" data-view="master" title="Master Data">
+          <span>▤</span><span class="nav-label">Master Data</span><span class="nav-count">5</span>
+        </button>
+        <button class="nav-button admin-tools-nav" data-view="admin" title="Admin Tools" data-admin-only hidden>
+          <span>⚙</span><span class="nav-label">Admin Tools</span><span class="nav-count">2</span>
+        </button>''',
+        1,
+    )
+
+    html = html.replace(
         '<button type="button" role="menuitem" disabled>Change Password</button>',
         '<button type="button" role="menuitem" id="adminPasswordMenu" hidden>Change Password</button>',
         1,
@@ -7659,11 +7672,74 @@ def main():
     html = html.replace(
         master_end_anchor,
         '''              </section>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="admin">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Admin Tools <span class="badge black admin-only-badge">Admin Only</span></h2>
+                <small>เครื่องมือสำหรับผู้ดูแลระบบ</small>
+              </div>
+            </div>
+            <div class="master-data-grid">
 ''' + admin_master_panels + '''            </div>
           </section>
         </section>
 
         <section class="view" id="notifications" hidden>''',
+        1,
+    )
+
+    html = html.replace(
+        '''      master: ["Master Data", "แก้ไขข้อมูล dropdown และบันทึกกลับ Shared Drive"],
+      confidential:''',
+        '''      master: ["Master Data", "แก้ไขข้อมูล dropdown และบันทึกกลับ Shared Drive"],
+      admin: ["Admin Tools", "อนุมัติ Due Date และจัดการรหัสผ่าน"],
+      confidential:''',
+        1,
+    )
+    html = html.replace(
+        '''        "master-data": "master"
+      };''',
+        '''        "master-data": "master",
+        "admin-tools": "admin"
+      };''',
+        1,
+    )
+    html = html.replace(
+        '''        confidential: "confidential-contract-status",
+        master: "master-data"
+      })[viewName]''',
+        '''        confidential: "confidential-contract-status",
+        master: "master-data",
+        admin: "admin-tools"
+      })[viewName]''',
+        1,
+    )
+    html = html.replace(
+        '''      if (viewName === "master") return canManageMasterData();
+      return true;''',
+        '''      if (viewName === "master" || viewName === "admin") return canManageMasterData();
+      return true;''',
+        1,
+    )
+    html = html.replace(
+        '''      const masterNav = document.querySelector('.nav-button[data-view="master"]');
+      const confidentialNav''',
+        '''      const masterNav = document.querySelector('.nav-button[data-view="master"]');
+      const adminNav = document.querySelector('.nav-button[data-view="admin"]');
+      const confidentialNav''',
+        1,
+    )
+    html = html.replace(
+        '''        if (masterNav) masterNav.hidden = !canManageMasterData();
+        if (confidentialNav)''',
+        '''        if (masterNav) masterNav.hidden = !canManageMasterData();
+        if (adminNav) adminNav.hidden = !canManageMasterData();
+        if (confidentialNav)''',
         1,
     )
 
@@ -8346,7 +8422,7 @@ def main():
       document.querySelector("#closeDueDecisionEmailModal")?.addEventListener("click", closeDueDecisionEmailPopup);
       document.querySelector("#adminPasswordMenu")?.addEventListener("click", () => {
         if (!requireSystemAdministrator()) return;
-        setView("master");
+        setView("admin");
         document.querySelector("#passwordManagementPanel")?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
       renderAdministrativeControls();
