@@ -7449,6 +7449,46 @@ def main():
 '''
     html = html.replace("  </style>", admin_workflow_css + "\n  </style>", 1)
 
+    due_decision_email_modal = r'''
+  <div class="modal-backdrop" id="dueDecisionEmailModal" aria-hidden="true">
+    <section class="modal email-compose-modal" role="dialog" aria-modal="true" aria-labelledby="dueDecisionEmailTitle">
+      <header class="modal-header">
+        <div>
+          <h2 id="dueDecisionEmailTitle">Due Date Decision Notification</h2>
+          <p id="dueDecisionEmailSubtitle">แจ้งผลการพิจารณากลับไปยังผู้ขอ</p>
+        </div>
+        <button class="icon-button" id="closeDueDecisionEmailModal" type="button" title="Close">×</button>
+      </header>
+      <div class="modal-body">
+        <div class="email-compose-grid">
+          <label class="form-field full">
+            <span class="bilingual-label"><span>To</span><span>อีเมลผู้ขอ</span></span>
+            <input class="input" type="email" id="dueDecisionEmailTo" placeholder="requester@turtle23.com">
+          </label>
+          <label class="form-field full">
+            <span>Subject</span>
+            <input class="input" id="dueDecisionEmailSubject">
+          </label>
+          <label class="form-field full">
+            <span class="bilingual-label"><span>Message</span><span>ข้อความ</span></span>
+            <textarea id="dueDecisionEmailBody"></textarea>
+          </label>
+        </div>
+        <div class="email-modal-actions">
+          <button class="ghost-button" type="button" id="copyDueDecisionEmailBtn">Copy Email</button>
+          <button class="ghost-button" type="button" id="closeDueDecisionEmailBtn">Close</button>
+          <button class="primary-button" type="button" id="sendDueDecisionEmailBtn"><span>✉</span> Send Email</button>
+        </div>
+      </div>
+    </section>
+  </div>
+'''
+    html = html.replace(
+        '  <div class="modal-backdrop" id="actionConfirmModal" aria-hidden="true">',
+        due_decision_email_modal + '\n  <div class="modal-backdrop" id="actionConfirmModal" aria-hidden="true">',
+        1,
+    )
+
     html = html.replace(
         '<button type="button" role="menuitem" disabled>Change Password</button>',
         '<button type="button" role="menuitem" id="adminPasswordMenu" hidden>Change Password</button>',
@@ -7732,6 +7772,7 @@ def main():
         reason,
         attachments,
         requestedBy,
+        requestedByEmail: emailForPerson(contract.owner) || emailForPerson(requestedBy) || "",
         approver: "System Administrator",
         approverEmail,
         requestedAt: localIsoDateTime(),
@@ -8099,6 +8140,128 @@ def main():
       return "Green >>G=On Track";
     }
 
+    function buildDueDecisionEmailDraft(request, contract) {
+      const resultCopy = {
+        "Approved and Applied": { en: "Approved", th: "อนุมัติ", subject: "Approved" },
+        "Rejected": { en: "Not Approved", th: "ไม่อนุมัติ", subject: "Not Approved" },
+        "More Information Requested": { en: "More Information Required", th: "ขอข้อมูลเพิ่มเติม", subject: "More Information Required" }
+      }[request.status] || { en: request.status, th: request.status, subject: request.status };
+      const finalDue = request.finalDue || contract.due || request.currentDue || "-";
+      const body = [
+        `Dear ${contract.owner || request.requestedBy || "Requester"},`,
+        "",
+        "Your Due Date adjustment request has been reviewed.",
+        `Request ID: ${request.requestId}`,
+        `Contract ID: ${contract.id}`,
+        `Contract Name: ${contract.name}`,
+        `Requested Due Date: ${request.requestedDue}`,
+        `Decision: ${resultCopy.en}`,
+        `Final Due Date: ${finalDue}`,
+        `Decision Reason: ${request.decisionReason || "-"}`,
+        ...(request.differentDateReason ? [`Reason for Different Final Date: ${request.differentDateReason}`] : []),
+        ...(request.adminNote ? [`Admin Note: ${request.adminNote}`] : []),
+        "",
+        `เรียน ${contract.owner || request.requestedBy || "ผู้ขอ"}`,
+        "",
+        "คำขอปรับวันครบกำหนดได้รับการพิจารณาแล้ว",
+        `เลขที่คำขอ: ${request.requestId}`,
+        `รหัสสัญญา: ${contract.id}`,
+        `ชื่อสัญญา: ${contract.name}`,
+        `วันที่ขอปรับ: ${request.requestedDue}`,
+        `ผลการพิจารณา: ${resultCopy.th}`,
+        `วันครบกำหนดสุดท้าย: ${finalDue}`,
+        `เหตุผลการพิจารณา: ${request.decisionReason || "-"}`,
+        ...(request.differentDateReason ? [`เหตุผลที่กำหนดวันแตกต่าง: ${request.differentDateReason}`] : []),
+        ...(request.adminNote ? [`หมายเหตุจากผู้ดูแลระบบ: ${request.adminNote}`] : []),
+        "",
+        "Contract Tracking System"
+      ].join("\n");
+      return {
+        to: request.requestedByEmail || emailForPerson(contract.owner) || emailForPerson(request.requestedBy) || "",
+        subject: `[Contract Tracking] Due Date Request ${resultCopy.subject}: ${request.requestId} - ${contract.id}`,
+        body,
+        attachments: [],
+        contractId: contract.id,
+        action: `Due Date ${request.status}`
+      };
+    }
+
+    function openDueDecisionEmailPopup(draft) {
+      const modal = document.querySelector("#dueDecisionEmailModal");
+      if (!modal) return;
+      document.querySelector("#dueDecisionEmailTo").value = draft.to || "";
+      document.querySelector("#dueDecisionEmailSubject").value = draft.subject || "";
+      document.querySelector("#dueDecisionEmailBody").value = draft.body || "";
+      modal.dataset.contractId = draft.contractId || "";
+      modal.dataset.action = draft.action || "";
+      document.querySelector("#dueDecisionEmailSubtitle").textContent = draft.to
+        ? `Requester email linked automatically: ${draft.to}`
+        : "Requester email not found. Enter an email before sending. / ไม่พบอีเมลผู้ขอ กรุณากรอกก่อนส่ง";
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      setTimeout(() => document.querySelector(draft.to ? "#sendDueDecisionEmailBtn" : "#dueDecisionEmailTo")?.focus(), 0);
+    }
+
+    function closeDueDecisionEmailPopup() {
+      const modal = document.querySelector("#dueDecisionEmailModal");
+      modal?.classList.remove("show");
+      modal?.setAttribute("aria-hidden", "true");
+    }
+
+    function currentDueDecisionEmailDraft() {
+      const modal = document.querySelector("#dueDecisionEmailModal");
+      return {
+        to: String(document.querySelector("#dueDecisionEmailTo")?.value || "").trim().toLowerCase(),
+        subject: document.querySelector("#dueDecisionEmailSubject")?.value || "",
+        body: document.querySelector("#dueDecisionEmailBody")?.value || "",
+        attachments: [],
+        contractId: modal?.dataset.contractId || "",
+        action: modal?.dataset.action || ""
+      };
+    }
+
+    async function sendDueDecisionEmail() {
+      const draft = currentDueDecisionEmailDraft();
+      if (!updateEmailPattern(draft.to)) {
+        document.querySelector("#dueDecisionEmailTo")?.focus();
+        showToast("Enter a valid requester email. / กรุณากรอกอีเมลผู้ขอให้ถูกต้อง");
+        return false;
+      }
+      const button = document.querySelector("#sendDueDecisionEmailBtn");
+      try {
+        if (button) { button.disabled = true; button.textContent = "Sending..."; }
+        await sendStatusEmailViaEndpoint(draft);
+        showToast("Due Date decision email sent. / ส่งอีเมลแจ้งผลแล้ว");
+        closeDueDecisionEmailPopup();
+        return true;
+      } catch (error) {
+        const message = error?.message || "Cannot send email.";
+        document.querySelector("#dueDecisionEmailSubtitle").textContent = message;
+        showToast(message);
+        return false;
+      } finally {
+        if (button) { button.disabled = false; button.innerHTML = "<span>✉</span> Send Email"; }
+      }
+    }
+
+    async function copyDueDecisionEmailDraft() {
+      const draft = currentDueDecisionEmailDraft();
+      const text = `To: ${draft.to}\nSubject: ${draft.subject}\n\n${draft.body}`;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const helper = document.createElement("textarea");
+        helper.value = text;
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand("copy");
+        helper.remove();
+      }
+      showToast("Email copied");
+    }
+
     async function applyDueDateDecision(formElement) {
       if (!requireSystemAdministrator("Access Denied: Only the System Administrator can approve and apply due date adjustments.")) return false;
       const form = new FormData(formElement);
@@ -8142,6 +8305,7 @@ def main():
       request.decidedBy = "admin";
       request.decidedAt = localIsoDateTime();
       request.requesterNotification = `${request.requestId}: ${request.status}`;
+      const requesterEmailDraft = buildDueDecisionEmailDraft(request, contract);
       administrativeSecurityState.dueDateHistory.unshift({ requestId: request.requestId, contractId: request.contractId, decision, finalDue: request.finalDue, decisionReason, differentDateReason, admin: "admin", decidedAt: request.decidedAt });
       persistAdministrativeSecurityState();
       delete contract.pendingDueDateRequest;
@@ -8151,6 +8315,7 @@ def main():
       formElement.reset();
       formElement.hidden = true;
       showToast(`${request.requestId} · ${request.status}`);
+      openDueDecisionEmailPopup(requesterEmailDraft);
       return true;
     }
 
@@ -8175,6 +8340,10 @@ def main():
       });
       document.querySelector("#dueApprovalDecisionForm")?.addEventListener("submit", event => { event.preventDefault(); applyDueDateDecision(event.currentTarget); });
       document.querySelector("#cancelDueAdminDecision")?.addEventListener("click", () => { document.querySelector("#dueApprovalDecisionForm").hidden = true; });
+      document.querySelector("#sendDueDecisionEmailBtn")?.addEventListener("click", sendDueDecisionEmail);
+      document.querySelector("#copyDueDecisionEmailBtn")?.addEventListener("click", copyDueDecisionEmailDraft);
+      document.querySelector("#closeDueDecisionEmailBtn")?.addEventListener("click", closeDueDecisionEmailPopup);
+      document.querySelector("#closeDueDecisionEmailModal")?.addEventListener("click", closeDueDecisionEmailPopup);
       document.querySelector("#adminPasswordMenu")?.addEventListener("click", () => {
         if (!requireSystemAdministrator()) return;
         setView("master");
