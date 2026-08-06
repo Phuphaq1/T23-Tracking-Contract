@@ -7962,6 +7962,11 @@
             <input class="input" type="text" id="dueApprovalEmailTo" placeholder="email1@turtle23.com, email2@turtle23.com">
           </label>
           <label class="form-field full">
+            <span class="bilingual-label"><span>CC</span><span>สำเนาอีเมล</span></span>
+            <input class="input" type="text" id="dueApprovalEmailCc" placeholder="email1@turtle23.com, email2@turtle23.com" aria-describedby="dueApprovalEmailCcHint">
+            <small class="form-hint" id="dueApprovalEmailCcHint">Optional · Separate multiple emails with comma or semicolon / ไม่บังคับ · คั่นหลายอีเมลด้วย comma หรือ semicolon</small>
+          </label>
+          <label class="form-field full">
             <span>Subject</span>
             <input class="input" id="dueApprovalEmailSubject">
           </label>
@@ -17315,6 +17320,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       ].join("\n");
       return {
         to: request.approverEmail || "",
+        cc: normalizeEmailList(request.cc || ""),
         subject: `[Contract Tracking] Approval Required: Due Date Adjustment - ${contract.id} - ${contract.name}`,
         body
       };
@@ -17324,6 +17330,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const modal = document.querySelector("#dueApprovalEmailModal");
       if (!modal) return;
       document.querySelector("#dueApprovalEmailTo").value = draft.to || "";
+      document.querySelector("#dueApprovalEmailCc").value = draft.cc || "";
+      document.querySelector("#dueApprovalEmailCc").setCustomValidity("");
       document.querySelector("#dueApprovalEmailSubject").value = draft.subject || "";
       document.querySelector("#dueApprovalEmailBody").value = draft.body || "";
       document.querySelector("#dueApprovalEmailSubtitle").textContent = draft.to
@@ -17344,6 +17352,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     function currentDueApprovalEmailDraft() {
       return {
         to: normalizeEmailList(document.querySelector("#dueApprovalEmailTo")?.value || ""),
+        cc: normalizeEmailList(document.querySelector("#dueApprovalEmailCc")?.value || ""),
         subject: document.querySelector("#dueApprovalEmailSubject")?.value || "",
         body: document.querySelector("#dueApprovalEmailBody")?.value || ""
       };
@@ -17356,14 +17365,23 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         showToast("Please enter the approval recipient email.");
         return;
       }
+      if (draft.cc && !isValidEmailList(draft.cc)) {
+        const ccInput = document.querySelector("#dueApprovalEmailCc");
+        ccInput?.setCustomValidity("Enter a valid email address. / กรุณากรอกอีเมลให้ถูกต้อง");
+        ccInput?.focus();
+        ccInput?.reportValidity();
+        return;
+      }
       const recipients = normalizeEmailList(draft.to).replace(/,\s*/g, ",");
-      window.location.href = `mailto:${encodeURIComponent(recipients)}?subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`;
+      const ccRecipients = normalizeEmailList(draft.cc).replace(/,\s*/g, ",");
+      const ccParameter = ccRecipients ? `cc=${encodeURIComponent(ccRecipients)}&` : "";
+      window.location.href = `mailto:${encodeURIComponent(recipients)}?${ccParameter}subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`;
       closeDueApprovalEmailPopup();
     }
 
     async function copyDueApprovalEmailDraft() {
       const draft = currentDueApprovalEmailDraft();
-      const text = `To: ${draft.to}\nSubject: ${draft.subject}\n\n${draft.body}`;
+      const text = `To: ${draft.to}\nCC: ${draft.cc || "-"}\nSubject: ${draft.subject}\n\n${draft.body}`;
       try {
         await navigator.clipboard.writeText(text);
         showToast("Approval email copied");
@@ -19019,6 +19037,12 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       option.selected = !option.selected;
       event.currentTarget.dispatchEvent(new Event("change", { bubbles: true }));
       event.currentTarget.focus();
+    });
+    document.querySelector("#dueApprovalEmailCc")?.addEventListener("input", event => event.currentTarget.setCustomValidity(""));
+    document.querySelector("#dueApprovalEmailCc")?.addEventListener("blur", event => {
+      const value = normalizeEmailList(event.currentTarget.value || "");
+      event.currentTarget.value = value;
+      event.currentTarget.setCustomValidity(value && !isValidEmailList(value) ? "Enter a valid email address. / กรุณากรอกอีเมลให้ถูกต้อง" : "");
     });
     document.querySelector("#closeDueApprovalEmailModal")?.addEventListener("click", closeDueApprovalEmailPopup);
     document.querySelector("#closeDueApprovalEmailBtn")?.addEventListener("click", closeDueApprovalEmailPopup);
