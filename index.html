@@ -6599,6 +6599,9 @@
         <button class="nav-button" data-view="master" title="Master Data">
           <span>▤</span><span class="nav-label">Master Data</span><span class="nav-count">5</span>
         </button>
+        <button class="nav-button admin-tools-nav" data-view="admin" title="Admin Tools" data-admin-only hidden>
+          <span>⚙</span><span class="nav-label">Admin Tools</span><span class="nav-count">2</span>
+        </button>
         <button class="nav-button" data-view="notifications" title="Notifications" hidden>
           <span>✉</span><span class="nav-label">Notifications</span><span class="nav-count">14</span>
         </button>
@@ -7540,6 +7543,19 @@
 	                  </table>
                 </div>
               </section>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="admin">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Admin Tools <span class="badge black admin-only-badge">Admin Only</span></h2>
+                <small>เครื่องมือสำหรับผู้ดูแลระบบ</small>
+              </div>
+            </div>
+            <div class="master-data-grid">
 
               <section class="panel master-data-panel master-data-panel-full admin-only-panel" id="dueDateApprovalPanel" data-admin-only hidden>
                 <div class="panel-header">
@@ -12961,7 +12977,8 @@
         "contract-status": "contracts",
         "user-case-action": "user",
         "confidential-contract-status": "confidential",
-        "master-data": "master"
+        "master-data": "master",
+        "admin-tools": "admin"
       };
       return routes[hashRoute] || routes[pathRoute] || "dashboard";
     }
@@ -12972,7 +12989,8 @@
         contracts: "contract-status",
         user: "user-case-action",
         confidential: "confidential-contract-status",
-        master: "master-data"
+        master: "master-data",
+        admin: "admin-tools"
       })[viewName] || "dashboard";
     }
 
@@ -13491,6 +13509,7 @@
       workflow: ["Log View", "เลือก Contract ID จาก Dropdown เพื่อดู Log เฉพาะสัญญานั้น หรือเลือก All Contract ID เพื่อแสดงทั้งหมด"],
       user: ["User Case Action", "เพิ่มเคส อัปเดทสถานะ และปิดเคสจาก Contract Status / Log View"],
       master: ["Master Data", "แก้ไขข้อมูล dropdown และบันทึกกลับ Shared Drive"],
+      admin: ["Admin Tools", "อนุมัติ Due Date และจัดการรหัสผ่าน"],
       confidential: ["Confidential Contract Status", "แสดงเฉพาะสัญญาลับสำหรับผู้มีสิทธิ์เข้าถึง"],
       notifications: ["Notification Queue", "NotificationQueueTable"],
       setup: ["Email Notification Setup", "EmailNotificationRulesTable"]
@@ -17591,7 +17610,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (!currentUser) return false;
       if (viewName === "user") return canUseUserCaseAction();
       if (viewName === "confidential") return canViewConfidentialContracts();
-      if (viewName === "master") return canManageMasterData();
+      if (viewName === "master" || viewName === "admin") return canManageMasterData();
       return true;
     }
 
@@ -17637,6 +17656,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       document.body.dataset.roleName = currentUser.roleNameEn;
       const userNav = document.querySelector('.nav-button[data-view="user"]');
       const masterNav = document.querySelector('.nav-button[data-view="master"]');
+      const adminNav = document.querySelector('.nav-button[data-view="admin"]');
       const confidentialNav = document.querySelector("[data-confidential-nav]");
       const confidentialClassificationChoice = document.querySelector('[data-classification-value="Confidential"]');
       const newContractBtn = document.querySelector("#newContractBtn");
@@ -19853,7 +19873,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       document.querySelector("#closeDueDecisionEmailModal")?.addEventListener("click", closeDueDecisionEmailPopup);
       document.querySelector("#adminPasswordMenu")?.addEventListener("click", () => {
         if (!requireSystemAdministrator()) return;
-        setView("master");
+        setView("admin");
         document.querySelector("#passwordManagementPanel")?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
       renderAdministrativeControls();
