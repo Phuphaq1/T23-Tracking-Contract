@@ -7459,6 +7459,12 @@ def main():
         '<h2 class="reference-page-title"><span>Request Due Date Adjustment</span><small>ขอปรับวันครบกำหนด</small></h2>',
         1,
     )
+    html = html.replace('<strong>Adjust Due Date</strong>', '<strong>Request Due Date</strong>', 1)
+    html = html.replace(
+        'Add Case → Update Status → Close Case → Adjust Due Date',
+        'Add Case → Update Status → Close Case → Request Due Date',
+        1,
+    )
     html = html.replace(
         '<span class="badge amber" id="dueRequestStatus">Pending Approval</span>',
         '<span class="badge amber" id="dueRequestStatus">Pending Admin Review</span>',
