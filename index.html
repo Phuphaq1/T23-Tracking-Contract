@@ -7455,11 +7455,53 @@
                     <h2>Contract Records</h2>
                     <small>Edit or delete incorrect cases created from Add Case</small>
                   </div>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" id="importMasterContractsBtn" data-master-import="contractsNormal">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="contractsNormal">Export</button>
+                  </div>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
-                    <thead><tr><th>Contract ID</th><th>Contract Name</th><th>Department / Restaurant</th><th>Contract Owner</th><th>Type of Contract</th><th>Stage</th><th>Status Update</th><th>Station Owner</th><th>Due Date</th><th></th></tr></thead>
+                    <thead><tr><th>Contract ID</th><th>Contract Name</th><th>Department / Restaurant</th><th>Contract Owner</th><th>Type of Contract</th><th>Stage</th><th>Status Update</th><th>Station Owner</th><th>Add Case Date</th><th>Due Date</th><th></th></tr></thead>
                     <tbody id="masterContractRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel master-data-panel-full">
+                <div class="panel-header">
+                  <div>
+                    <h2>Confidential Contract Status</h2>
+                    <small>Edit or delete incorrect created from.</small>
+                  </div>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="contractsConfidential">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="contractsConfidential">Export</button>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Contract ID</th><th>Contract Name</th><th>Department / Restaurant</th><th>Contract Owner</th><th>Type of Contract</th><th>Stage</th><th>Status Update</th><th>Station Owner</th><th>Add Case Date</th><th>Due Date</th><th></th></tr></thead>
+                    <tbody id="masterConfidentialContractRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel master-data-panel-full">
+                <div class="panel-header">
+                  <div>
+                    <h2>Log Records</h2>
+                    <small>Edit or delete incorrect created from Log View Detail.</small>
+                  </div>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="logs">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="logs">Export</button>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Contract ID</th><th>Log No</th><th>Cycle</th><th>From</th><th>To</th><th>In</th><th>Out</th><th>SLA</th><th>Days on Hand</th><th>Alert</th><th>Action</th><th></th></tr></thead>
+                    <tbody id="masterLogRows"></tbody>
                   </table>
                 </div>
               </section>
@@ -7468,9 +7510,13 @@
                 <div class="panel-header">
                   <div>
                     <h2>Department Master</h2>
-                    <small>Department / Restaurant + code for Contract ID</small>
+                    <small>Add, edit, or delete Department rows</small>
                   </div>
-                  <button class="secondary-button" type="button" data-add-master-row="departments">Add Row</button>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="departments">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="departments">Export</button>
+                    <button class="secondary-button" type="button" data-add-master-row="departments">Add Row</button>
+                  </div>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
@@ -7484,9 +7530,13 @@
                 <div class="panel-header">
                   <div>
                     <h2>People / Owner Master</h2>
-                    <small>Used by Owner, To, CC and email lookup</small>
+                    <small>Add, edit, or delete Owner rows used by To, CC and email lookup</small>
                   </div>
-                  <button class="secondary-button" type="button" data-add-master-row="people">Add Row</button>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="people">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="people">Export</button>
+                    <button class="secondary-button" type="button" data-add-master-row="people">Add Row</button>
+                  </div>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
@@ -7500,9 +7550,13 @@
                 <div class="panel-header">
 	                  <div>
                     <h2>Type of Contract Master</h2>
-	                    <small>Used by Type/Sub Type dropdown, tooltip and Total SLA</small>
+	                    <small>Add, edit, or delete Type/Sub Type rows used by dropdown, tooltip and Total SLA</small>
 	                  </div>
-                  <button class="secondary-button" type="button" data-add-master-row="contractTypes">Add Row</button>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="contractTypes">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="contractTypes">Export</button>
+                    <button class="secondary-button" type="button" data-add-master-row="contractTypes">Add Row</button>
+                  </div>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
@@ -7516,9 +7570,13 @@
 	                <div class="panel-header">
 	                  <div>
 	                    <h2>Action SLA Master</h2>
-	                    <small>Included in Total SLA · Action SLA รวมอยู่ใน Total SLA แล้ว ไม่บวกซ้ำ</small>
+	                    <small>Add, edit, or delete Action SLA rows included in Total SLA</small>
 	                  </div>
-	                  <button class="secondary-button" type="button" data-add-master-row="actionSla">Add Row</button>
+	                  <div class="master-data-actions">
+	                    <button class="secondary-button" type="button" data-master-import="actionSla">Import</button>
+	                    <button class="secondary-button" type="button" data-master-export="actionSla">Export</button>
+	                    <button class="secondary-button" type="button" data-add-master-row="actionSla">Add Row</button>
+	                  </div>
 	                </div>
 	                <div class="table-wrap">
 	                  <table class="master-table">
@@ -7528,7 +7586,7 @@
 	                </div>
 	              </section>
 
-	              <section class="panel master-data-panel master-data-panel-full">
+	              <section class="panel master-data-panel master-data-panel-full" hidden aria-hidden="true">
 	                <div class="panel-header">
 	                  <div>
 	                    <h2>Contract Name Template</h2>
@@ -7554,6 +7612,7 @@
                 <h2>Admin Tools <span class="badge black admin-only-badge">Admin Only</span></h2>
                 <small>เครื่องมือสำหรับผู้ดูแลระบบ</small>
               </div>
+              <button class="primary-button" type="button" id="saveAdminToolsBtn" data-admin-only hidden>Save Admin Tools</button>
             </div>
             <div class="master-data-grid">
 
@@ -8252,7 +8311,736 @@
       }
 ];
 
-    const contracts = [];
+    const contracts = [
+      {
+            "id": "CT-N-OP-001",
+            "name": "Sub Lease Agreement - 3 fl Capri",
+            "department": "Operation",
+            "owner": "Ratchaneekul Yamkate (Koy)",
+            "type": "Lease & Rental Agreement / สัญญาเช่าและให้เช่า",
+            "vendor": "Otto - MPZ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "addCaseDate": "",
+            "due": "2026-05-19",
+            "systemDue": "2026-05-19",
+            "workType": "Sub Lease Agreement",
+            "totalSla": 20,
+            "used": 80,
+            "days": 80,
+            "balance": -60,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: 3 fl Capri | Source Status: In Process | Legal Status: Finalized by Legal | Latest Action: K. Henry will support to talk with K. Otto. | Note: sign quotation instead of agreement",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-002",
+            "name": "Lease Asset / Amendment - BLY-T10",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Amendment Agreement / สัญญาแก้ไขเพิ่มเติม",
+            "vendor": "BLY-T10",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-03-05",
+            "systemDue": "2026-03-05",
+            "workType": "Lease Asset / Amendment",
+            "totalSla": 20,
+            "used": 133,
+            "days": 133,
+            "balance": -113,
+            "alert": "Red >>R=At Risk",
+            "remark": "Source Status: In Process | Legal Status: Finalized by Legal | Legal Tracking: L20-69 | Received: 05 Feb 2026 | Latest Action: Final signing process by OP/will send to K. Todd for signing first. Chef Ton sign back by 12 June 2026 | Note: old period, Not yet received the signed copy. sent to chef Ton 19 Feb",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-003",
+            "name": "Sub Lease Agreement - BLY-FSQ",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Lease & Rental Agreement / สัญญาเช่าและให้เช่า",
+            "vendor": "BLY-FSQ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2028-10-31",
+            "systemDue": "2026-04-27",
+            "workType": "Sub Lease Agreement",
+            "totalSla": 20,
+            "used": 96,
+            "days": 96,
+            "balance": -76,
+            "alert": "Red >>R=At Risk",
+            "remark": "Source Status: In Process | Legal Status: Awaiting information in SA | Legal Tracking: L64-69 | Received: 30 Mar 2026 | Target: 13 Apr 2026 | Legal Done: 12 Mar 2026 | Latest Action: Chef Ton's review | Note: new period, 1 Nov 25 - 31 Oct 28",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-004",
+            "name": "Sub Lease Agreement - winwin-FSQ",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Lease & Rental Agreement / สัญญาเช่าและให้เช่า",
+            "vendor": "winwin-FSQ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2028-10-31",
+            "systemDue": "2026-04-10",
+            "workType": "Sub Lease Agreement",
+            "totalSla": 20,
+            "used": 107,
+            "days": 107,
+            "balance": -87,
+            "alert": "Red >>R=At Risk",
+            "remark": "Source Status: In Process | Legal Status: Awaiting information in SA | Legal Tracking: L48-69 | Received: 13 Mar 2026 | Target: 27 Mar 2026 | Legal Done: 20 Mar 2026 | Latest Action: Sent to Tenant for reviewing./ As checked with K. Gee, he sent to Legal BTS for reviewing. | Note: new period, 1 Nov 25 - 31 Oct 28",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-005",
+            "name": "Lease Asset / Amendment - BK Salon",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Amendment Agreement / สัญญาแก้ไขเพิ่มเติม",
+            "vendor": "BLY-T3",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-05-14",
+            "systemDue": "2026-05-14",
+            "workType": "Lease Asset / Amendment",
+            "totalSla": 20,
+            "used": 83,
+            "days": 83,
+            "balance": -63,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: BK Salon | Source Status: In Process | Legal Status: Awaiting asset information | Legal Tracking: L58-69 | Received: 16 Apr 2026 | Target: 30 Apr 2026 | Latest Action: Final by legal, OP confirm the terms and conditions, Sent to Tenant on 19 June 2026 | Note: the name should b T3, due to the exceution date is on 1 Apr 25 (Back date)",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-006",
+            "name": "Lease Asset / Amendment - Gowin",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Amendment Agreement / สัญญาแก้ไขเพิ่มเติม",
+            "vendor": "BLY - FSQ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-03-05",
+            "systemDue": "2026-03-05",
+            "workType": "Lease Asset / Amendment",
+            "totalSla": 20,
+            "used": 133,
+            "days": 133,
+            "balance": -113,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Gowin | Source Status: In Process | Legal Status: Finalized by Legal | Legal Tracking: L22-69 | Received: 05 Feb 2026 | Target: 19 Feb 2026 | Legal Done: 06 Mar 2026 | Latest Action: USER - To send agreement to counterparty",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-007",
+            "name": "Lease Agreement - Gowin",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Lease & Rental Agreement / สัญญาเช่าและให้เช่า",
+            "vendor": "CM Gold (Jimmy) - FSQ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-04-17",
+            "systemDue": "2026-04-17",
+            "workType": "Lease Agreement",
+            "totalSla": 20,
+            "used": 102,
+            "days": 102,
+            "balance": -82,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Gowin | Source Status: In Process | Legal Status: Finalized by Legal | Legal Tracking: L63-69 | Received: 20 Mar 2026 | Target: 03 Apr 2026 | Legal Done: 31 Mar 2026 | Latest Action: USER - To send agreement to counterparty/ Got review from Tenant, will send to Legal on 20May26/ Agreement will be sent by 15 June 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-008",
+            "name": "Service - Lawoi'",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Service Agreement / สัญญาให้บริการ",
+            "vendor": "TTH-Grab",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-03-12",
+            "systemDue": "2026-03-12",
+            "workType": "Service",
+            "totalSla": 22,
+            "used": 130,
+            "days": 130,
+            "balance": -108,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Lawoi' | Source Status: In Process | Legal Status: Awaiting further information | Received: 10 Feb 2026 | Target: 24 Feb 2026 | Legal Done: 10 Feb 2026 | Latest Action: On process of singing, will sent to LAWOI by 24 June 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-IT-001",
+            "name": "Reservation System - Kappo S38",
+            "department": "IT",
+            "owner": "Kawinphop Champee (Boss)",
+            "type": "Service Agreement / สัญญาให้บริการ",
+            "vendor": "Weeloy - T5",
+            "stage": "Return",
+            "cycle": 1,
+            "returns": 1,
+            "status": "Red >>R=Overdue",
+            "station": "From Kawinphop Champee (Boss) >> To Kawinphop Champee (Boss)",
+            "addCaseDate": "",
+            "due": "2026-03-25",
+            "systemDue": "2026-03-25",
+            "workType": "Reservation Service Agreement",
+            "totalSla": 22,
+            "used": 244,
+            "days": 123,
+            "balance": -222,
+            "alert": "Red >>R=At Risk",
+            "remark": "- เนื่องจาก memo ที่นำส่งมีการลงนามไม่ครบสมบูรณ์ ดังนั้น ขอให้จัดส่งให้ครบถ้วน\n- วันที่ของสัญญาจะขอให้เว้นว่างไว้ \n- ขอให้พิจารณาวันตามข้อ 6.1 ว่ายังเป็นวันเริ่มต้น 11 April 26 อยู่หรือไม่ เนื่องจากเลยระยะเวลาดังกล่าวมาแล้ว\n- เนื่องจากมีการนำข้อมูลส่วนบุคคลมาใช้ในหลายส่วน ขอให้ทำแบบ flow การใช้ข้อมูลตามที่กำหนดในสัญญา และแบบฟอร์มการส่งตรวจ pdpa",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-BD-001",
+            "name": "Interior Design Agreement - Roaster Coffee",
+            "department": "Business Development",
+            "owner": "Supakorn Teerawutthiporn (PJ)",
+            "type": "Outsourcing Agreement / สัญญาจ้าง",
+            "vendor": "T5 - PAC",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Supakorn Teerawutthiporn (PJ) >> To Supakorn Teerawutthiporn (PJ)",
+            "addCaseDate": "",
+            "due": "2026-04-22",
+            "systemDue": "2026-04-22",
+            "workType": "Interior Design Agreement",
+            "totalSla": 24,
+            "used": 103,
+            "days": 103,
+            "balance": -79,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Roaster Coffee | Source Status: In Process | Received: 19 Mar 2026 | Target: 02 Apr 2026 | Latest Action: Final signing process by BD",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-BD-002",
+            "name": "No.1749 - Roaster Coffee",
+            "department": "Business Development",
+            "owner": "Supakorn Teerawutthiporn (PJ)",
+            "type": "Lease & Rental Agreement / สัญญาเช่าและให้เช่า",
+            "vendor": "T5-WBKK",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Supakorn Teerawutthiporn (PJ) >> To Supakorn Teerawutthiporn (PJ)",
+            "addCaseDate": "",
+            "due": "2026-05-28",
+            "systemDue": "2026-05-28",
+            "workType": "Lease Agreement",
+            "totalSla": 20,
+            "used": 73,
+            "days": 73,
+            "balance": -53,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Roaster Coffee | Source Status: In Process | Legal Status: Awaiting further information | Received: 30 Apr 2026 | Latest Action: Final signing process by BD",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-MKT-001",
+            "name": "Consultancy Agreement - Unicorn Bldg",
+            "department": "Marketing",
+            "owner": "Nithita Aroonchote (Ploy)",
+            "type": "Outsourcing Agreement / สัญญาจ้าง",
+            "vendor": "T23-Kamkoong",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Nithita Aroonchote (Ploy) >> To Nithita Aroonchote (Ploy)",
+            "addCaseDate": "",
+            "due": "2026-05-13",
+            "systemDue": "2026-05-13",
+            "workType": "Consultancy Agreement",
+            "totalSla": 24,
+            "used": 88,
+            "days": 88,
+            "balance": -64,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Unicorn Bldg | Source Status: In Process | Legal Status: Final signing process by MKT | Legal Tracking: L70-69 | Received: 09 Apr 2026 | Target: 23 Apr 2026 | Legal Done: 27 Apr 2026 | Latest Action: Final signing process by MKT",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-009",
+            "name": "Laundry Service - Baan Turtle BKK",
+            "department": "Operation",
+            "owner": "Ratchaneekul Yamkate (Koy)",
+            "type": "Service Agreement / สัญญาให้บริการ",
+            "vendor": "PVE-FSQ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "addCaseDate": "",
+            "due": "2026-05-08",
+            "systemDue": "2026-05-08",
+            "workType": "Laundry Service",
+            "totalSla": 22,
+            "used": 89,
+            "days": 89,
+            "balance": -67,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Baan Turtle BKK | Source Status: In Process | Legal Status: Finalized by Legal | Received: 08 Apr 2026 | Target: 22 Apr 2026 | Note: K. Koy",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-ADMIN-001",
+            "name": "House Keeper - T23 office",
+            "department": "Administration",
+            "owner": "Nattanai Saranpumidech (Ohm)",
+            "type": "Service Agreement / สัญญาให้บริการ",
+            "vendor": "T23-SCS",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Nattanai Saranpumidech (Ohm) >> To Nattanai Saranpumidech (Ohm)",
+            "addCaseDate": "",
+            "due": "2026-05-18",
+            "systemDue": "2026-05-18",
+            "workType": "Service Agreement",
+            "totalSla": 22,
+            "used": 83,
+            "days": 83,
+            "balance": -61,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: T23 office | Source Status: In Process | Legal Status: Finalized by Legal | Legal Tracking: L76-69 | Received: 16 Apr 2026 | Target: 30 Apr 2026 | Legal Done: 21 Apr 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-010",
+            "name": "Secirity Guard - BK Salon",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Service Agreement / สัญญาให้บริการ",
+            "vendor": "FSQ - LSS",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-05-26",
+            "systemDue": "2026-05-26",
+            "workType": "Service Agreement",
+            "totalSla": 22,
+            "used": 77,
+            "days": 77,
+            "balance": -55,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: BK Salon | Source Status: In Process | Received: 24 Apr 2026 | Latest Action: sent agreement to supplier for issuing and signing contract by 9 June 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-MKT-002",
+            "name": "MKT services - BTSV",
+            "department": "Marketing",
+            "owner": "Pattarat Piamsin (Mind)",
+            "type": "Outsourcing Agreement / สัญญาจ้าง",
+            "vendor": "T23 - MCL",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Pattarat Piamsin (Mind) >> To Pattarat Piamsin (Mind)",
+            "addCaseDate": "",
+            "due": "2026-06-24",
+            "systemDue": "2026-06-24",
+            "workType": "Consultancy Agreement",
+            "totalSla": 24,
+            "used": 58,
+            "days": 58,
+            "balance": -34,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: BTSV | Source Status: In Process | Received: 21 May 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-011",
+            "name": "Lift service - Baan Turtle",
+            "department": "Operation",
+            "owner": "Ratchaneekul Yamkate (Koy)",
+            "type": "Service Agreement / สัญญาให้บริการ",
+            "vendor": "FSQ - Cibes",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "addCaseDate": "",
+            "due": "2026-06-24",
+            "systemDue": "2026-06-24",
+            "workType": "Service Agreement with equipment",
+            "totalSla": 22,
+            "used": 56,
+            "days": 56,
+            "balance": -34,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Baan Turtle | Source Status: In Process | Received: 25 May 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-012",
+            "name": "Lift service - Baan Turtle",
+            "department": "Operation",
+            "owner": "Ratchaneekul Yamkate (Koy)",
+            "type": "Service Agreement / สัญญาให้บริการ",
+            "vendor": "FSQ - Cibes",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "addCaseDate": "",
+            "due": "2026-06-24",
+            "systemDue": "2026-06-24",
+            "workType": "Service Agreement without equipment",
+            "totalSla": 22,
+            "used": 56,
+            "days": 56,
+            "balance": -34,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Baan Turtle | Source Status: In Process | Received: 25 May 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-013",
+            "name": "Equipments - Lawoi'",
+            "department": "Operation",
+            "owner": "Ratchaneekul Yamkate (Koy)",
+            "type": "Lease & Rental Agreement / สัญญาเช่าและให้เช่า",
+            "vendor": "KTT - Saha",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "addCaseDate": "",
+            "due": "2026-06-22",
+            "systemDue": "2026-06-22",
+            "workType": "Eqipment lease agreement",
+            "totalSla": 20,
+            "used": 56,
+            "days": 56,
+            "balance": -36,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Lawoi' | Source Status: In Process | Received: 25 May 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-MKT-003",
+            "name": "cross charge",
+            "department": "Marketing",
+            "owner": "Pijitporn Atjima-anan (Mod)",
+            "type": "Outsourcing Agreement / สัญญาจ้าง",
+            "vendor": "T23 - Alpea",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Pijitporn Atjima-anan (Mod) >> To Pijitporn Atjima-anan (Mod)",
+            "addCaseDate": "",
+            "due": "2026-07-09",
+            "systemDue": "2026-07-09",
+            "workType": "Consultancy Agreement",
+            "totalSla": 24,
+            "used": 47,
+            "days": 47,
+            "balance": -23,
+            "alert": "Red >>R=At Risk",
+            "remark": "Source Status: In Process | Legal Tracking: L100-69 | Received: 05 Jun 2026 | Latest Action: Final signing process by MKT",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-014",
+            "name": "Lease Agreement/ Amendment - Baan Turtle",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Amendment Agreement / สัญญาแก้ไขเพิ่มเติม",
+            "vendor": "T23 - T10",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-07-02",
+            "systemDue": "2026-07-02",
+            "workType": "Lease Agreement/ Amendment",
+            "totalSla": 20,
+            "used": 48,
+            "days": 48,
+            "balance": -28,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Baan Turtle | Source Status: In Process | Received: 04 Jun 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-015",
+            "name": "PCS - Baan Turtle Phuket",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Service Agreement / สัญญาให้บริการ",
+            "vendor": "T23",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-07-23",
+            "systemDue": "2026-07-23",
+            "workType": "Security service agreement",
+            "totalSla": 22,
+            "used": 35,
+            "days": 35,
+            "balance": -13,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Baan Turtle Phuket | Source Status: In Process | Received: 23 Jun 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-N-OP-016",
+            "name": "Sakeseeker - Capricci",
+            "department": "Operation",
+            "owner": "Preeyapas Srinon (Nan)",
+            "type": "Commercial Agreement / สัญญาทางธุรกิจ",
+            "vendor": "Mammapazza",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "addCaseDate": "",
+            "due": "2026-07-27",
+            "systemDue": "2026-07-27",
+            "workType": "SAKE Playground event",
+            "totalSla": 24,
+            "used": 35,
+            "days": 35,
+            "balance": -11,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Capricci | Source Status: In Process | Received: 23 Jun 2026",
+            "accessLevel": "Normal",
+            "visibility": "Standard access / สิทธิ์ทั่วไป",
+            "category": "Day-to-day Work"
+      },
+      {
+            "id": "CT-C-FIN-001",
+            "name": "Management Agreement - Sathorn 10 Project",
+            "department": "Finance",
+            "owner": "Atsanai Banmai (Bank)",
+            "type": "Commercial Agreement / สัญญาทางธุรกิจ",
+            "vendor": "T23 - FSQ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "addCaseDate": "",
+            "due": "2026-06-18",
+            "systemDue": "2026-06-18",
+            "workType": "Management Agreement",
+            "totalSla": 24,
+            "used": 62,
+            "days": 62,
+            "balance": -38,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Sathorn 10 Project | Source Status: In Process | Legal Tracking: L99-69 | Received: 15 May 2026",
+            "accessLevel": "Confidential",
+            "visibility": "Restricted access / จำกัดสิทธิ์",
+            "category": "Confidential"
+      },
+      {
+            "id": "CT-C-FIN-002",
+            "name": "Management Agreement - Baan Turtle",
+            "department": "Finance",
+            "owner": "Atsanai Banmai (Bank)",
+            "type": "Commercial Agreement / สัญญาทางธุรกิจ",
+            "vendor": "T23 - FSQ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "addCaseDate": "",
+            "due": "2026-06-18",
+            "systemDue": "2026-06-18",
+            "workType": "Management Agreement",
+            "totalSla": 24,
+            "used": 62,
+            "days": 62,
+            "balance": -38,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Baan Turtle | Source Status: In Process | Legal Tracking: L106-69 | Received: 15 May 2026",
+            "accessLevel": "Confidential",
+            "visibility": "Restricted access / จำกัดสิทธิ์",
+            "category": "Confidential"
+      },
+      {
+            "id": "CT-C-FIN-003",
+            "name": "Management Agreement - Sathu Pradit",
+            "department": "Finance",
+            "owner": "Atsanai Banmai (Bank)",
+            "type": "Commercial Agreement / สัญญาทางธุรกิจ",
+            "vendor": "T23 - FSQ",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "addCaseDate": "",
+            "due": "2026-06-18",
+            "systemDue": "2026-06-18",
+            "workType": "Management Agreement",
+            "totalSla": 24,
+            "used": 62,
+            "days": 62,
+            "balance": -38,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Sathu Pradit | Source Status: In Process | Legal Tracking: L107-69 | Received: 15 May 2026",
+            "accessLevel": "Confidential",
+            "visibility": "Restricted access / จำกัดสิทธิ์",
+            "category": "Confidential"
+      },
+      {
+            "id": "CT-C-FIN-004",
+            "name": "Management Agreement - Chan Kao",
+            "department": "Finance",
+            "owner": "Atsanai Banmai (Bank)",
+            "type": "Commercial Agreement / สัญญาทางธุรกิจ",
+            "vendor": "T23 - WBKK",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "addCaseDate": "",
+            "due": "2026-06-18",
+            "systemDue": "2026-06-18",
+            "workType": "Management Agreement",
+            "totalSla": 24,
+            "used": 62,
+            "days": 62,
+            "balance": -38,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Chan Kao | Source Status: In Process | Legal Tracking: L108-69 | Received: 15 May 2026",
+            "accessLevel": "Confidential",
+            "visibility": "Restricted access / จำกัดสิทธิ์",
+            "category": "Confidential"
+      },
+      {
+            "id": "CT-C-FIN-005",
+            "name": "Management Agreement - Yenakart",
+            "department": "Finance",
+            "owner": "Atsanai Banmai (Bank)",
+            "type": "Commercial Agreement / สัญญาทางธุรกิจ",
+            "vendor": "T23 - WBKK",
+            "stage": "Draft Created",
+            "cycle": 1,
+            "returns": 0,
+            "status": "Red >>R=Overdue",
+            "station": "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "addCaseDate": "",
+            "due": "2026-06-18",
+            "systemDue": "2026-06-18",
+            "workType": "Management Agreement",
+            "totalSla": 24,
+            "used": 62,
+            "days": 62,
+            "balance": -38,
+            "alert": "Red >>R=At Risk",
+            "remark": "Place: Yenakart | Source Status: In Process | Legal Tracking: L109-69 | Received: 15 May 2026",
+            "accessLevel": "Confidential",
+            "visibility": "Restricted access / จำกัดสิทธิ์",
+            "category": "Confidential"
+      }
+];
 
 
 
@@ -9518,7 +10306,988 @@
 
 
 
-    const logRecords = [];
+    const logRecords = [
+      [
+            "CT-N-OP-001",
+            "1",
+            "1",
+            "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "2026-04-21",
+            "",
+            "20",
+            "80",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-002",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-02-05",
+            "",
+            "20",
+            "133",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-003",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-03-30",
+            "",
+            "20",
+            "96",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-004",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-03-13",
+            "",
+            "20",
+            "107",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-005",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-04-16",
+            "",
+            "20",
+            "83",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-006",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-02-05",
+            "",
+            "20",
+            "133",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-007",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-03-20",
+            "",
+            "20",
+            "102",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-008",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-02-10",
+            "",
+            "22",
+            "130",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "22",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-IT-001",
+            "1",
+            "1",
+            "From Kawinphop Champee (Boss) >> To Siwaporn Iamwiboon (Grace)",
+            "Kawinphop Champee (Boss)",
+            "Siwaporn Iamwiboon (Grace)",
+            "2026-02-23",
+            "",
+            "22",
+            "121",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "22",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-BD-001",
+            "1",
+            "1",
+            "From Supakorn Teerawutthiporn (PJ) >> To Supakorn Teerawutthiporn (PJ)",
+            "Supakorn Teerawutthiporn (PJ)",
+            "Supakorn Teerawutthiporn (PJ)",
+            "2026-03-19",
+            "",
+            "24",
+            "103",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-BD-002",
+            "1",
+            "1",
+            "From Supakorn Teerawutthiporn (PJ) >> To Supakorn Teerawutthiporn (PJ)",
+            "Supakorn Teerawutthiporn (PJ)",
+            "Supakorn Teerawutthiporn (PJ)",
+            "2026-04-30",
+            "",
+            "20",
+            "73",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-MKT-001",
+            "1",
+            "1",
+            "From Nithita Aroonchote (Ploy) >> To Nithita Aroonchote (Ploy)",
+            "Nithita Aroonchote (Ploy)",
+            "Nithita Aroonchote (Ploy)",
+            "2026-04-09",
+            "",
+            "24",
+            "88",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-009",
+            "1",
+            "1",
+            "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "2026-04-08",
+            "",
+            "22",
+            "89",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "22",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-ADMIN-001",
+            "1",
+            "1",
+            "From Nattanai Saranpumidech (Ohm) >> To Nattanai Saranpumidech (Ohm)",
+            "Nattanai Saranpumidech (Ohm)",
+            "Nattanai Saranpumidech (Ohm)",
+            "2026-04-16",
+            "",
+            "22",
+            "83",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "22",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-010",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-04-24",
+            "",
+            "22",
+            "77",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "22",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-MKT-002",
+            "1",
+            "1",
+            "From Pattarat Piamsin (Mind) >> To Pattarat Piamsin (Mind)",
+            "Pattarat Piamsin (Mind)",
+            "Pattarat Piamsin (Mind)",
+            "2026-05-21",
+            "",
+            "24",
+            "58",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-011",
+            "1",
+            "1",
+            "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "2026-05-25",
+            "",
+            "22",
+            "56",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "22",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-012",
+            "1",
+            "1",
+            "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "2026-05-25",
+            "",
+            "22",
+            "56",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "22",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-013",
+            "1",
+            "1",
+            "From Ratchaneekul Yamkate (Koy) >> To Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "Ratchaneekul Yamkate (Koy)",
+            "2026-05-25",
+            "",
+            "20",
+            "56",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-C-FIN-001",
+            "1",
+            "1",
+            "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "2026-05-15",
+            "",
+            "24",
+            "62",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-MKT-003",
+            "1",
+            "1",
+            "From Pijitporn Atjima-anan (Mod) >> To Pijitporn Atjima-anan (Mod)",
+            "Pijitporn Atjima-anan (Mod)",
+            "Pijitporn Atjima-anan (Mod)",
+            "2026-06-05",
+            "",
+            "24",
+            "47",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-014",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-06-04",
+            "",
+            "20",
+            "48",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "20",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-C-FIN-002",
+            "1",
+            "1",
+            "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "2026-05-15",
+            "",
+            "24",
+            "62",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-C-FIN-003",
+            "1",
+            "1",
+            "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "2026-05-15",
+            "",
+            "24",
+            "62",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-C-FIN-004",
+            "1",
+            "1",
+            "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "2026-05-15",
+            "",
+            "24",
+            "62",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-C-FIN-005",
+            "1",
+            "1",
+            "From Atsanai Banmai (Bank) >> To Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "Atsanai Banmai (Bank)",
+            "2026-05-15",
+            "",
+            "24",
+            "62",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-015",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-06-23",
+            "",
+            "22",
+            "35",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "22",
+            "",
+            "",
+            [],
+            []
+      ],
+      [
+            "CT-N-OP-016",
+            "1",
+            "1",
+            "From Preeyapas Srinon (Nan) >> To Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "Preeyapas Srinon (Nan)",
+            "2026-06-23",
+            "",
+            "24",
+            "35",
+            "Red >>R=At Risk",
+            "",
+            "Draft Created",
+            "Draft Created by Production Import",
+            "OK",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Production Import",
+            "2026-08-11T09:40:42.165Z",
+            "",
+            "",
+            "Draft Created",
+            "",
+            "Imported from อะไรล่ะนั่น.xlsx",
+            "24",
+            "",
+            "",
+            [],
+            []
+      ]
+];
 
 
 
@@ -12738,8 +14507,8 @@
       }
 });
     const driveDatabaseConfig = Object.freeze({
-      "folderId": "1GxsqFX2xuRJk7TBcW9gF8RadI1Q-H5W9",
-      "folderUrl": "https://drive.google.com/drive/folders/1GxsqFX2xuRJk7TBcW9gF8RadI1Q-H5W9",
+      "folderId": "1JH3z-QrsjhiHxc2h8IUGKTf-jxML1igj",
+      "folderUrl": "https://drive.google.com/drive/folders/1JH3z-QrsjhiHxc2h8IUGKTf-jxML1igj",
       "contractsCsv": "tracking_contracts_contracts_db.csv",
       "logsCsv": "tracking_contracts_log_db.csv",
       "typeMasterCsv": "tracking_contracts_type_master_db.csv",
@@ -12749,8 +14518,8 @@
       "actionSlaCsv": "tracking_contracts_action_sla_master_db.csv"
 });
     const attachmentCloudConfig = Object.freeze({
-      "folderId": "13d9ZNEE0ijV5JfU7chg0wHrTNp500AgR",
-      "folderUrl": "https://drive.google.com/drive/folders/13d9ZNEE0ijV5JfU7chg0wHrTNp500AgR",
+      "folderId": "1sU2_6KlvRSWZ3Rv-9bF9AEU7PvYBF4pJ",
+      "folderUrl": "https://drive.google.com/drive/folders/1sU2_6KlvRSWZ3Rv-9bF9AEU7PvYBF4pJ",
       "folderName": "Attachments Files",
       "uploadEndpoint": "https://script.google.com/macros/s/AKfycbzhIbrLVvD-Cwxh3wqEWqjSaIESGgXfhdJ2cWUhepiSIsAyG8yQafG392kkjnSvjT_N/exec"
 });
@@ -12866,7 +14635,7 @@
     const demoAccountConfig = Object.freeze({
       viewer: { role: "viewer", passwordHash: "9f9f20ec6958d3c176c17ea3eb9731b053b6fc753367e3c25e3fb2578ec0f4e6" },
       user: { role: "user", passwordHash: "cc66576333f36fb04050e842039951ddbdb54b5dcca031a5eb5861fa1e1a1f09" },
-      confidential: { role: "confidential", passwordHash: "eb44db23e31fa6df080d8cb73efb730478abafd2724781d1199d2fb090f3b293" },
+      confidential: { role: "confidential", passwordHash: "7e7f06d4dccf2376e8774a707806817c9fe7079979ddc6e74c088d7a57afa08b" },
       admin: { role: "admin", passwordHash: "fb07d63fb5ae1ee60f5f96592cb25a99ed421f4e32969d347af615bf62c5e5b3" }
     });
     let currentUser = null;
@@ -13510,7 +15279,7 @@
       user: ["User Case Action", "เพิ่มเคส อัปเดทสถานะ และปิดเคสจาก Contract Status / Log View"],
       master: ["Master Data", "แก้ไขข้อมูล dropdown และบันทึกกลับ Shared Drive"],
       admin: ["Admin Tools", "อนุมัติ Due Date และจัดการรหัสผ่าน"],
-      confidential: ["Confidential Contract Status", "แสดงเฉพาะสัญญาลับสำหรับผู้มีสิทธิ์เข้าถึง"],
+      confidential: ["Confidential Contract Status", "Edit or delete incorrect created from."],
       notifications: ["Notification Queue", "NotificationQueueTable"],
       setup: ["Email Notification Setup", "EmailNotificationRulesTable"]
     };
@@ -15352,6 +17121,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const fromName = safeText(from);
       const toName = safeText(to) || safeText(email);
       const dueDate = safeText(formatDateForEmail(contract?.due)).replace(/^[-–]$/, "");
+      const systemUrl = "https://turtletwentythree.github.io/Project-Contract-tracking/";
       const slaNumber = Number(sla) || 0;
       const copyByAction = {
         "Submit to Review": {
@@ -15416,7 +17186,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         `From: ${fromName}`,
         `To: ${toName}`,
         `Action SLA: ${slaNumber} Working Day${slaNumber === 1 ? "" : "s"}`,
-        `Due Date: ${dueDate}`
+        `Due Date: ${dueDate}`,
+        `System Link: ${systemUrl}`
       ];
       if (reasonText) englishLines.push("", copy.reasonEn, reasonText);
       englishLines.push("", "Please review and proceed with the contract accordingly.");
@@ -15437,6 +17208,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (reasonText) thaiLines.push("", copy.reasonTh, reasonText);
       thaiLines.push("", "กรุณาตรวจสอบและดำเนินการตามขั้นตอนที่เกี่ยวข้อง", "", "Contract Tracking System");
 
+      thaiLines.splice(Math.max(thaiLines.length - 1, 0), 0, "", `System Link: ${systemUrl}`);
       const body = [...englishLines, "", "", ...thaiLines].join("\n");
       return {
         to: email || "",
@@ -16067,6 +17839,42 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
 
     function latestLogFor(contractId) {
       return logRecords.filter(row => row[0] === contractId).slice(-1)[0] || null;
+    }
+
+    function firstLogFor(contractId) {
+      return logRecords.find(row => row[0] === contractId) || null;
+    }
+
+    function addCaseStartDateForContract(contract) {
+      if (!contract) return "";
+      return dateToInputValue(contract.addCaseDate || firstLogFor(contract.id)?.[6] || "");
+    }
+
+    function recalculateLogTiming(row) {
+      if (!Array.isArray(row)) return row;
+      row[9] = calculateDaysOnHand(row[6], row[7]);
+      row[10] = calculateAlert(row[12], row[9], row[8]);
+      return row;
+    }
+
+    function syncContractTimingFromLogs(contract) {
+      if (!contract) return contract;
+      const rows = logRecords.filter(row => row[0] === contract.id);
+      rows.forEach(recalculateLogTiming);
+      const latest = rows.slice(-1)[0] || null;
+      const totalSla = Number(contract.totalSla || totalSlaFor(contract.workType || contract.type)) || 0;
+      const used = rows.reduce((sum, row) => sum + (Number(row[9]) || 0), 0);
+      const startDate = addCaseStartDateForContract(contract);
+      contract.addCaseDate = startDate;
+      contract.totalSla = totalSla;
+      contract.used = used;
+      contract.days = latest ? Number(latest[9]) || 0 : used;
+      contract.balance = totalSla - used;
+      contract.systemDue = startDate ? addBusinessDays(startDate, totalSla) : (contract.systemDue || "");
+      if (!contract.due) contract.due = contract.systemDue;
+      contract.alert = latest?.[10] || calculateAlert(contract.stage, contract.days, totalSla);
+      contract.status = calculateContractStatus(contract.stage, used, totalSla);
+      return contract;
     }
 
     function localIsoDateTime(dateValue = new Date()) {
@@ -17732,6 +19540,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       "Status Update",
       "Station",
       "Station Owner",
+      "Add Case Date",
       "Due Date",
       "System Due Date",
       "Work Type",
@@ -17862,6 +19671,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         "Status Update": item.status,
         "Station": item.station,
         "Station Owner": station.to,
+        "Add Case Date": item.addCaseDate || firstLogFor(item.id)?.[6] || "",
         "Due Date": item.due,
         "System Due Date": item.systemDue || "",
         "Work Type": item.workType,
@@ -17898,6 +19708,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         returns: Number(row["Returns"] || 0) || 0,
         status: String(row["Status Update"] || row["Alert"] || "Green >>G=On Track").trim(),
         station: String(row["Station"] || `From ${owner || "Owner"} >> To ${stationOwner}`).trim(),
+        addCaseDate: String(row["Add Case Date"] || "").trim(),
         due: String(row["Due Date"] || "").trim(),
         systemDue: String(row["System Due Date"] || "").trim(),
         workType: String(row["Work Type"] || type || "Other").trim(),
@@ -17956,6 +19767,11 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       const status = document.querySelector("#databaseSyncStatus");
       if (!status) return;
       status.textContent = message || `${contracts.length} contracts · ${driveDatabaseConfig.contractsCsv}`;
+    }
+
+    function notifyDatabaseSaved(message) {
+      showToast(message);
+      window.alert(message);
     }
 
     function migrateContractIdsToDepartmentFormat(contractRows = [], logRows = []) {
@@ -18238,17 +20054,28 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       if (!requireSystemAdministrator()) return;
       if (!file) return;
       const reader = new FileReader();
-      reader.addEventListener("load", () => {
+      reader.addEventListener("load", async () => {
         const rows = csvToObjects(reader.result);
         const importedContracts = rows.map(contractFromDbRow).filter(item => item.id && item.name);
         if (!importedContracts.length) {
           showToast("No valid contracts in CSV");
+          window.alert("No valid contracts were found in the selected CSV file.");
           return;
         }
-        migrateContractIdsToDepartmentFormat(importedContracts, logRecords);
-        const importedIds = new Set(importedContracts.map(item => item.id));
-        logRecords.splice(0, logRecords.length, ...logRecords.filter(row => importedIds.has(row[0])));
+        if (!window.confirm(`Import ${importedContracts.length} contract record(s) into Master Data? Matching Contract IDs will be updated and other existing records will remain.`)) return;
+        migrateContractIdsToDepartmentFormat(importedContracts, []);
+        const existingById = new Map(contracts.map((contract, index) => [contract.id, index]));
+        let addedCount = 0;
+        let updatedCount = 0;
         importedContracts.forEach(contract => {
+          const existingIndex = existingById.get(contract.id);
+          if (existingIndex >= 0) {
+            contracts[existingIndex] = { ...contracts[existingIndex], ...contract };
+            updatedCount += 1;
+          } else {
+            contracts.push(contract);
+            addedCount += 1;
+          }
           if (!latestLogFor(contract.id)) {
             addLogRecord({
               contractId: contract.id,
@@ -18256,7 +20083,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
               station: contract.station,
               from: stationParts(contract.station).from || contract.owner,
               to: stationParts(contract.station).to || "Legal",
-              inDate: todayInputValue(),
+              inDate: contract.addCaseDate || todayInputValue(),
               outDate: "",
               sla: contract.totalSla || totalSlaFor(contract.workType),
               delayReason: "",
@@ -18265,13 +20092,219 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
             });
           }
         });
-        contracts.splice(0, contracts.length, ...importedContracts);
         refreshDashboardDataFromContracts();
         saveContractsDatabase();
+        await saveDriveDatabaseToCloud();
         renderAll();
-        showToast(`${importedContracts.length} contracts imported`);
+        notifyDatabaseSaved(`Import completed. ${addedCount} added, ${updatedCount} updated. Database sync request sent.`);
       });
       reader.readAsText(file, "utf-8");
+    }
+
+    const masterImportExportLabels = Object.freeze({
+      contractsNormal: "Contract Records",
+      contractsConfidential: "Confidential Contract Status",
+      logs: "Log Records",
+      departments: "Department Master",
+      people: "People / Owner Master",
+      contractTypes: "Type of Contract Master",
+      actionSla: "Action SLA Master"
+    });
+
+    function upsertRowsByKey(targetRows, incomingRows, keyFn) {
+      const indexes = new Map();
+      targetRows.forEach((row, index) => {
+        const key = keyFn(row);
+        if (key) indexes.set(key, index);
+      });
+      let added = 0;
+      let updated = 0;
+      incomingRows.forEach(row => {
+        const key = keyFn(row);
+        if (!key) return;
+        if (indexes.has(key)) {
+          targetRows[indexes.get(key)] = { ...targetRows[indexes.get(key)], ...row };
+          updated += 1;
+        } else {
+          indexes.set(key, targetRows.length);
+          targetRows.push(row);
+          added += 1;
+        }
+      });
+      return { added, updated };
+    }
+
+    function masterExportPayload(kind) {
+      if (kind === "contractsNormal") {
+        return {
+          filename: "master_contract_records.csv",
+          headers: contractDatabaseHeaders,
+          rows: contracts.filter(contract => !isConfidentialContract(contract)).map(contractDbRow)
+        };
+      }
+      if (kind === "contractsConfidential") {
+        return {
+          filename: "master_confidential_contract_status.csv",
+          headers: contractDatabaseHeaders,
+          rows: contracts.filter(isConfidentialContract).map(contractDbRow)
+        };
+      }
+      if (kind === "logs") {
+        return { filename: "master_log_records.csv", headers: logDatabaseHeaders, rows: logRecords.map(logDbRow) };
+      }
+      if (kind === "departments") {
+        return { filename: "master_department_rows.csv", headers: ["Department / Restaurant", "Department Code", "Department Data Version", "Active"], rows: masterData.departments || [] };
+      }
+      if (kind === "people") {
+        return { filename: "master_people_owner_rows.csv", headers: ["company", "department", "name", "email", "active"], rows: masterData.people || [] };
+      }
+      if (kind === "contractTypes") {
+        return { filename: "master_type_of_contract_rows.csv", headers: ["Contract Classification", "Type of Contract", "Sub Type of Contract", "Fixed SLA (Working Days)", "Standard SLA Version", "Active", "Category", "Description / คำอธิบาย"], rows: masterData.contractTypes || [] };
+      }
+      if (kind === "actionSla") {
+        return { filename: "master_action_sla_rows.csv", headers: ["Action", "Description / รายละเอียด", "Fixed SLA (Working Days)", "SLA Rule / วิธีนับ", "Action Data Version", "Active"], rows: masterData.actionSla || [] };
+      }
+      return null;
+    }
+
+    function exportMasterDataTable(kind) {
+      if (!requireSystemAdministrator()) return;
+      if (!normalizeMasterDataFromUi()) return;
+      const payload = masterExportPayload(kind);
+      if (!payload) return;
+      downloadTextFile(payload.filename, objectsToCsv(payload.headers, payload.rows));
+      showToast(`${masterImportExportLabels[kind] || "Master Data"} exported`);
+    }
+
+    function upsertImportedContracts(importedContracts, accessLevel) {
+      migrateContractIdsToDepartmentFormat(importedContracts, []);
+      const existingById = new Map(contracts.map((contract, index) => [contract.id, index]));
+      let added = 0;
+      let updated = 0;
+      importedContracts.forEach(contract => {
+        contract.accessLevel = accessLevel;
+        contract.visibility = accessLevel === "Confidential" ? "Restricted access / จำกัดสิทธิ์" : "Standard access / สิทธิ์ทั่วไป";
+        contract.category = accessLevel === "Confidential" ? "Confidential" : (contract.category || contractTypeCategoryFor(contract.type));
+        const existingIndex = existingById.get(contract.id);
+        if (existingIndex >= 0) {
+          contracts[existingIndex] = { ...contracts[existingIndex], ...contract };
+          updated += 1;
+        } else {
+          existingById.set(contract.id, contracts.length);
+          contracts.push(contract);
+          added += 1;
+        }
+        if (!latestLogFor(contract.id)) {
+          addLogRecord({
+            contractId: contract.id,
+            cycle: contract.cycle || 1,
+            station: contract.station,
+            from: stationParts(contract.station).from || contract.owner,
+            to: stationParts(contract.station).to || "Legal",
+            inDate: contract.addCaseDate || todayInputValue(),
+            outDate: "",
+            sla: contract.totalSla || totalSlaFor(contract.workType || contract.type),
+            delayReason: "",
+            action: contract.stage || "Draft Created",
+            updatedBy: "Master Import"
+          });
+        }
+      });
+      return { added, updated };
+    }
+
+    async function applyMasterImportRows(kind, rows) {
+      let result = { added: 0, updated: 0 };
+      if (kind === "contractsNormal" || kind === "contractsConfidential") {
+        const accessLevel = kind === "contractsConfidential" ? "Confidential" : "Normal";
+        const importedContracts = rows.map(contractFromDbRow).filter(item => item.id && item.name);
+        if (!importedContracts.length) return null;
+        result = upsertImportedContracts(importedContracts, accessLevel);
+      } else if (kind === "logs") {
+        const importedLogs = rows.map(logFromDbRow).filter(row => String(row?.[0] || "").trim() && String(row?.[1] || "").trim());
+        if (!importedLogs.length) return null;
+        const existingByKey = new Map(logRecords.map((row, index) => [`${row[0]}::${row[1]}`, index]));
+        importedLogs.forEach(row => {
+          row[1] = Number(row[1]) || row[1];
+          row[2] = Number(row[2]) || row[2] || 1;
+          row[8] = Number(row[8]) || 0;
+          recalculateLogTiming(row);
+          const key = `${row[0]}::${row[1]}`;
+          if (existingByKey.has(key)) {
+            logRecords[existingByKey.get(key)] = row;
+            result.updated += 1;
+          } else {
+            existingByKey.set(key, logRecords.length);
+            logRecords.push(row);
+            result.added += 1;
+          }
+        });
+      } else if (kind === "departments") {
+        const imported = rows.map(row => {
+          const department = canonicalDepartmentName(row["Department / Restaurant"]);
+          const code = String(row["Department Code"] || departmentCodeSuggestion(department) || "").trim().toUpperCase();
+          return { ...row, "Department / Restaurant": department, "Department Code": code, "Department Data Version": row["Department Data Version"] || departmentDataVersion, Active: row.Active || "Yes" };
+        }).filter(row => row["Department / Restaurant"] && row["Department Code"]);
+        result = upsertRowsByKey(masterData.departments, imported, row => normalizeDirectoryValue(row["Department / Restaurant"]));
+      } else if (kind === "people") {
+        const imported = rows.map(row => ({ ...row, company: row.company || "Turtle 23", email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" })).filter(row => row.name);
+        result = upsertRowsByKey(masterData.people, imported, row => normalizeDirectoryValue(row.email || row.name));
+      } else if (kind === "contractTypes") {
+        const imported = rows.map(row => ({
+          ...row,
+          Category: row.Category || row["Contract Classification"] || "",
+          "Standard SLA Version": row["Standard SLA Version"] || standardSlaDataVersion,
+          Active: row.Active || "Yes"
+        })).filter(row => row["Contract Classification"] && (row["Type of Contract"] || row["Sub Type of Contract"]));
+        result = upsertRowsByKey(masterData.contractTypes, imported, row => [row["Contract Classification"], row["Type of Contract"], row["Sub Type of Contract"]].map(normalizeDirectoryValue).join("::"));
+      } else if (kind === "actionSla") {
+        const imported = rows.map(row => ({
+          ...row,
+          "Description / รายละเอียด": row["Description / รายละเอียด"] || actionDescriptionConfig[row.Action]?.descriptionTh || "",
+          "SLA Rule / วิธีนับ": row["SLA Rule / วิธีนับ"] || actionDescriptionConfig[row.Action]?.slaRuleTh || "",
+          "Action Data Version": row["Action Data Version"] || actionDataVersion,
+          Active: row.Active || "Yes"
+        })).filter(row => row.Action);
+        result = upsertRowsByKey(masterData.actionSla, imported, row => normalizeDirectoryValue(row.Action));
+      }
+      refreshDashboardDataFromContracts();
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
+      renderAll();
+      notifyDatabaseSaved(`${masterImportExportLabels[kind] || "Master Data"} import completed. ${result.added} added, ${result.updated} updated.`);
+      return result;
+    }
+
+    function importMasterDataTable(kind, file) {
+      if (!requireSystemAdministrator()) return;
+      if (!file) return;
+      const label = masterImportExportLabels[kind] || "Master Data";
+      const reader = new FileReader();
+      reader.addEventListener("load", async () => {
+        const rows = csvToObjects(reader.result);
+        if (!rows.length) {
+          window.alert("No valid rows were found in the selected CSV file.");
+          return;
+        }
+        if (!window.confirm(`Import ${rows.length} row(s) into ${label}? Matching records will be updated and other existing records will remain.`)) return;
+        const result = await applyMasterImportRows(kind, rows);
+        if (!result) window.alert(`No valid rows were found for ${label}.`);
+      });
+      reader.readAsText(file, "utf-8");
+    }
+
+    function openMasterImportPicker(kind) {
+      if (!requireSystemAdministrator()) return;
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".csv,text/csv";
+      input.hidden = true;
+      input.addEventListener("change", event => {
+        importMasterDataTable(kind, event.target.files?.[0]);
+        input.remove();
+      }, { once: true });
+      document.body.appendChild(input);
+      input.click();
     }
 
     function masterInput(field, value = "", options = {}) {
@@ -18290,6 +20323,10 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       return masterInput(field, value || "Yes", { select: true, choices: ["Yes", "No"] });
     }
 
+    function masterReadOnly(value = "") {
+      return `<span class="master-readonly">${escapeHtml(value === "" || value == null ? "-" : value)}</span>`;
+    }
+
     function masterDeleteButton() {
       return `<button class="icon-button" type="button" data-remove-master-row title="Remove row">×</button>`;
     }
@@ -18298,10 +20335,8 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       return stationParts(contract.station).to || contract.stationOwner || contract.owner || "";
     }
 
-    function renderMasterData() {
-      const contractBody = document.querySelector("#masterContractRows");
-      if (contractBody) {
-        contractBody.innerHTML = contracts.map(contract => `
+    function masterContractRow(contract) {
+      return `
           <tr>
             <td><input type="hidden" data-master-field="_originalId" value="${escapeHtml(contract.id)}">${masterInput("id", contract.id)}</td>
             <td>${masterInput("name", contract.name)}</td>
@@ -18311,9 +20346,43 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
             <td>${masterInput("stage", contract.stage)}</td>
             <td>${masterInput("status", contract.status)}</td>
             <td>${masterInput("stationOwner", stationOwnerForMasterContract(contract))}</td>
+            <td>${masterInput("addCaseDate", addCaseStartDateForContract(contract), { type: "date" })}</td>
             <td>${masterInput("due", contract.due, { type: "date" })}</td>
             <td>${masterDeleteButton()}</td>
-          </tr>`).join("");
+          </tr>`;
+    }
+
+    function renderMasterData() {
+      const contractBody = document.querySelector("#masterContractRows");
+      if (contractBody) {
+        contractBody.innerHTML = contracts.filter(contract => !isConfidentialContract(contract)).map(masterContractRow).join("");
+      }
+
+      const confidentialContractBody = document.querySelector("#masterConfidentialContractRows");
+      if (confidentialContractBody) {
+        confidentialContractBody.innerHTML = contracts.filter(isConfidentialContract).map(masterContractRow).join("");
+      }
+
+      const logBody = document.querySelector("#masterLogRows");
+      if (logBody) {
+        logBody.innerHTML = logRecords.map(row => {
+          const actionChoices = row[12] && !updateActionList.includes(row[12]) ? [row[12], ...updateActionList] : updateActionList;
+          return `
+          <tr>
+            <td><input type="hidden" data-master-field="_originalContractId" value="${escapeHtml(row[0])}"><input type="hidden" data-master-field="_originalLogNo" value="${escapeHtml(row[1])}">${masterInput("contractId", row[0])}</td>
+            <td>${masterInput("logNo", row[1], { type: "number" })}</td>
+            <td>${masterInput("cycle", row[2], { type: "number" })}</td>
+            <td>${masterInput("from", row[4])}</td>
+            <td>${masterInput("to", row[5])}</td>
+            <td>${masterInput("inDate", dateToInputValue(row[6]), { type: "date" })}</td>
+            <td>${masterInput("outDate", dateToInputValue(row[7]), { type: "date" })}</td>
+            <td>${masterInput("sla", row[8], { type: "number" })}</td>
+            <td>${masterReadOnly(row[9])}</td>
+            <td>${masterReadOnly(row[10])}</td>
+            <td>${masterInput("action", row[12], { select: true, choices: actionChoices })}</td>
+            <td>${masterDeleteButton()}</td>
+          </tr>`;
+        }).join("");
       }
 
       const deptBody = document.querySelector("#masterDepartmentRows");
@@ -18406,11 +20475,21 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     function normalizeMasterDataFromUi() {
       if (!requireSystemAdministrator()) return false;
       const originalContracts = new Map(contracts.map(contract => [String(contract.id || "").trim(), contract]));
-      const contractRows = readMasterRows("#masterContractRows", ["_originalId", "id", "name", "department", "owner", "type", "stage", "status", "stationOwner", "due"], "_originalId");
+      const contractFields = ["_originalId", "id", "name", "department", "owner", "type", "stage", "status", "stationOwner", "addCaseDate", "due"];
+      const contractRows = [
+        ...readMasterRows("#masterContractRows", contractFields, "_originalId").map(row => ({ ...row, accessLevel: "" })),
+        ...readMasterRows("#masterConfidentialContractRows", contractFields, "_originalId").map(row => ({ ...row, accessLevel: "Confidential" }))
+      ];
+      const logRows = readMasterRows("#masterLogRows", ["_originalContractId", "_originalLogNo", "contractId", "logNo", "cycle", "from", "to", "inDate", "outDate", "sla", "action"], "_originalContractId");
       const nextContracts = [];
       const keptIds = new Set();
       const idMap = new Map();
+      const addCaseDateMap = new Map();
+      const nextLogRecords = [];
+      const usedLogKeys = new Set();
+      const firstLogInChanged = new Set();
       let hasContractError = false;
+      let hasLogError = false;
 
       contractRows.forEach(row => {
         const originalId = String(row._originalId || "").trim();
@@ -18431,7 +20510,9 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         const stationOwner = String(row.stationOwner || stationOwnerForMasterContract(original) || "Legal").trim();
         const totalSla = Number(original.totalSla || totalSlaFor(type)) || 0;
         const used = Number(original.used || original.days || 0) || 0;
-        const accessLevel = String(original.accessLevel || accessLevelForContractType(type) || "Normal").trim();
+        const accessLevel = String(row.accessLevel || original.accessLevel || accessLevelForContractType(type) || "Normal").trim();
+        const addCaseDate = dateToInputValue(row.addCaseDate || original.addCaseDate || firstLogFor(originalId)?.[6] || firstLogFor(id)?.[6] || "");
+        addCaseDateMap.set(id, addCaseDate);
         nextContracts.push({
           ...original,
           id,
@@ -18443,6 +20524,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
           stage: String(row.stage || original.stage || "Draft Created").trim(),
           status: String(row.status || original.status || original.alert || "Green >>G=On Track").trim(),
           station: `From ${owner || stationParts(original.station || "").from || "Owner"} >> To ${stationOwner}`,
+          addCaseDate,
           due: String(row.due || original.due || "").trim(),
           workType: String(original.workType || type || "Other").trim(),
           totalSla,
@@ -18457,18 +20539,79 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         if (originalId && originalId !== id) idMap.set(originalId, id);
       });
 
+      logRows.forEach(row => {
+        const originalContractId = String(row._originalContractId || "").trim();
+        const rawContractId = String(row.contractId || originalContractId).trim();
+        const contractId = idMap.get(rawContractId) || rawContractId;
+        const originalLogNo = String(row._originalLogNo || "").trim();
+        const originalLog = logRecords.find(item => String(item?.[0] || "") === originalContractId && String(item?.[1] || "") === originalLogNo) || [];
+        const logNo = Number(row.logNo || originalLog[1] || 0);
+        const cycle = Number(row.cycle || originalLog[2] || 1);
+        const from = String(row.from || originalLog[4] || "").trim();
+        const to = String(row.to || originalLog[5] || "").trim();
+        const nextIn = dateToInputValue(row.inDate || "");
+        const nextOut = dateToInputValue(row.outDate || "");
+        const sla = Number(row.sla || originalLog[8] || 0);
+        const action = String(row.action || originalLog[12] || "").trim();
+        const logKey = `${contractId}::${logNo}`;
+        if (!contractId) {
+          hasLogError = true;
+          return;
+        }
+        if (!keptIds.has(contractId)) {
+          const mappedOriginalId = idMap.get(originalContractId) || originalContractId;
+          if (!keptIds.has(mappedOriginalId) && rawContractId === originalContractId) return;
+          hasLogError = true;
+          return;
+        }
+        if (!Number.isFinite(logNo) || logNo <= 0 || !Number.isFinite(cycle) || cycle <= 0 || !from || !to || !nextIn || (nextOut && normalizeDateOnly(nextOut) < normalizeDateOnly(nextIn)) || !Number.isFinite(sla) || sla < 0 || !action || usedLogKeys.has(logKey)) {
+          hasLogError = true;
+          return;
+        }
+        usedLogKeys.add(logKey);
+        const originalIn = dateToInputValue(originalLog[6] || "");
+        if (Number(logNo) === 1 && nextIn !== originalIn) firstLogInChanged.add(contractId);
+        const nextLog = Array.isArray(originalLog) ? [...originalLog] : Array.from({ length: logDatabaseHeaders.length }, () => "");
+        const changed = String(nextLog[0] || "") !== contractId || Number(nextLog[1] || 0) !== logNo || Number(nextLog[2] || 0) !== cycle || String(nextLog[4] || "") !== from || String(nextLog[5] || "") !== to || dateToInputValue(nextLog[6] || "") !== nextIn || dateToInputValue(nextLog[7] || "") !== nextOut || Number(nextLog[8] || 0) !== sla || String(nextLog[12] || "") !== action;
+        nextLog[0] = contractId;
+        nextLog[1] = logNo;
+        nextLog[2] = cycle;
+        nextLog[3] = `From ${from} >> To ${to}`;
+        nextLog[4] = from;
+        nextLog[5] = to;
+        nextLog[6] = nextIn;
+        nextLog[7] = nextOut;
+        nextLog[8] = sla;
+        nextLog[12] = action;
+        nextLog[28] = Number(nextLog[28] || sla) || sla;
+        if (changed) {
+          nextLog[13] = nextLog[13] || `${action} by ${currentUser?.name || "Admin"}`;
+          nextLog[21] = currentUser?.name || "Admin";
+          nextLog[22] = localIsoDateTime();
+        }
+        recalculateLogTiming(nextLog);
+        nextLogRecords.push(nextLog);
+      });
+
       if (hasContractError) {
         showToast("Contract ID and Contract Name are required, and Contract ID must not duplicate");
         return false;
       }
+      if (hasLogError) {
+        showToast("Log Records require valid Contract ID, Log No, Cycle, From, To, In, SLA, Action, and unique Log No per Contract");
+        return false;
+      }
 
       contracts.splice(0, contracts.length, ...nextContracts);
-      logRecords.splice(0, logRecords.length, ...logRecords
-        .map(row => {
-          if (Array.isArray(row) && idMap.has(row[0])) row[0] = idMap.get(row[0]);
-          return row;
-        })
-        .filter(row => keptIds.has(row?.[0])));
+      logRecords.splice(0, logRecords.length, ...nextLogRecords
+        .filter(row => keptIds.has(row?.[0]))
+        .sort((a, b) => String(a[0] || "").localeCompare(String(b[0] || "")) || (Number(a[1]) || 0) - (Number(b[1]) || 0)));
+      logRecords.forEach(row => {
+        const addCaseDate = addCaseDateMap.get(row?.[0]);
+        if (addCaseDate && Number(row?.[1] || 0) === 1 && !firstLogInChanged.has(row?.[0])) row[6] = addCaseDate;
+        recalculateLogTiming(row);
+      });
+      contracts.forEach(syncContractTimingFromLogs);
       refreshDashboardDataFromContracts();
 
 	      masterData.departments = readMasterRows("#masterDepartmentRows", ["Department / Restaurant", "Department Code", "Active"], "Department / Restaurant")
@@ -18534,13 +20677,14 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
 
     async function saveMasterDataFromUi() {
       if (!requireSystemAdministrator()) return;
+      if (!window.confirm("Confirm save Master Data to Database?")) return;
       if (!normalizeMasterDataFromUi()) return;
       renderMasterData();
       saveContractsDatabase();
       await saveDriveDatabaseToCloud();
       populateUserControls();
       renderUserCasePreview();
-      showToast("Master Data saved to Shared Drive");
+      notifyDatabaseSaved("Master Data saved. Database sync request sent.");
     }
 
     function setupMasterDataControls() {
@@ -18549,6 +20693,16 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         button.addEventListener("click", () => addMasterRow(button.dataset.addMasterRow));
       });
       document.querySelector("#master")?.addEventListener("click", event => {
+        const importButton = event.target.closest("[data-master-import]");
+        if (importButton) {
+          openMasterImportPicker(importButton.dataset.masterImport);
+          return;
+        }
+        const exportButton = event.target.closest("[data-master-export]");
+        if (exportButton) {
+          exportMasterDataTable(exportButton.dataset.masterExport);
+          return;
+        }
         const removeButton = event.target.closest("[data-remove-master-row]");
         if (!removeButton) return;
         removeButton.closest("tr")?.remove();
@@ -18738,6 +20892,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         returns: 0,
         status: contractStatus,
         station: `From ${owner} >> To ${to}`,
+        addCaseDate: lockedInDate,
         due: finalDue,
         systemDue,
         dueAdjusted: initiallyAdjusted,
@@ -19443,6 +21598,9 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     const defaultPasswordHashes = Object.freeze(Object.fromEntries(
       Object.entries(demoAccountConfig).map(([username, account]) => [username, account.passwordHash])
     ));
+    const deprecatedConfidentialPasswordHashes = Object.freeze([
+      "eb44db23e31fa6df080d8cb73efb730478abafd2724781d1199d2fb090f3b293"
+    ]);
 
     function defaultAdministrativeSecurityState() {
       return {
@@ -19461,11 +21619,15 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         if (!parsed || typeof parsed !== "object") return fallback;
         Object.keys(fallback.accounts).forEach(username => {
           const saved = parsed.accounts?.[username] || {};
+          const savedPasswordHash = String(saved.passwordHash || defaultPasswordHashes[username]);
+          const migratedPasswordHash = username === "confidential" && deprecatedConfidentialPasswordHashes.includes(savedPasswordHash)
+            ? defaultPasswordHashes[username]
+            : savedPasswordHash;
           fallback.accounts[username] = {
-            passwordHash: String(saved.passwordHash || defaultPasswordHashes[username]),
+            passwordHash: migratedPasswordHash,
             passwordHashHistory: Array.isArray(saved.passwordHashHistory)
-              ? saved.passwordHashHistory.map(String).filter(Boolean).slice(0, 5)
-              : [String(saved.passwordHash || defaultPasswordHashes[username])],
+              ? [migratedPasswordHash, ...saved.passwordHashHistory.map(String).filter(Boolean)].filter((value, index, rows) => rows.indexOf(value) === index).slice(0, 5)
+              : [migratedPasswordHash],
             failedAttempts: Number(saved.failedAttempts || 0),
             locked: Boolean(saved.locked)
           };
@@ -19578,15 +21740,19 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         setPasswordManagementMessage(error);
         return false;
       }
+      if (!window.confirm(`Confirm change password for ${username}?`)) return false;
       administrativeSecurityState.accounts[username].passwordHash = newHash;
       administrativeSecurityState.accounts[username].passwordHashHistory = [newHash, ...(administrativeSecurityState.accounts[username].passwordHashHistory || [])].slice(0, 5);
       administrativeSecurityState.accounts[username].failedAttempts = 0;
       administrativeSecurityState.accounts[username].locked = false;
       appendPasswordAudit(username, "Change Password", remark);
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
       formElement.reset();
       document.querySelector("#passwordAccountSelect").value = username;
       setPasswordManagementMessage("Password changed successfully. / เปลี่ยนรหัสผ่านเรียบร้อย", true);
       renderPasswordManagement();
+      notifyDatabaseSaved("Password changed and saved.");
       if (username === "admin") logoutUser();
       return true;
     }
@@ -19600,9 +21766,12 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         setPasswordManagementMessage("Admin Current Password is incorrect.");
         return false;
       }
+      if (!window.confirm(`Confirm reset ${username} to the default password?`)) return false;
       const previousHashes = credentialRecord(username)?.passwordHashHistory || [];
       administrativeSecurityState.accounts[username] = { passwordHash: defaultPasswordHashes[username], passwordHashHistory: [defaultPasswordHashes[username], ...previousHashes].filter((value, index, rows) => rows.indexOf(value) === index).slice(0, 5), failedAttempts: 0, locked: false };
       appendPasswordAudit(username, "Reset to Default Password", form.get("remark"));
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
       setPasswordManagementMessage("Default password restored. / คืนค่ารหัสผ่านเริ่มต้นแล้ว", true);
       renderPasswordManagement();
       if (username === "admin") logoutUser();
@@ -19618,10 +21787,13 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         setPasswordManagementMessage("Admin Current Password is incorrect.");
         return false;
       }
+      if (!window.confirm(`Confirm unlock account ${username}?`)) return false;
       const account = credentialRecord(username);
       account.locked = false;
       account.failedAttempts = 0;
       appendPasswordAudit(username, "Unlock Account", form.get("remark"));
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
       setPasswordManagementMessage("Account unlocked. / ปลดล็อกบัญชีแล้ว", true);
       renderPasswordManagement();
       return true;
@@ -19638,7 +21810,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       }
       const queue = document.querySelector("#dueApprovalQueueRows");
       if (queue) queue.innerHTML = dueDateAdjustmentRequests.length ? dueDateAdjustmentRequests.slice().reverse().map(request => `
-        <tr><td>${escapeHtml(request.requestId)}</td><td>${escapeHtml(request.contractId)}</td><td>${escapeHtml(request.requestedDue)}</td><td>${escapeHtml(request.requestedBy)}</td><td>${escapeHtml(request.status)}</td><td><button class="secondary-button" type="button" data-review-due-request="${escapeHtml(request.requestId)}">Review</button></td></tr>`).join("") : '<tr><td colspan="6">No Due Date requests</td></tr>';
+        <tr data-admin-request-id="${escapeHtml(request.requestId)}"><td>${escapeHtml(request.requestId)}</td><td>${escapeHtml(request.contractId)}</td><td><input class="master-input" type="date" data-admin-request-field="requestedDue" value="${escapeHtml(request.requestedDue || "")}"></td><td><input class="master-input" type="text" data-admin-request-field="requestedBy" value="${escapeHtml(request.requestedBy || "")}"></td><td><select class="master-input" data-admin-request-field="status">${[...new Set([request.status || "Pending", "Pending", "Approved and Applied", "Rejected", "More Information Requested"])].map(status => `<option value="${status}"${status === request.status ? " selected" : ""}>${status}</option>`).join("")}</select></td><td><button class="secondary-button" type="button" data-review-due-request="${escapeHtml(request.requestId)}">Review</button></td></tr>`).join("") : '<tr><td colspan="6">No Due Date requests</td></tr>';
       const history = document.querySelector("#dueAdjustmentHistoryRows");
       if (history) history.innerHTML = administrativeSecurityState.dueDateHistory.length
         ? administrativeSecurityState.dueDateHistory.map(item => `<tr><td>${escapeHtml(item.requestId)}</td><td>${escapeHtml(item.decision)}</td><td>${escapeHtml(item.finalDue || "-")}</td><td>${escapeHtml(item.admin)}</td><td>${escapeHtml(formatDateTime(item.decidedAt))}</td></tr>`).join("")
@@ -19809,6 +21981,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
         showToast("Reason for Different Final Date is required.");
         return false;
       }
+      if (!window.confirm(`Confirm ${decision} for ${request.requestId}? This change will be saved to the database.`)) return false;
       if (decision === "Approve and Apply") {
         contract.originalDue = contract.originalDue || request.currentDue || contract.due;
         contract.due = finalDue;
@@ -19846,6 +22019,57 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
       return true;
     }
 
+    async function saveAdminToolsChanges() {
+      if (!requireSystemAdministrator()) return false;
+      const rows = [...document.querySelectorAll("#dueApprovalQueueRows tr[data-admin-request-id]")];
+      const changes = [];
+      for (const row of rows) {
+        const request = dueDateAdjustmentRequests.find(item => item.requestId === row.dataset.adminRequestId);
+        if (!request) continue;
+        const requestedDue = String(row.querySelector('[data-admin-request-field="requestedDue"]')?.value || "").trim();
+        const requestedBy = String(row.querySelector('[data-admin-request-field="requestedBy"]')?.value || "").trim();
+        const status = String(row.querySelector('[data-admin-request-field="status"]')?.value || "Pending").trim();
+        if (!requestedDue || !requestedBy) {
+          window.alert(`Requested Due Date and Requested By are required for ${request.requestId}.`);
+          return false;
+        }
+        const changedFields = [];
+        if (requestedDue !== String(request.requestedDue || "")) changedFields.push(`Requested Due Date: ${request.requestedDue || "-"} -> ${requestedDue}`);
+        if (requestedBy !== String(request.requestedBy || "")) changedFields.push(`Requested By: ${request.requestedBy || "-"} -> ${requestedBy}`);
+        if (status !== String(request.status || "")) changedFields.push(`Status: ${request.status || "-"} -> ${status}`);
+        if (changedFields.length) changes.push({ request, requestedDue, requestedBy, status, changedFields });
+      }
+      if (!changes.length) {
+        window.alert("No Admin Tools changes to save.");
+        return false;
+      }
+      if (!window.confirm(`Confirm save ${changes.length} Admin Tools change(s) to Database?`)) return false;
+      const changedAt = localIsoDateTime();
+      changes.forEach(change => {
+        change.request.requestedDue = change.requestedDue;
+        change.request.requestedBy = change.requestedBy;
+        change.request.status = change.status;
+        change.request.lastModifiedBy = "admin";
+        change.request.lastModifiedAt = changedAt;
+        administrativeSecurityState.dueDateHistory.unshift({
+          requestId: change.request.requestId,
+          contractId: change.request.contractId,
+          decision: "Admin Tools Direct Edit",
+          finalDue: change.requestedDue,
+          decisionReason: change.changedFields.join("; "),
+          admin: "admin",
+          decidedAt: changedAt
+        });
+      });
+      administrativeSecurityState.dueDateHistory = administrativeSecurityState.dueDateHistory.slice(0, 200);
+      persistAdministrativeSecurityState();
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
+      renderDueDateApprovalQueue();
+      notifyDatabaseSaved(`Admin Tools saved. ${changes.length} record(s) updated.`);
+      return true;
+    }
+
     function renderAdministrativeControls() {
       const admin = isSystemAdministrator();
       document.querySelectorAll("[data-admin-only]").forEach(node => { node.hidden = !admin; });
@@ -19857,6 +22081,7 @@ ${info?.placeholderTh || "กรุณาระบุข้อมูลที่
     }
 
     function setupAdministrativeControls() {
+      document.querySelector("#saveAdminToolsBtn")?.addEventListener("click", saveAdminToolsChanges);
       document.querySelector("#passwordAccountSelect")?.addEventListener("change", renderPasswordManagement);
       document.querySelector("#passwordManagementForm")?.addEventListener("submit", event => { event.preventDefault(); changeManagedPassword(event.currentTarget); });
       document.querySelector("#resetPasswordBtn")?.addEventListener("click", resetManagedPassword);
