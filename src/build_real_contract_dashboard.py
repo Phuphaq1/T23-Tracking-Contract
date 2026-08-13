@@ -25,13 +25,14 @@ OUTPUT_CONTRACT_TYPE_MASTER_V2_CSV = ROOT / "outputs" / "contract_type_master_v2
 OUTPUT_CODE = ROOT / "outputs" / "tracking_contracts_dashboard_codex_code.py"
 OUTPUT_README = ROOT / "outputs" / "tracking_contracts_database_readme.txt"
 OUTPUT_ATTACHMENT_APPS_SCRIPT = ROOT / "outputs" / "tracking_contracts_attachment_upload_apps_script.js"
-DRIVE_FOLDER_ID = "1GxsqFX2xuRJk7TBcW9gF8RadI1Q-H5W9"
+DRIVE_FOLDER_ID = "1JH3z-QrsjhiHxc2h8IUGKTf-jxML1igj"
 DRIVE_FOLDER_URL = f"https://drive.google.com/drive/folders/{DRIVE_FOLDER_ID}"
-ATTACHMENT_CLOUD_FOLDER_ID = "13d9ZNEE0ijV5JfU7chg0wHrTNp500AgR"
+ATTACHMENT_CLOUD_FOLDER_ID = "1sU2_6KlvRSWZ3Rv-9bF9AEU7PvYBF4pJ"
 ATTACHMENT_CLOUD_FOLDER_URL = f"https://drive.google.com/drive/folders/{ATTACHMENT_CLOUD_FOLDER_ID}"
 ATTACHMENT_CLOUD_FOLDER_NAME = "Attachments Files"
 ATTACHMENT_UPLOAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhIbrLVvD-Cwxh3wqEWqjSaIESGgXfhdJ2cWUhepiSIsAyG8yQafG392kkjnSvjT_N/exec"
-RESET_CONTRACT_AND_LOG_DATA = True
+RESET_CONTRACT_AND_LOG_DATA = False
+USE_EXISTING_CSV_DATABASE = True
 ACTIVE_UPDATE_ACTIONS = ["Submit to Review", "Return", "Resubmit", "Forward"]
 STANDARD_SLA_DATA_VERSION = "2026-08-05-sla-config-updated1-v1"
 DEPARTMENT_DATA_VERSION = "2026-07-23-nonzero-departments-v1"
@@ -577,6 +578,58 @@ def write_csv(path, rows, headers):
         writer.writerows(rows)
 
 
+def read_csv_database(path):
+    if not path.exists() or path.stat().st_size == 0:
+        return []
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def contract_from_csv_row(row):
+    total_sla = number(row.get("Total SLA"), 0)
+    used = number(row.get("Days Used") or row.get("Days on Hand"), 0)
+    return {
+        "id": clean(row.get("Contract ID")),
+        "name": clean(row.get("Contract Name")),
+        "department": clean(row.get("Department / Restaurant")),
+        "owner": clean(row.get("Contract Owner") or row.get("Station Owner")),
+        "type": clean(row.get("Type of Contract") or row.get("Work Type") or "Other"),
+        "vendor": clean(row.get("Vendor / Counter party")),
+        "stage": clean(row.get("Stage") or "Draft Created"),
+        "cycle": number(row.get("Cycle"), 1),
+        "returns": number(row.get("Returns"), 0),
+        "status": clean(row.get("Status Update") or row.get("Alert") or "Green >>G=On Track"),
+        "station": clean(row.get("Station")),
+        "addCaseDate": clean(row.get("Add Case Date")),
+        "due": clean(row.get("Due Date")),
+        "systemDue": clean(row.get("System Due Date")),
+        "workType": clean(row.get("Work Type") or row.get("Type of Contract") or "Other"),
+        "totalSla": total_sla,
+        "used": used,
+        "days": number(row.get("Days on Hand"), used),
+        "balance": number(row.get("Balance"), total_sla - used),
+        "alert": clean(row.get("Alert") or row.get("Status Update") or "Green >>G=On Track"),
+        "remark": clean(row.get("Remark")),
+        "accessLevel": clean(row.get("Access Level") or "Normal"),
+        "visibility": clean(row.get("Visibility")),
+        "category": clean(row.get("Category")),
+    }
+
+
+def log_from_csv_row(row):
+    values = []
+    for header, value in row.items():
+        if header in {"Attachments", "CC Recipients"}:
+            try:
+                parsed = json.loads(value or "[]")
+                values.append(parsed if isinstance(parsed, list) else [])
+            except json.JSONDecodeError:
+                values.append([])
+        else:
+            values.append(value or "")
+    return values
+
+
 def main():
     register_df = read_table("Contract Register", 3)
     sla_input_df = read_table("Contract SLA Input", 3)
@@ -883,6 +936,13 @@ def main():
     if RESET_CONTRACT_AND_LOG_DATA:
         contracts = []
         log_records = []
+    if USE_EXISTING_CSV_DATABASE:
+        saved_contract_rows = read_csv_database(OUTPUT_CONTRACTS_CSV)
+        saved_log_rows = read_csv_database(OUTPUT_LOGS_CSV)
+        if saved_contract_rows:
+            contracts = [contract_from_csv_row(row) for row in saved_contract_rows]
+        if saved_log_rows:
+            log_records = [log_from_csv_row(row) for row in saved_log_rows]
 
     action_sla = {}
     sla_steps = []
@@ -2981,6 +3041,13 @@ def main():
         """        vendor: String(form.get("vendor") || selectedAddTemplate?.vendor || "").trim(),""",
     )
     html = html.replace(
+        """        station: `From ${owner} >> To ${to}`,
+        due: finalDue,""",
+        """        station: `From ${owner} >> To ${to}`,
+        addCaseDate: lockedInDate,
+        due: finalDue,""",
+    )
+    html = html.replace(
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
       attachEditableDropdown("updateTo", () => directoryEmployeeOptions(), () => syncUpdateRecipientEmail(true));""",
         """      attachEditableDropdown("addOwner", ownerDropdownOptions, syncAddCaseSystemFields);
@@ -3042,11 +3109,53 @@ def main():
                     <h2>Contract Records</h2>
                     <small>Edit or delete incorrect cases created from Add Case</small>
                   </div>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" id="importMasterContractsBtn" data-master-import="contractsNormal">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="contractsNormal">Export</button>
+                  </div>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
-                    <thead><tr><th>Contract ID</th><th>Contract Name</th><th>Department / Restaurant</th><th>Contract Owner</th><th>Type of Contract</th><th>Stage</th><th>Status Update</th><th>Station Owner</th><th>Due Date</th><th></th></tr></thead>
+                    <thead><tr><th>Contract ID</th><th>Contract Name</th><th>Department / Restaurant</th><th>Contract Owner</th><th>Type of Contract</th><th>Stage</th><th>Status Update</th><th>Station Owner</th><th>Add Case Date</th><th>Due Date</th><th></th></tr></thead>
                     <tbody id="masterContractRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel master-data-panel-full">
+                <div class="panel-header">
+                  <div>
+                    <h2>Confidential Contract Status</h2>
+                    <small>Edit or delete incorrect created from.</small>
+                  </div>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="contractsConfidential">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="contractsConfidential">Export</button>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Contract ID</th><th>Contract Name</th><th>Department / Restaurant</th><th>Contract Owner</th><th>Type of Contract</th><th>Stage</th><th>Status Update</th><th>Station Owner</th><th>Add Case Date</th><th>Due Date</th><th></th></tr></thead>
+                    <tbody id="masterConfidentialContractRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="panel master-data-panel master-data-panel-full">
+                <div class="panel-header">
+                  <div>
+                    <h2>Log Records</h2>
+                    <small>Edit or delete incorrect created from Log View Detail.</small>
+                  </div>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="logs">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="logs">Export</button>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table class="master-table">
+                    <thead><tr><th>Contract ID</th><th>Log No</th><th>Cycle</th><th>From</th><th>To</th><th>In</th><th>Out</th><th>SLA</th><th>Days on Hand</th><th>Alert</th><th>Action</th><th></th></tr></thead>
+                    <tbody id="masterLogRows"></tbody>
                   </table>
                 </div>
               </section>
@@ -3055,9 +3164,13 @@ def main():
                 <div class="panel-header">
                   <div>
                     <h2>Department Master</h2>
-                    <small>Department / Restaurant + code for Contract ID</small>
+                    <small>Add, edit, or delete Department rows</small>
                   </div>
-                  <button class="secondary-button" type="button" data-add-master-row="departments">Add Row</button>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="departments">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="departments">Export</button>
+                    <button class="secondary-button" type="button" data-add-master-row="departments">Add Row</button>
+                  </div>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
@@ -3071,9 +3184,13 @@ def main():
                 <div class="panel-header">
                   <div>
                     <h2>People / Owner Master</h2>
-                    <small>Used by Owner, To, CC and email lookup</small>
+                    <small>Add, edit, or delete Owner rows used by To, CC and email lookup</small>
                   </div>
-                  <button class="secondary-button" type="button" data-add-master-row="people">Add Row</button>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="people">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="people">Export</button>
+                    <button class="secondary-button" type="button" data-add-master-row="people">Add Row</button>
+                  </div>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
@@ -3087,9 +3204,13 @@ def main():
                 <div class="panel-header">
 	                  <div>
                     <h2>Type of Contract Master</h2>
-	                    <small>Used by Type/Sub Type dropdown, tooltip and Total SLA</small>
+	                    <small>Add, edit, or delete Type/Sub Type rows used by dropdown, tooltip and Total SLA</small>
 	                  </div>
-                  <button class="secondary-button" type="button" data-add-master-row="contractTypes">Add Row</button>
+                  <div class="master-data-actions">
+                    <button class="secondary-button" type="button" data-master-import="contractTypes">Import</button>
+                    <button class="secondary-button" type="button" data-master-export="contractTypes">Export</button>
+                    <button class="secondary-button" type="button" data-add-master-row="contractTypes">Add Row</button>
+                  </div>
                 </div>
                 <div class="table-wrap">
                   <table class="master-table">
@@ -3103,9 +3224,13 @@ def main():
 	                <div class="panel-header">
 	                  <div>
 	                    <h2>Action SLA Master</h2>
-	                    <small>Included in Total SLA · Action SLA รวมอยู่ใน Total SLA แล้ว ไม่บวกซ้ำ</small>
+	                    <small>Add, edit, or delete Action SLA rows included in Total SLA</small>
 	                  </div>
-	                  <button class="secondary-button" type="button" data-add-master-row="actionSla">Add Row</button>
+	                  <div class="master-data-actions">
+	                    <button class="secondary-button" type="button" data-master-import="actionSla">Import</button>
+	                    <button class="secondary-button" type="button" data-master-export="actionSla">Export</button>
+	                    <button class="secondary-button" type="button" data-add-master-row="actionSla">Add Row</button>
+	                  </div>
 	                </div>
 	                <div class="table-wrap">
 	                  <table class="master-table">
@@ -3115,7 +3240,7 @@ def main():
 	                </div>
 	              </section>
 
-	              <section class="panel master-data-panel master-data-panel-full">
+	              <section class="panel master-data-panel master-data-panel-full" hidden aria-hidden="true">
 	                <div class="panel-header">
 	                  <div>
 	                    <h2>Contract Name Template</h2>
@@ -4634,6 +4759,7 @@ def main():
       const fromName = safeText(from);
       const toName = safeText(to) || safeText(email);
       const dueDate = safeText(formatDateForEmail(contract?.due)).replace(/^[-–]$/, "");
+      const systemUrl = "https://turtletwentythree.github.io/Project-Contract-tracking/";
       const slaNumber = Number(sla) || 0;
       const copyByAction = {
         "Submit to Review": {
@@ -4698,7 +4824,8 @@ def main():
         `From: ${fromName}`,
         `To: ${toName}`,
         `Action SLA: ${slaNumber} Working Day${slaNumber === 1 ? "" : "s"}`,
-        `Due Date: ${dueDate}`
+        `Due Date: ${dueDate}`,
+        `System Link: ${systemUrl}`
       ];
       if (reasonText) englishLines.push("", copy.reasonEn, reasonText);
       englishLines.push("", "Please review and proceed with the contract accordingly.");
@@ -4719,6 +4846,7 @@ def main():
       if (reasonText) thaiLines.push("", copy.reasonTh, reasonText);
       thaiLines.push("", "กรุณาตรวจสอบและดำเนินการตามขั้นตอนที่เกี่ยวข้อง", "", "Contract Tracking System");
 
+      thaiLines.splice(Math.max(thaiLines.length - 1, 0), 0, "", `System Link: ${systemUrl}`);
       const body = [...englishLines, "", "", ...thaiLines].join("\\n");
       return {
         to: email || "",
@@ -5070,6 +5198,51 @@ def main():
     initializeStatusEmailCcControl();""",
     )
     html = html.replace(
+        """    function latestLogFor(contractId) {
+      return logRecords.filter(row => row[0] === contractId).slice(-1)[0] || null;
+    }""",
+        """    function latestLogFor(contractId) {
+      return logRecords.filter(row => row[0] === contractId).slice(-1)[0] || null;
+    }
+
+    function firstLogFor(contractId) {
+      return logRecords.find(row => row[0] === contractId) || null;
+    }
+
+    function addCaseStartDateForContract(contract) {
+      if (!contract) return "";
+      return dateToInputValue(contract.addCaseDate || firstLogFor(contract.id)?.[6] || "");
+    }
+
+    function recalculateLogTiming(row) {
+      if (!Array.isArray(row)) return row;
+      row[9] = calculateDaysOnHand(row[6], row[7]);
+      row[10] = calculateAlert(row[12], row[9], row[8]);
+      return row;
+    }
+
+    function syncContractTimingFromLogs(contract) {
+      if (!contract) return contract;
+      const rows = logRecords.filter(row => row[0] === contract.id);
+      rows.forEach(recalculateLogTiming);
+      const latest = rows.slice(-1)[0] || null;
+      const totalSla = Number(contract.totalSla || totalSlaFor(contract.workType || contract.type)) || 0;
+      const used = rows.reduce((sum, row) => sum + (Number(row[9]) || 0), 0);
+      const startDate = addCaseStartDateForContract(contract);
+      contract.addCaseDate = startDate;
+      contract.totalSla = totalSla;
+      contract.used = used;
+      contract.days = latest ? Number(latest[9]) || 0 : used;
+      contract.balance = totalSla - used;
+      contract.systemDue = startDate ? addBusinessDays(startDate, totalSla) : (contract.systemDue || "");
+      if (!contract.due) contract.due = contract.systemDue;
+      contract.alert = latest?.[10] || calculateAlert(contract.stage, contract.days, totalSla);
+      contract.status = calculateContractStatus(contract.stage, used, totalSla);
+      return contract;
+    }""",
+        1,
+    )
+    html = html.replace(
         """    function renderAll() {
       rebuildNotificationQueue();""",
         """    const contractDatabaseHeaders = [
@@ -5085,6 +5258,7 @@ def main():
       "Status Update",
       "Station",
       "Station Owner",
+      "Add Case Date",
       "Due Date",
       "System Due Date",
       "Work Type",
@@ -5215,6 +5389,7 @@ def main():
         "Status Update": item.status,
         "Station": item.station,
         "Station Owner": station.to,
+        "Add Case Date": item.addCaseDate || firstLogFor(item.id)?.[6] || "",
         "Due Date": item.due,
         "System Due Date": item.systemDue || "",
         "Work Type": item.workType,
@@ -5251,6 +5426,7 @@ def main():
         returns: Number(row["Returns"] || 0) || 0,
         status: String(row["Status Update"] || row["Alert"] || "Green >>G=On Track").trim(),
         station: String(row["Station"] || `From ${owner || "Owner"} >> To ${stationOwner}`).trim(),
+        addCaseDate: String(row["Add Case Date"] || "").trim(),
         due: String(row["Due Date"] || "").trim(),
         systemDue: String(row["System Due Date"] || "").trim(),
         workType: String(row["Work Type"] || type || "Other").trim(),
@@ -5309,6 +5485,11 @@ def main():
       const status = document.querySelector("#databaseSyncStatus");
       if (!status) return;
       status.textContent = message || `${contracts.length} contracts · ${driveDatabaseConfig.contractsCsv}`;
+    }
+
+    function notifyDatabaseSaved(message) {
+      showToast(message);
+      window.alert(message);
     }
 
     function migrateContractIdsToDepartmentFormat(contractRows = [], logRows = []) {
@@ -5588,17 +5769,28 @@ def main():
       if (!requireSystemAdministrator()) return;
       if (!file) return;
       const reader = new FileReader();
-      reader.addEventListener("load", () => {
+      reader.addEventListener("load", async () => {
         const rows = csvToObjects(reader.result);
         const importedContracts = rows.map(contractFromDbRow).filter(item => item.id && item.name);
         if (!importedContracts.length) {
           showToast("No valid contracts in CSV");
+          window.alert("No valid contracts were found in the selected CSV file.");
           return;
         }
-        migrateContractIdsToDepartmentFormat(importedContracts, logRecords);
-        const importedIds = new Set(importedContracts.map(item => item.id));
-        logRecords.splice(0, logRecords.length, ...logRecords.filter(row => importedIds.has(row[0])));
+        if (!window.confirm(`Import ${importedContracts.length} contract record(s) into Master Data? Matching Contract IDs will be updated and other existing records will remain.`)) return;
+        migrateContractIdsToDepartmentFormat(importedContracts, []);
+        const existingById = new Map(contracts.map((contract, index) => [contract.id, index]));
+        let addedCount = 0;
+        let updatedCount = 0;
         importedContracts.forEach(contract => {
+          const existingIndex = existingById.get(contract.id);
+          if (existingIndex >= 0) {
+            contracts[existingIndex] = { ...contracts[existingIndex], ...contract };
+            updatedCount += 1;
+          } else {
+            contracts.push(contract);
+            addedCount += 1;
+          }
           if (!latestLogFor(contract.id)) {
             addLogRecord({
               contractId: contract.id,
@@ -5606,7 +5798,7 @@ def main():
               station: contract.station,
               from: stationParts(contract.station).from || contract.owner,
               to: stationParts(contract.station).to || "Legal",
-              inDate: todayInputValue(),
+              inDate: contract.addCaseDate || todayInputValue(),
               outDate: "",
               sla: contract.totalSla || totalSlaFor(contract.workType),
               delayReason: "",
@@ -5615,13 +5807,219 @@ def main():
             });
           }
         });
-        contracts.splice(0, contracts.length, ...importedContracts);
         refreshDashboardDataFromContracts();
         saveContractsDatabase();
+        await saveDriveDatabaseToCloud();
         renderAll();
-        showToast(`${importedContracts.length} contracts imported`);
+        notifyDatabaseSaved(`Import completed. ${addedCount} added, ${updatedCount} updated. Database sync request sent.`);
       });
       reader.readAsText(file, "utf-8");
+    }
+
+    const masterImportExportLabels = Object.freeze({
+      contractsNormal: "Contract Records",
+      contractsConfidential: "Confidential Contract Status",
+      logs: "Log Records",
+      departments: "Department Master",
+      people: "People / Owner Master",
+      contractTypes: "Type of Contract Master",
+      actionSla: "Action SLA Master"
+    });
+
+    function upsertRowsByKey(targetRows, incomingRows, keyFn) {
+      const indexes = new Map();
+      targetRows.forEach((row, index) => {
+        const key = keyFn(row);
+        if (key) indexes.set(key, index);
+      });
+      let added = 0;
+      let updated = 0;
+      incomingRows.forEach(row => {
+        const key = keyFn(row);
+        if (!key) return;
+        if (indexes.has(key)) {
+          targetRows[indexes.get(key)] = { ...targetRows[indexes.get(key)], ...row };
+          updated += 1;
+        } else {
+          indexes.set(key, targetRows.length);
+          targetRows.push(row);
+          added += 1;
+        }
+      });
+      return { added, updated };
+    }
+
+    function masterExportPayload(kind) {
+      if (kind === "contractsNormal") {
+        return {
+          filename: "master_contract_records.csv",
+          headers: contractDatabaseHeaders,
+          rows: contracts.filter(contract => !isConfidentialContract(contract)).map(contractDbRow)
+        };
+      }
+      if (kind === "contractsConfidential") {
+        return {
+          filename: "master_confidential_contract_status.csv",
+          headers: contractDatabaseHeaders,
+          rows: contracts.filter(isConfidentialContract).map(contractDbRow)
+        };
+      }
+      if (kind === "logs") {
+        return { filename: "master_log_records.csv", headers: logDatabaseHeaders, rows: logRecords.map(logDbRow) };
+      }
+      if (kind === "departments") {
+        return { filename: "master_department_rows.csv", headers: ["Department / Restaurant", "Department Code", "Department Data Version", "Active"], rows: masterData.departments || [] };
+      }
+      if (kind === "people") {
+        return { filename: "master_people_owner_rows.csv", headers: ["company", "department", "name", "email", "active"], rows: masterData.people || [] };
+      }
+      if (kind === "contractTypes") {
+        return { filename: "master_type_of_contract_rows.csv", headers: ["Contract Classification", "Type of Contract", "Sub Type of Contract", "Fixed SLA (Working Days)", "Standard SLA Version", "Active", "Category", "Description / คำอธิบาย"], rows: masterData.contractTypes || [] };
+      }
+      if (kind === "actionSla") {
+        return { filename: "master_action_sla_rows.csv", headers: ["Action", "Description / รายละเอียด", "Fixed SLA (Working Days)", "SLA Rule / วิธีนับ", "Action Data Version", "Active"], rows: masterData.actionSla || [] };
+      }
+      return null;
+    }
+
+    function exportMasterDataTable(kind) {
+      if (!requireSystemAdministrator()) return;
+      if (!normalizeMasterDataFromUi()) return;
+      const payload = masterExportPayload(kind);
+      if (!payload) return;
+      downloadTextFile(payload.filename, objectsToCsv(payload.headers, payload.rows));
+      showToast(`${masterImportExportLabels[kind] || "Master Data"} exported`);
+    }
+
+    function upsertImportedContracts(importedContracts, accessLevel) {
+      migrateContractIdsToDepartmentFormat(importedContracts, []);
+      const existingById = new Map(contracts.map((contract, index) => [contract.id, index]));
+      let added = 0;
+      let updated = 0;
+      importedContracts.forEach(contract => {
+        contract.accessLevel = accessLevel;
+        contract.visibility = accessLevel === "Confidential" ? "Restricted access / จำกัดสิทธิ์" : "Standard access / สิทธิ์ทั่วไป";
+        contract.category = accessLevel === "Confidential" ? "Confidential" : (contract.category || contractTypeCategoryFor(contract.type));
+        const existingIndex = existingById.get(contract.id);
+        if (existingIndex >= 0) {
+          contracts[existingIndex] = { ...contracts[existingIndex], ...contract };
+          updated += 1;
+        } else {
+          existingById.set(contract.id, contracts.length);
+          contracts.push(contract);
+          added += 1;
+        }
+        if (!latestLogFor(contract.id)) {
+          addLogRecord({
+            contractId: contract.id,
+            cycle: contract.cycle || 1,
+            station: contract.station,
+            from: stationParts(contract.station).from || contract.owner,
+            to: stationParts(contract.station).to || "Legal",
+            inDate: contract.addCaseDate || todayInputValue(),
+            outDate: "",
+            sla: contract.totalSla || totalSlaFor(contract.workType || contract.type),
+            delayReason: "",
+            action: contract.stage || "Draft Created",
+            updatedBy: "Master Import"
+          });
+        }
+      });
+      return { added, updated };
+    }
+
+    async function applyMasterImportRows(kind, rows) {
+      let result = { added: 0, updated: 0 };
+      if (kind === "contractsNormal" || kind === "contractsConfidential") {
+        const accessLevel = kind === "contractsConfidential" ? "Confidential" : "Normal";
+        const importedContracts = rows.map(contractFromDbRow).filter(item => item.id && item.name);
+        if (!importedContracts.length) return null;
+        result = upsertImportedContracts(importedContracts, accessLevel);
+      } else if (kind === "logs") {
+        const importedLogs = rows.map(logFromDbRow).filter(row => String(row?.[0] || "").trim() && String(row?.[1] || "").trim());
+        if (!importedLogs.length) return null;
+        const existingByKey = new Map(logRecords.map((row, index) => [`${row[0]}::${row[1]}`, index]));
+        importedLogs.forEach(row => {
+          row[1] = Number(row[1]) || row[1];
+          row[2] = Number(row[2]) || row[2] || 1;
+          row[8] = Number(row[8]) || 0;
+          recalculateLogTiming(row);
+          const key = `${row[0]}::${row[1]}`;
+          if (existingByKey.has(key)) {
+            logRecords[existingByKey.get(key)] = row;
+            result.updated += 1;
+          } else {
+            existingByKey.set(key, logRecords.length);
+            logRecords.push(row);
+            result.added += 1;
+          }
+        });
+      } else if (kind === "departments") {
+        const imported = rows.map(row => {
+          const department = canonicalDepartmentName(row["Department / Restaurant"]);
+          const code = String(row["Department Code"] || departmentCodeSuggestion(department) || "").trim().toUpperCase();
+          return { ...row, "Department / Restaurant": department, "Department Code": code, "Department Data Version": row["Department Data Version"] || departmentDataVersion, Active: row.Active || "Yes" };
+        }).filter(row => row["Department / Restaurant"] && row["Department Code"]);
+        result = upsertRowsByKey(masterData.departments, imported, row => normalizeDirectoryValue(row["Department / Restaurant"]));
+      } else if (kind === "people") {
+        const imported = rows.map(row => ({ ...row, company: row.company || "Turtle 23", email: String(row.email || "").trim().toLowerCase(), active: row.active || "Yes" })).filter(row => row.name);
+        result = upsertRowsByKey(masterData.people, imported, row => normalizeDirectoryValue(row.email || row.name));
+      } else if (kind === "contractTypes") {
+        const imported = rows.map(row => ({
+          ...row,
+          Category: row.Category || row["Contract Classification"] || "",
+          "Standard SLA Version": row["Standard SLA Version"] || standardSlaDataVersion,
+          Active: row.Active || "Yes"
+        })).filter(row => row["Contract Classification"] && (row["Type of Contract"] || row["Sub Type of Contract"]));
+        result = upsertRowsByKey(masterData.contractTypes, imported, row => [row["Contract Classification"], row["Type of Contract"], row["Sub Type of Contract"]].map(normalizeDirectoryValue).join("::"));
+      } else if (kind === "actionSla") {
+        const imported = rows.map(row => ({
+          ...row,
+          "Description / รายละเอียด": row["Description / รายละเอียด"] || actionDescriptionConfig[row.Action]?.descriptionTh || "",
+          "SLA Rule / วิธีนับ": row["SLA Rule / วิธีนับ"] || actionDescriptionConfig[row.Action]?.slaRuleTh || "",
+          "Action Data Version": row["Action Data Version"] || actionDataVersion,
+          Active: row.Active || "Yes"
+        })).filter(row => row.Action);
+        result = upsertRowsByKey(masterData.actionSla, imported, row => normalizeDirectoryValue(row.Action));
+      }
+      refreshDashboardDataFromContracts();
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
+      renderAll();
+      notifyDatabaseSaved(`${masterImportExportLabels[kind] || "Master Data"} import completed. ${result.added} added, ${result.updated} updated.`);
+      return result;
+    }
+
+    function importMasterDataTable(kind, file) {
+      if (!requireSystemAdministrator()) return;
+      if (!file) return;
+      const label = masterImportExportLabels[kind] || "Master Data";
+      const reader = new FileReader();
+      reader.addEventListener("load", async () => {
+        const rows = csvToObjects(reader.result);
+        if (!rows.length) {
+          window.alert("No valid rows were found in the selected CSV file.");
+          return;
+        }
+        if (!window.confirm(`Import ${rows.length} row(s) into ${label}? Matching records will be updated and other existing records will remain.`)) return;
+        const result = await applyMasterImportRows(kind, rows);
+        if (!result) window.alert(`No valid rows were found for ${label}.`);
+      });
+      reader.readAsText(file, "utf-8");
+    }
+
+    function openMasterImportPicker(kind) {
+      if (!requireSystemAdministrator()) return;
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".csv,text/csv";
+      input.hidden = true;
+      input.addEventListener("change", event => {
+        importMasterDataTable(kind, event.target.files?.[0]);
+        input.remove();
+      }, { once: true });
+      document.body.appendChild(input);
+      input.click();
     }
 
     function masterInput(field, value = "", options = {}) {
@@ -5640,6 +6038,10 @@ def main():
       return masterInput(field, value || "Yes", { select: true, choices: ["Yes", "No"] });
     }
 
+    function masterReadOnly(value = "") {
+      return `<span class="master-readonly">${escapeHtml(value === "" || value == null ? "-" : value)}</span>`;
+    }
+
     function masterDeleteButton() {
       return `<button class="icon-button" type="button" data-remove-master-row title="Remove row">×</button>`;
     }
@@ -5648,10 +6050,8 @@ def main():
       return stationParts(contract.station).to || contract.stationOwner || contract.owner || "";
     }
 
-    function renderMasterData() {
-      const contractBody = document.querySelector("#masterContractRows");
-      if (contractBody) {
-        contractBody.innerHTML = contracts.map(contract => `
+    function masterContractRow(contract) {
+      return `
           <tr>
             <td><input type="hidden" data-master-field="_originalId" value="${escapeHtml(contract.id)}">${masterInput("id", contract.id)}</td>
             <td>${masterInput("name", contract.name)}</td>
@@ -5661,9 +6061,43 @@ def main():
             <td>${masterInput("stage", contract.stage)}</td>
             <td>${masterInput("status", contract.status)}</td>
             <td>${masterInput("stationOwner", stationOwnerForMasterContract(contract))}</td>
+            <td>${masterInput("addCaseDate", addCaseStartDateForContract(contract), { type: "date" })}</td>
             <td>${masterInput("due", contract.due, { type: "date" })}</td>
             <td>${masterDeleteButton()}</td>
-          </tr>`).join("");
+          </tr>`;
+    }
+
+    function renderMasterData() {
+      const contractBody = document.querySelector("#masterContractRows");
+      if (contractBody) {
+        contractBody.innerHTML = contracts.filter(contract => !isConfidentialContract(contract)).map(masterContractRow).join("");
+      }
+
+      const confidentialContractBody = document.querySelector("#masterConfidentialContractRows");
+      if (confidentialContractBody) {
+        confidentialContractBody.innerHTML = contracts.filter(isConfidentialContract).map(masterContractRow).join("");
+      }
+
+      const logBody = document.querySelector("#masterLogRows");
+      if (logBody) {
+        logBody.innerHTML = logRecords.map(row => {
+          const actionChoices = row[12] && !updateActionList.includes(row[12]) ? [row[12], ...updateActionList] : updateActionList;
+          return `
+          <tr>
+            <td><input type="hidden" data-master-field="_originalContractId" value="${escapeHtml(row[0])}"><input type="hidden" data-master-field="_originalLogNo" value="${escapeHtml(row[1])}">${masterInput("contractId", row[0])}</td>
+            <td>${masterInput("logNo", row[1], { type: "number" })}</td>
+            <td>${masterInput("cycle", row[2], { type: "number" })}</td>
+            <td>${masterInput("from", row[4])}</td>
+            <td>${masterInput("to", row[5])}</td>
+            <td>${masterInput("inDate", dateToInputValue(row[6]), { type: "date" })}</td>
+            <td>${masterInput("outDate", dateToInputValue(row[7]), { type: "date" })}</td>
+            <td>${masterInput("sla", row[8], { type: "number" })}</td>
+            <td>${masterReadOnly(row[9])}</td>
+            <td>${masterReadOnly(row[10])}</td>
+            <td>${masterInput("action", row[12], { select: true, choices: actionChoices })}</td>
+            <td>${masterDeleteButton()}</td>
+          </tr>`;
+        }).join("");
       }
 
       const deptBody = document.querySelector("#masterDepartmentRows");
@@ -5756,11 +6190,21 @@ def main():
     function normalizeMasterDataFromUi() {
       if (!requireSystemAdministrator()) return false;
       const originalContracts = new Map(contracts.map(contract => [String(contract.id || "").trim(), contract]));
-      const contractRows = readMasterRows("#masterContractRows", ["_originalId", "id", "name", "department", "owner", "type", "stage", "status", "stationOwner", "due"], "_originalId");
+      const contractFields = ["_originalId", "id", "name", "department", "owner", "type", "stage", "status", "stationOwner", "addCaseDate", "due"];
+      const contractRows = [
+        ...readMasterRows("#masterContractRows", contractFields, "_originalId").map(row => ({ ...row, accessLevel: "" })),
+        ...readMasterRows("#masterConfidentialContractRows", contractFields, "_originalId").map(row => ({ ...row, accessLevel: "Confidential" }))
+      ];
+      const logRows = readMasterRows("#masterLogRows", ["_originalContractId", "_originalLogNo", "contractId", "logNo", "cycle", "from", "to", "inDate", "outDate", "sla", "action"], "_originalContractId");
       const nextContracts = [];
       const keptIds = new Set();
       const idMap = new Map();
+      const addCaseDateMap = new Map();
+      const nextLogRecords = [];
+      const usedLogKeys = new Set();
+      const firstLogInChanged = new Set();
       let hasContractError = false;
+      let hasLogError = false;
 
       contractRows.forEach(row => {
         const originalId = String(row._originalId || "").trim();
@@ -5781,7 +6225,9 @@ def main():
         const stationOwner = String(row.stationOwner || stationOwnerForMasterContract(original) || "Legal").trim();
         const totalSla = Number(original.totalSla || totalSlaFor(type)) || 0;
         const used = Number(original.used || original.days || 0) || 0;
-        const accessLevel = String(original.accessLevel || accessLevelForContractType(type) || "Normal").trim();
+        const accessLevel = String(row.accessLevel || original.accessLevel || accessLevelForContractType(type) || "Normal").trim();
+        const addCaseDate = dateToInputValue(row.addCaseDate || original.addCaseDate || firstLogFor(originalId)?.[6] || firstLogFor(id)?.[6] || "");
+        addCaseDateMap.set(id, addCaseDate);
         nextContracts.push({
           ...original,
           id,
@@ -5793,6 +6239,7 @@ def main():
           stage: String(row.stage || original.stage || "Draft Created").trim(),
           status: String(row.status || original.status || original.alert || "Green >>G=On Track").trim(),
           station: `From ${owner || stationParts(original.station || "").from || "Owner"} >> To ${stationOwner}`,
+          addCaseDate,
           due: String(row.due || original.due || "").trim(),
           workType: String(original.workType || type || "Other").trim(),
           totalSla,
@@ -5807,18 +6254,79 @@ def main():
         if (originalId && originalId !== id) idMap.set(originalId, id);
       });
 
+      logRows.forEach(row => {
+        const originalContractId = String(row._originalContractId || "").trim();
+        const rawContractId = String(row.contractId || originalContractId).trim();
+        const contractId = idMap.get(rawContractId) || rawContractId;
+        const originalLogNo = String(row._originalLogNo || "").trim();
+        const originalLog = logRecords.find(item => String(item?.[0] || "") === originalContractId && String(item?.[1] || "") === originalLogNo) || [];
+        const logNo = Number(row.logNo || originalLog[1] || 0);
+        const cycle = Number(row.cycle || originalLog[2] || 1);
+        const from = String(row.from || originalLog[4] || "").trim();
+        const to = String(row.to || originalLog[5] || "").trim();
+        const nextIn = dateToInputValue(row.inDate || "");
+        const nextOut = dateToInputValue(row.outDate || "");
+        const sla = Number(row.sla || originalLog[8] || 0);
+        const action = String(row.action || originalLog[12] || "").trim();
+        const logKey = `${contractId}::${logNo}`;
+        if (!contractId) {
+          hasLogError = true;
+          return;
+        }
+        if (!keptIds.has(contractId)) {
+          const mappedOriginalId = idMap.get(originalContractId) || originalContractId;
+          if (!keptIds.has(mappedOriginalId) && rawContractId === originalContractId) return;
+          hasLogError = true;
+          return;
+        }
+        if (!Number.isFinite(logNo) || logNo <= 0 || !Number.isFinite(cycle) || cycle <= 0 || !from || !to || !nextIn || (nextOut && normalizeDateOnly(nextOut) < normalizeDateOnly(nextIn)) || !Number.isFinite(sla) || sla < 0 || !action || usedLogKeys.has(logKey)) {
+          hasLogError = true;
+          return;
+        }
+        usedLogKeys.add(logKey);
+        const originalIn = dateToInputValue(originalLog[6] || "");
+        if (Number(logNo) === 1 && nextIn !== originalIn) firstLogInChanged.add(contractId);
+        const nextLog = Array.isArray(originalLog) ? [...originalLog] : Array.from({ length: logDatabaseHeaders.length }, () => "");
+        const changed = String(nextLog[0] || "") !== contractId || Number(nextLog[1] || 0) !== logNo || Number(nextLog[2] || 0) !== cycle || String(nextLog[4] || "") !== from || String(nextLog[5] || "") !== to || dateToInputValue(nextLog[6] || "") !== nextIn || dateToInputValue(nextLog[7] || "") !== nextOut || Number(nextLog[8] || 0) !== sla || String(nextLog[12] || "") !== action;
+        nextLog[0] = contractId;
+        nextLog[1] = logNo;
+        nextLog[2] = cycle;
+        nextLog[3] = `From ${from} >> To ${to}`;
+        nextLog[4] = from;
+        nextLog[5] = to;
+        nextLog[6] = nextIn;
+        nextLog[7] = nextOut;
+        nextLog[8] = sla;
+        nextLog[12] = action;
+        nextLog[28] = Number(nextLog[28] || sla) || sla;
+        if (changed) {
+          nextLog[13] = nextLog[13] || `${action} by ${currentUser?.name || "Admin"}`;
+          nextLog[21] = currentUser?.name || "Admin";
+          nextLog[22] = localIsoDateTime();
+        }
+        recalculateLogTiming(nextLog);
+        nextLogRecords.push(nextLog);
+      });
+
       if (hasContractError) {
         showToast("Contract ID and Contract Name are required, and Contract ID must not duplicate");
         return false;
       }
+      if (hasLogError) {
+        showToast("Log Records require valid Contract ID, Log No, Cycle, From, To, In, SLA, Action, and unique Log No per Contract");
+        return false;
+      }
 
       contracts.splice(0, contracts.length, ...nextContracts);
-      logRecords.splice(0, logRecords.length, ...logRecords
-        .map(row => {
-          if (Array.isArray(row) && idMap.has(row[0])) row[0] = idMap.get(row[0]);
-          return row;
-        })
-        .filter(row => keptIds.has(row?.[0])));
+      logRecords.splice(0, logRecords.length, ...nextLogRecords
+        .filter(row => keptIds.has(row?.[0]))
+        .sort((a, b) => String(a[0] || "").localeCompare(String(b[0] || "")) || (Number(a[1]) || 0) - (Number(b[1]) || 0)));
+      logRecords.forEach(row => {
+        const addCaseDate = addCaseDateMap.get(row?.[0]);
+        if (addCaseDate && Number(row?.[1] || 0) === 1 && !firstLogInChanged.has(row?.[0])) row[6] = addCaseDate;
+        recalculateLogTiming(row);
+      });
+      contracts.forEach(syncContractTimingFromLogs);
       refreshDashboardDataFromContracts();
 
 	      masterData.departments = readMasterRows("#masterDepartmentRows", ["Department / Restaurant", "Department Code", "Active"], "Department / Restaurant")
@@ -5882,13 +6390,15 @@ def main():
     }
 
     async function saveMasterDataFromUi() {
+      if (!requireSystemAdministrator()) return;
+      if (!window.confirm("Confirm save Master Data to Database?")) return;
       if (!normalizeMasterDataFromUi()) return;
       renderMasterData();
       saveContractsDatabase();
       await saveDriveDatabaseToCloud();
       populateUserControls();
       renderUserCasePreview();
-      showToast("Master Data saved to Shared Drive");
+      notifyDatabaseSaved("Master Data saved. Database sync request sent.");
     }
 
     function setupMasterDataControls() {
@@ -5897,6 +6407,16 @@ def main():
         button.addEventListener("click", () => addMasterRow(button.dataset.addMasterRow));
       });
       document.querySelector("#master")?.addEventListener("click", event => {
+        const importButton = event.target.closest("[data-master-import]");
+        if (importButton) {
+          openMasterImportPicker(importButton.dataset.masterImport);
+          return;
+        }
+        const exportButton = event.target.closest("[data-master-export]");
+        if (exportButton) {
+          exportMasterDataTable(exportButton.dataset.masterExport);
+          return;
+        }
         const removeButton = event.target.closest("[data-remove-master-row]");
         if (!removeButton) return;
         removeButton.closest("tr")?.remove();
@@ -5996,7 +6516,7 @@ def main():
       notifications: ["Notification Queue", "NotificationQueueTable"],""",
         """      user: ["User Case Action", "เพิ่มเคส อัปเดทสถานะ และปิดเคสจาก Contract Status / Log View"],
       master: ["Master Data", "แก้ไขข้อมูล dropdown และบันทึกกลับ Shared Drive"],
-      confidential: ["Confidential Contract Status", "แสดงเฉพาะสัญญาลับสำหรับผู้มีสิทธิ์เข้าถึง"],
+      confidential: ["Confidential Contract Status", "Edit or delete incorrect created from."],
       notifications: ["Notification Queue", "NotificationQueueTable"],""",
     )
     html = html.replace(
@@ -6988,7 +7508,7 @@ def main():
     const demoAccountConfig = Object.freeze({
       viewer: { role: "viewer", passwordHash: "9f9f20ec6958d3c176c17ea3eb9731b053b6fc753367e3c25e3fb2578ec0f4e6" },
       user: { role: "user", passwordHash: "cc66576333f36fb04050e842039951ddbdb54b5dcca031a5eb5861fa1e1a1f09" },
-      confidential: { role: "confidential", passwordHash: "eb44db23e31fa6df080d8cb73efb730478abafd2724781d1199d2fb090f3b293" },
+      confidential: { role: "confidential", passwordHash: "7e7f06d4dccf2376e8774a707806817c9fe7079979ddc6e74c088d7a57afa08b" },
       admin: { role: "admin", passwordHash: "fb07d63fb5ae1ee60f5f96592cb25a99ed421f4e32969d347af615bf62c5e5b3" }
     });
     let currentUser = null;
@@ -7683,6 +8203,7 @@ def main():
                 <h2>Admin Tools <span class="badge black admin-only-badge">Admin Only</span></h2>
                 <small>เครื่องมือสำหรับผู้ดูแลระบบ</small>
               </div>
+              <button class="primary-button" type="button" id="saveAdminToolsBtn" data-admin-only hidden>Save Admin Tools</button>
             </div>
             <div class="master-data-grid">
 ''' + admin_master_panels + '''            </div>
@@ -7992,6 +8513,9 @@ def main():
     const defaultPasswordHashes = Object.freeze(Object.fromEntries(
       Object.entries(demoAccountConfig).map(([username, account]) => [username, account.passwordHash])
     ));
+    const deprecatedConfidentialPasswordHashes = Object.freeze([
+      "eb44db23e31fa6df080d8cb73efb730478abafd2724781d1199d2fb090f3b293"
+    ]);
 
     function defaultAdministrativeSecurityState() {
       return {
@@ -8010,11 +8534,15 @@ def main():
         if (!parsed || typeof parsed !== "object") return fallback;
         Object.keys(fallback.accounts).forEach(username => {
           const saved = parsed.accounts?.[username] || {};
+          const savedPasswordHash = String(saved.passwordHash || defaultPasswordHashes[username]);
+          const migratedPasswordHash = username === "confidential" && deprecatedConfidentialPasswordHashes.includes(savedPasswordHash)
+            ? defaultPasswordHashes[username]
+            : savedPasswordHash;
           fallback.accounts[username] = {
-            passwordHash: String(saved.passwordHash || defaultPasswordHashes[username]),
+            passwordHash: migratedPasswordHash,
             passwordHashHistory: Array.isArray(saved.passwordHashHistory)
-              ? saved.passwordHashHistory.map(String).filter(Boolean).slice(0, 5)
-              : [String(saved.passwordHash || defaultPasswordHashes[username])],
+              ? [migratedPasswordHash, ...saved.passwordHashHistory.map(String).filter(Boolean)].filter((value, index, rows) => rows.indexOf(value) === index).slice(0, 5)
+              : [migratedPasswordHash],
             failedAttempts: Number(saved.failedAttempts || 0),
             locked: Boolean(saved.locked)
           };
@@ -8127,15 +8655,19 @@ def main():
         setPasswordManagementMessage(error);
         return false;
       }
+      if (!window.confirm(`Confirm change password for ${username}?`)) return false;
       administrativeSecurityState.accounts[username].passwordHash = newHash;
       administrativeSecurityState.accounts[username].passwordHashHistory = [newHash, ...(administrativeSecurityState.accounts[username].passwordHashHistory || [])].slice(0, 5);
       administrativeSecurityState.accounts[username].failedAttempts = 0;
       administrativeSecurityState.accounts[username].locked = false;
       appendPasswordAudit(username, "Change Password", remark);
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
       formElement.reset();
       document.querySelector("#passwordAccountSelect").value = username;
       setPasswordManagementMessage("Password changed successfully. / เปลี่ยนรหัสผ่านเรียบร้อย", true);
       renderPasswordManagement();
+      notifyDatabaseSaved("Password changed and saved.");
       if (username === "admin") logoutUser();
       return true;
     }
@@ -8149,9 +8681,12 @@ def main():
         setPasswordManagementMessage("Admin Current Password is incorrect.");
         return false;
       }
+      if (!window.confirm(`Confirm reset ${username} to the default password?`)) return false;
       const previousHashes = credentialRecord(username)?.passwordHashHistory || [];
       administrativeSecurityState.accounts[username] = { passwordHash: defaultPasswordHashes[username], passwordHashHistory: [defaultPasswordHashes[username], ...previousHashes].filter((value, index, rows) => rows.indexOf(value) === index).slice(0, 5), failedAttempts: 0, locked: false };
       appendPasswordAudit(username, "Reset to Default Password", form.get("remark"));
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
       setPasswordManagementMessage("Default password restored. / คืนค่ารหัสผ่านเริ่มต้นแล้ว", true);
       renderPasswordManagement();
       if (username === "admin") logoutUser();
@@ -8167,10 +8702,13 @@ def main():
         setPasswordManagementMessage("Admin Current Password is incorrect.");
         return false;
       }
+      if (!window.confirm(`Confirm unlock account ${username}?`)) return false;
       const account = credentialRecord(username);
       account.locked = false;
       account.failedAttempts = 0;
       appendPasswordAudit(username, "Unlock Account", form.get("remark"));
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
       setPasswordManagementMessage("Account unlocked. / ปลดล็อกบัญชีแล้ว", true);
       renderPasswordManagement();
       return true;
@@ -8187,7 +8725,7 @@ def main():
       }
       const queue = document.querySelector("#dueApprovalQueueRows");
       if (queue) queue.innerHTML = dueDateAdjustmentRequests.length ? dueDateAdjustmentRequests.slice().reverse().map(request => `
-        <tr><td>${escapeHtml(request.requestId)}</td><td>${escapeHtml(request.contractId)}</td><td>${escapeHtml(request.requestedDue)}</td><td>${escapeHtml(request.requestedBy)}</td><td>${escapeHtml(request.status)}</td><td><button class="secondary-button" type="button" data-review-due-request="${escapeHtml(request.requestId)}">Review</button></td></tr>`).join("") : '<tr><td colspan="6">No Due Date requests</td></tr>';
+        <tr data-admin-request-id="${escapeHtml(request.requestId)}"><td>${escapeHtml(request.requestId)}</td><td>${escapeHtml(request.contractId)}</td><td><input class="master-input" type="date" data-admin-request-field="requestedDue" value="${escapeHtml(request.requestedDue || "")}"></td><td><input class="master-input" type="text" data-admin-request-field="requestedBy" value="${escapeHtml(request.requestedBy || "")}"></td><td><select class="master-input" data-admin-request-field="status">${[...new Set([request.status || "Pending", "Pending", "Approved and Applied", "Rejected", "More Information Requested"])].map(status => `<option value="${status}"${status === request.status ? " selected" : ""}>${status}</option>`).join("")}</select></td><td><button class="secondary-button" type="button" data-review-due-request="${escapeHtml(request.requestId)}">Review</button></td></tr>`).join("") : '<tr><td colspan="6">No Due Date requests</td></tr>';
       const history = document.querySelector("#dueAdjustmentHistoryRows");
       if (history) history.innerHTML = administrativeSecurityState.dueDateHistory.length
         ? administrativeSecurityState.dueDateHistory.map(item => `<tr><td>${escapeHtml(item.requestId)}</td><td>${escapeHtml(item.decision)}</td><td>${escapeHtml(item.finalDue || "-")}</td><td>${escapeHtml(item.admin)}</td><td>${escapeHtml(formatDateTime(item.decidedAt))}</td></tr>`).join("")
@@ -8358,6 +8896,7 @@ def main():
         showToast("Reason for Different Final Date is required.");
         return false;
       }
+      if (!window.confirm(`Confirm ${decision} for ${request.requestId}? This change will be saved to the database.`)) return false;
       if (decision === "Approve and Apply") {
         contract.originalDue = contract.originalDue || request.currentDue || contract.due;
         contract.due = finalDue;
@@ -8395,6 +8934,57 @@ def main():
       return true;
     }
 
+    async function saveAdminToolsChanges() {
+      if (!requireSystemAdministrator()) return false;
+      const rows = [...document.querySelectorAll("#dueApprovalQueueRows tr[data-admin-request-id]")];
+      const changes = [];
+      for (const row of rows) {
+        const request = dueDateAdjustmentRequests.find(item => item.requestId === row.dataset.adminRequestId);
+        if (!request) continue;
+        const requestedDue = String(row.querySelector('[data-admin-request-field="requestedDue"]')?.value || "").trim();
+        const requestedBy = String(row.querySelector('[data-admin-request-field="requestedBy"]')?.value || "").trim();
+        const status = String(row.querySelector('[data-admin-request-field="status"]')?.value || "Pending").trim();
+        if (!requestedDue || !requestedBy) {
+          window.alert(`Requested Due Date and Requested By are required for ${request.requestId}.`);
+          return false;
+        }
+        const changedFields = [];
+        if (requestedDue !== String(request.requestedDue || "")) changedFields.push(`Requested Due Date: ${request.requestedDue || "-"} -> ${requestedDue}`);
+        if (requestedBy !== String(request.requestedBy || "")) changedFields.push(`Requested By: ${request.requestedBy || "-"} -> ${requestedBy}`);
+        if (status !== String(request.status || "")) changedFields.push(`Status: ${request.status || "-"} -> ${status}`);
+        if (changedFields.length) changes.push({ request, requestedDue, requestedBy, status, changedFields });
+      }
+      if (!changes.length) {
+        window.alert("No Admin Tools changes to save.");
+        return false;
+      }
+      if (!window.confirm(`Confirm save ${changes.length} Admin Tools change(s) to Database?`)) return false;
+      const changedAt = localIsoDateTime();
+      changes.forEach(change => {
+        change.request.requestedDue = change.requestedDue;
+        change.request.requestedBy = change.requestedBy;
+        change.request.status = change.status;
+        change.request.lastModifiedBy = "admin";
+        change.request.lastModifiedAt = changedAt;
+        administrativeSecurityState.dueDateHistory.unshift({
+          requestId: change.request.requestId,
+          contractId: change.request.contractId,
+          decision: "Admin Tools Direct Edit",
+          finalDue: change.requestedDue,
+          decisionReason: change.changedFields.join("; "),
+          admin: "admin",
+          decidedAt: changedAt
+        });
+      });
+      administrativeSecurityState.dueDateHistory = administrativeSecurityState.dueDateHistory.slice(0, 200);
+      persistAdministrativeSecurityState();
+      saveContractsDatabase();
+      await saveDriveDatabaseToCloud();
+      renderDueDateApprovalQueue();
+      notifyDatabaseSaved(`Admin Tools saved. ${changes.length} record(s) updated.`);
+      return true;
+    }
+
     function renderAdministrativeControls() {
       const admin = isSystemAdministrator();
       document.querySelectorAll("[data-admin-only]").forEach(node => { node.hidden = !admin; });
@@ -8406,6 +8996,7 @@ def main():
     }
 
     function setupAdministrativeControls() {
+      document.querySelector("#saveAdminToolsBtn")?.addEventListener("click", saveAdminToolsChanges);
       document.querySelector("#passwordAccountSelect")?.addEventListener("change", renderPasswordManagement);
       document.querySelector("#passwordManagementForm")?.addEventListener("submit", event => { event.preventDefault(); changeManagedPassword(event.currentTarget); });
       document.querySelector("#resetPasswordBtn")?.addEventListener("click", resetManagedPassword);
@@ -8645,6 +9236,8 @@ def main():
 	    )
     OUTPUT_ATTACHMENT_APPS_SCRIPT.write_text(
         f"""const DEFAULT_FOLDER_ID = "{ATTACHMENT_CLOUD_FOLDER_ID}";
+const DEFAULT_DATABASE_FOLDER_ID = "{DRIVE_FOLDER_ID}";
+const DEFAULT_BACKUP_FOLDER_ID = "{DRIVE_FOLDER_ID}";
 const EMAIL_SENDER_NAME = "T23 Contract Tracking";
 
 function doPost(e) {{
@@ -8653,6 +9246,8 @@ function doPost(e) {{
     const mode = payload.mode || (payload.to ? "sendStatusEmail" : "uploadAttachment");
     if (mode === "sendStatusEmail") return sendStatusEmail_(payload);
     if (mode === "saveDriveDatabase") return saveDriveDatabase_(payload);
+    if (mode === "backupDriveDatabase") return backupDriveDatabase_(payload);
+    if (mode === "installDailyBackup") return installDailyBackupTrigger_(payload);
     return jsonResponse({{ success: true, files: [saveAttachment_(payload)] }});
   }} catch (error) {{
     return jsonResponse({{ success: false, error: errorMessage_(error) }});
@@ -8667,7 +9262,9 @@ function doGet(e) {{
     return jsonpResponse({{
       success: true,
       message: "T23 attachment upload, status email, and Drive database endpoint is running.",
-      folderId: DEFAULT_FOLDER_ID
+      folderId: DEFAULT_FOLDER_ID,
+      databaseFolderId: DEFAULT_DATABASE_FOLDER_ID,
+      backupFolderId: DEFAULT_BACKUP_FOLDER_ID
     }}, callback);
   }} catch (error) {{
     return jsonpResponse({{ success: false, error: errorMessage_(error) }}, callback);
@@ -8710,10 +9307,84 @@ function saveDriveDatabase_(payload) {{
   }});
 }}
 
+function backupDriveDatabase_(payload) {{
+  const sourceFolder = DriveApp.getFolderById(payload.folderId || DEFAULT_DATABASE_FOLDER_ID);
+  const backupFolder = DriveApp.getFolderById(payload.backupFolderId || DEFAULT_BACKUP_FOLDER_ID);
+  const stamp = Utilities.formatDate(new Date(), "Etc/UTC", "yyyyMMdd-HHmmss");
+  const prefix = payload.prefix || "daily_backup";
+  const files = {{
+    contracts: backupTextFileByName_(sourceFolder, backupFolder, payload.contractsCsv || "tracking_contracts_contracts_db.csv", stamp, prefix),
+    logs: backupTextFileByName_(sourceFolder, backupFolder, payload.logsCsv || "tracking_contracts_log_db.csv", stamp, prefix),
+    typeMaster: backupTextFileByName_(sourceFolder, backupFolder, payload.typeMasterCsv || "tracking_contracts_type_master_db.csv", stamp, prefix),
+    departments: backupTextFileByName_(sourceFolder, backupFolder, payload.departmentMasterCsv || "tracking_contracts_department_master_db.csv", stamp, prefix),
+    people: backupTextFileByName_(sourceFolder, backupFolder, payload.peopleMasterCsv || "tracking_contracts_people_master_db.csv", stamp, prefix),
+    contractTemplates: backupTextFileByName_(sourceFolder, backupFolder, payload.contractTemplateCsv || "tracking_contracts_contract_template_master_db.csv", stamp, prefix),
+    actionSla: backupTextFileByName_(sourceFolder, backupFolder, payload.actionSlaCsv || "tracking_contracts_action_sla_master_db.csv", stamp, prefix)
+  }};
+  return jsonResponse({{
+    success: true,
+    backedUp: true,
+    backedUpAt: new Date().toISOString(),
+    sourceFolderId: sourceFolder.getId(),
+    backupFolderId: backupFolder.getId(),
+    files: files
+  }});
+}}
+
+function runDailyBackup() {{
+  return backupDriveDatabase_({{
+    folderId: DEFAULT_DATABASE_FOLDER_ID,
+    backupFolderId: DEFAULT_BACKUP_FOLDER_ID,
+    prefix: "daily_backup"
+  }});
+}}
+
+function installDailyBackupTrigger_() {{
+  ScriptApp.getProjectTriggers().forEach(function(trigger) {{
+    if (trigger.getHandlerFunction && trigger.getHandlerFunction() === "runDailyBackup") {{
+      ScriptApp.deleteTrigger(trigger);
+    }}
+  }});
+  const trigger = ScriptApp.newTrigger("runDailyBackup")
+    .timeBased()
+    .everyDays(1)
+    .atHour(2)
+    .create();
+  return jsonResponse({{
+    success: true,
+    installed: true,
+    handlerFunction: trigger.getHandlerFunction(),
+    backupFolderId: DEFAULT_BACKUP_FOLDER_ID
+  }});
+}}
+
 function readTextFileByName_(folder, fileName) {{
   const files = folder.getFilesByName(fileName);
   if (!files.hasNext()) return "";
   return files.next().getBlob().getDataAsString("UTF-8").replace(/^\\uFEFF/, "");
+}}
+
+function backupTextFileByName_(sourceFolder, backupFolder, fileName, stamp, prefix) {{
+  const name = cleanFileName_(fileName || "database.csv");
+  const files = sourceFolder.getFilesByName(name);
+  if (!files.hasNext()) {{
+    return {{
+      sourceName: name,
+      skipped: true,
+      reason: "Source file not found"
+    }};
+  }}
+  const sourceFile = files.next();
+  const backupName = cleanFileName_([prefix, stamp, name].join("_"));
+  const backupFile = backupFolder.createFile(backupName, sourceFile.getBlob().getDataAsString("UTF-8"), MimeType.CSV);
+  backupFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return {{
+    id: backupFile.getId(),
+    sourceName: name,
+    name: backupFile.getName(),
+    url: backupFile.getUrl(),
+    downloadUrl: "https://drive.google.com/uc?export=download&id=" + backupFile.getId()
+  }};
 }}
 
 function upsertTextFileByName_(folder, fileName, text) {{
@@ -8923,7 +9594,8 @@ function jsonpResponse(data, callback) {{
     OUTPUT_README.write_text(
         "\n".join([
             "T23 Tracking Contracts CSV Database",
-            f"Google Drive folder: {DRIVE_FOLDER_URL}",
+            "Google Drive account: everyone.turtle23.ai@gmail.com",
+            f"Google Drive database folder: {DRIVE_FOLDER_URL}",
             f"HTML: {OUTPUT_HTML.name}",
             f"Codex generator code: {OUTPUT_CODE.name}",
             f"Contracts CSV database: {OUTPUT_CONTRACTS_CSV.name}",
@@ -8939,6 +9611,9 @@ function jsonpResponse(data, callback) {{
             "Add Case / Update Status / Close Case save locally first, then sync the CSV database back to the shared Drive folder in the background.",
             "To enable real email sending, direct attachment upload, and Drive CSV sync, deploy tracking_contracts_attachment_upload_apps_script.js as a Google Apps Script Web App.",
             "Then paste the Web App URL into ATTACHMENT_UPLOAD_ENDPOINT in tracking_contracts_dashboard_codex_code.py and regenerate the HTML.",
+            "",
+            "Production source of truth: the CSV files in the Google Drive database folder above.",
+            "Do not upload an empty local contracts or log CSV over the production Drive files.",
         ]),
         encoding="utf-8",
     )
